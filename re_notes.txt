@@ -1,5 +1,0 @@
-
-Files to update
-------wallets-----------
-wallet.validators.ts - Chain validation, private key validation, error messages
-

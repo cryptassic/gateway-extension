@@ -1,13 +1,18 @@
 networks:
   mainnet:
-    rpcURL: https://cosmos-mainnet-rpc.allthatnode.com:26657
+    rpcURL: https://cosmos-rpc.polkachu.com/
     tokenListType: URL
     tokenListSource: >-
-      https://cosmos-chain-registry-list.vercel.app/list.json
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json
+    chainId: cosmoshub-4
+    bench32_prefix: cosmos
   testnet:
-    rpcURL: https://cosmos-testnet-rpc.allthatnode.com:26657
+    rpcURL: https://cosmos-testnet-rpc.allthatnode.com:26657/
     tokenListType: URL
-    tokenListSource: https://cosmos-chain-registry-list.vercel.app/list.json
+    tokenListSource: >-
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json
+    chainId: theta-testnet-001
+    bench32_prefix: cosmos
 network: mainnet
 nativeCurrencySymbol: ATOM
 manualGasPrice: 110

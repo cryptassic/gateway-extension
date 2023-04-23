@@ -12,7 +12,10 @@ import { UniswapConfig } from '../../connectors/uniswap/uniswap.config';
 import { Perp } from '../../connectors/perp/perp';
 import { SushiswapConfig } from '../../connectors/sushiswap/sushiswap.config';
 import { OpenoceanConfig } from '../../connectors/openocean/openocean.config';
+<<<<<<< HEAD
 import { ZigZagConfig } from '../../connectors/zigzag/zigzag.config';
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 // MKR does not match the ERC20 perfectly so we need to use a separate ABI.
 const MKR_ADDRESS = '0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2';
@@ -189,8 +192,11 @@ export class Ethereum extends EthereumBase implements Ethereumish {
       spender = perp.perp.contracts.vault.address;
     } else if (reqSpender === 'openocean') {
       spender = OpenoceanConfig.config.routerAddress('ethereum', this._chain);
+<<<<<<< HEAD
     } else if (reqSpender === 'zigzag') {
       spender = ZigZagConfig.config.contractAddress(this._chain);
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
     } else {
       spender = reqSpender;
     }

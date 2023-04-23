@@ -8,7 +8,10 @@ import { Ethereumish } from '../../services/common-interfaces';
 import { PancakeSwapConfig } from '../../connectors/pancakeswap/pancakeswap.config';
 import { SushiswapConfig } from '../../connectors/sushiswap/sushiswap.config';
 import { ConfigManagerV2 } from '../../services/config-manager-v2';
+<<<<<<< HEAD
 import { OpenoceanConfig } from '../../connectors/openocean/openocean.config';
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 export class BinanceSmartChain extends EthereumBase implements Ethereumish {
   private static _instances: { [name: string]: BinanceSmartChain };
@@ -101,8 +104,11 @@ export class BinanceSmartChain extends EthereumBase implements Ethereumish {
         'binance-smart-chain',
         this._chain
       );
+<<<<<<< HEAD
     } else if (reqSpender === 'openocean') {
       spender = OpenoceanConfig.config.routerAddress('binance-smart-chain', this._chain);
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
     } else {
       spender = reqSpender;
     }

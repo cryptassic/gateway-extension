@@ -18,6 +18,13 @@ import {
   WalletSignResponse,
 } from './wallet.requests';
 
+<<<<<<< HEAD
+=======
+import {
+  isCosmosPrivateKey,
+} from './wallet.validators';
+
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 import { ConfigManagerCertPassphrase } from '../config-manager-cert-passphrase';
 
 import {
@@ -113,11 +120,24 @@ export async function addWallet(
         passphrase
       );
     } else if (connection instanceof Cosmos) {
+<<<<<<< HEAD
       const wallet = await connection.getAccountsfromPrivateKey(
         req.privateKey,
         'cosmos'
       );
       address = wallet.address;
+=======
+
+      const fromPrivate = connection.getAccountsfromPrivateKey;
+      const fromMnemonic = connection.getWalletFromMnemonic;
+
+      const wallet = isCosmosPrivateKey(req.privateKey) ?
+        await fromPrivate(req.privateKey, 'cosmos') :
+        await fromMnemonic(req.privateKey, 'cosmos');
+
+      address = wallet.address;
+
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
       encryptedPrivateKey = await connection.encrypt(
         req.privateKey,
         passphrase

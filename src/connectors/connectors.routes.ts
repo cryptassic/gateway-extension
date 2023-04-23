@@ -19,7 +19,10 @@ import { InjectiveCLOBConfig } from './injective/injective.clob.config';
 import { XsswapConfig } from './xsswap/xsswap.config';
 import { ConnectorsResponse } from './connectors.request';
 import { DexalotCLOBConfig } from './dexalot/dexalot.clob.config';
+<<<<<<< HEAD
 import { ZigZagConfig } from './zigzag/zigzag.config';
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 export namespace ConnectorsRoutes {
   export const router = Router();
@@ -112,6 +115,7 @@ export namespace ConnectorsRoutes {
             },
           },
           {
+<<<<<<< HEAD
             name: 'injective_perpetual',
             trading_type: InjectiveCLOBConfig.config.tradingTypes('perp'),
             available_networks: InjectiveCLOBConfig.config.availableNetworks,
@@ -122,6 +126,9 @@ export namespace ConnectorsRoutes {
           },
           {
             name: 'xsswap',
+=======
+            name: 'xswap',
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
             trading_type: XsswapConfig.config.tradingTypes,
             available_networks: XsswapConfig.config.availableNetworks,
           },
@@ -134,11 +141,14 @@ export namespace ConnectorsRoutes {
                 'Enter your Dexalot API Key (you can request one from the Dexalot team) >>> ',
             },
           },
+<<<<<<< HEAD
           {
             name: 'zigzag',
             trading_type: ZigZagConfig.config.tradingTypes,
             available_networks: ZigZagConfig.config.availableNetworks,
           },
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
         ],
       });
     })

@@ -30,11 +30,17 @@ export namespace OpenoceanConfig {
     tradingTypes: ['EVM_AMM'],
     availableNetworks: [
       { chain: 'avalanche', networks: ['avalanche'] },
+<<<<<<< HEAD
       { chain: 'ethereum', networks: ['mainnet', 'arbitrum_one', 'optimism'] },
       { chain: 'polygon', networks: ['mainnet'] },
       { chain: 'harmony', networks: ['mainnet'] },
       { chain: 'binance-smart-chain', networks: ['mainnet'] },
       { chain: 'cronos', networks: ['mainnet'] },
+=======
+      { chain: 'ethereum', networks: ['mainnet'] },
+      { chain: 'polygon', networks: ['mainnet'] },
+      { chain: 'harmony', networks: ['mainnet'] },
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
     ],
   };
 }

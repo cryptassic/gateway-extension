@@ -19,6 +19,10 @@ import {
 import { EthereumBase, TokenInfo } from '../chains/ethereum/ethereum-base';
 import { Cronos } from '../chains/cronos/cronos';
 import { Near } from '../chains/near/near';
+<<<<<<< HEAD
+=======
+import { Cosmos } from '../chains/cosmos/cosmos';
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 import { Nearish, Xdcish } from '../services/common-interfaces';
 
 export async function getStatus(
@@ -51,7 +55,14 @@ export async function getStatus(
       connections.push(await Cronos.getInstance(req.network as string));
     } else if (req.chain === 'injective') {
       connections.push(Injective.getInstance(req.network as string));
+<<<<<<< HEAD
     } else {
+=======
+    } else if (req.chain === 'cosmos') {
+      connections.push(Cosmos.getInstance(req.network as string));
+    }
+    else {
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
       throw new HttpException(
         500,
         UNKNOWN_KNOWN_CHAIN_ERROR_MESSAGE(req.chain),
@@ -101,6 +112,14 @@ export async function getStatus(
     connections = connections.concat(
       injectiveConnections ? Object.values(injectiveConnections) : []
     );
+<<<<<<< HEAD
+=======
+
+    const cosmosConnections = Cosmos.getConnectedInstances();
+    connections = connections.concat(
+      cosmosConnections ? Object.values(cosmosConnections) : []
+    );
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
   }
 
   for (const connection of connections) {

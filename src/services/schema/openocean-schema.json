@@ -8,7 +8,11 @@
     "contractAddresses": {
       "type": "object",
       "patternProperties": {
+<<<<<<< HEAD
         "[\\w-]+$": {
+=======
+        "^\\w+$": {
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
           "type": "object",
           "patternProperties": {
             "^\\w+$": {

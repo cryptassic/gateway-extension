@@ -3,17 +3,27 @@ import { patch, unpatch } from '../services/patch';
 import { gatewayApp } from '../../src/app';
 import { Injective } from '../../src/chains/injective/injective';
 import { InjectiveCLOB } from '../../src/connectors/injective/injective';
+<<<<<<< HEAD
 import { InjectiveClobPerp } from '../../src/connectors/injective_perpetual/injective.perp';
 
 let inj: Injective;
 let injCLOB: InjectiveCLOB;
 let injClobPerp: InjectiveClobPerp;
+=======
+
+let inj: Injective;
+let injCLOB: InjectiveCLOB;
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 const TX_HASH =
   'CC6BF44223B4BD05396F83D55A0ABC0F16CE80836C0E34B08F4558CF72944299'; // noqa: mock
 const MARKET = 'INJ-USDT';
 
+<<<<<<< HEAD
 const SPOT_MARKETS = [
+=======
+const MARKETS = [
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
   {
     marketId:
       '0xa508cb32923323679f29a032c70342c147c17d0145625922b0ef22e955c844c0', // noqa: mock
@@ -46,6 +56,7 @@ const SPOT_MARKETS = [
     minQuantityTickSize: 1000000000000000,
   },
 ];
+<<<<<<< HEAD
 const DERIVATIVE_MARKETS = [
   {
     oracleBase: 'INJ',
@@ -124,6 +135,8 @@ const POSITIONS = [
     aggregateReduceOnlyQuantity: '0',
   },
 ];
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 const ORDER_BOOK = {
   sells: [
@@ -136,6 +149,7 @@ const ORDER_BOOK = {
   ],
 };
 
+<<<<<<< HEAD
 const TRADES = {
   trades: [
     {
@@ -145,6 +159,8 @@ const TRADES = {
   pagination: { to: 0, from: 0, total: 1 },
 };
 
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 const ORDERS = {
   orderHistory: [
     {
@@ -186,7 +202,10 @@ const ORDERS = {
       direction: 'sell',
     },
   ],
+<<<<<<< HEAD
   pagination: { to: 0, from: 0, total: 2 },
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 };
 
 const GAS_PRICES = {
@@ -206,10 +225,15 @@ beforeAll(async () => {
   patchCurrentBlockNumber();
   inj.init();
   injCLOB = InjectiveCLOB.getInstance('injective', 'mainnet');
+<<<<<<< HEAD
   injClobPerp = InjectiveClobPerp.getInstance('injective', 'mainnet');
   patchMarkets();
   await injCLOB.init();
   await injClobPerp.init();
+=======
+  patchMarkets();
+  await injCLOB.init();
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 });
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -233,10 +257,14 @@ const patchCurrentBlockNumber = (withError: boolean = false) => {
 
 const patchMarkets = () => {
   patch(injCLOB.spotApi, 'fetchMarkets', () => {
+<<<<<<< HEAD
     return SPOT_MARKETS;
   });
   patch(injClobPerp.derivativeApi, 'fetchMarkets', () => {
     return DERIVATIVE_MARKETS;
+=======
+    return MARKETS;
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
   });
 };
 
@@ -244,6 +272,7 @@ const patchOrderBook = () => {
   patch(injCLOB.spotApi, 'fetchOrderbook', () => {
     return ORDER_BOOK;
   });
+<<<<<<< HEAD
   patch(injClobPerp.derivativeApi, 'fetchOrderbook', () => {
     return ORDER_BOOK;
   });
@@ -290,6 +319,9 @@ const patchPositions = () => {
   });
 };
 
+=======
+};
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 const patchGetWallet = () => {
   patch(inj, 'getWallet', () => {
     return {
@@ -316,18 +348,24 @@ const patchOrders = () => {
   patch(injCLOB.spotApi, 'fetchOrderHistory', () => {
     return ORDERS;
   });
+<<<<<<< HEAD
   patch(injClobPerp.derivativeApi, 'fetchOrderHistory', () => {
     return ORDERS;
   });
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 };
 
 const patchGasPrices = () => {
   patch(injCLOB, 'estimateGas', () => {
     return GAS_PRICES;
   });
+<<<<<<< HEAD
   patch(injClobPerp, 'estimateGas', () => {
     return GAS_PRICES;
   });
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
 };
 
 describe('GET /clob/markets', () => {
@@ -389,6 +427,10 @@ describe('GET /clob/ticker', () => {
         chain: 'injective',
         network: 'mainnet',
         connector: 'injective',
+<<<<<<< HEAD
+=======
+        market: MARKET,
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
@@ -581,6 +623,7 @@ describe('GET /clob/estimateGas', () => {
       .expect(404);
   });
 });
+<<<<<<< HEAD
 
 // perp stuff
 
@@ -892,3 +935,5 @@ describe('GET /clob/perp/lastTradePrice', () => {
       .expect(404);
   });
 });
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)

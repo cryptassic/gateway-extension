@@ -11,6 +11,7 @@ import { IndexedTx, setupIbcExtension } from '@cosmjs/stargate';
 
 //Cosmos
 const { DirectSecp256k1Wallet } = require('@cosmjs/proto-signing');
+import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 const { StargateClient } = require('@cosmjs/stargate');
 const { toBase64, fromBase64, fromHex } = require('@cosmjs/encoding');
 const crypto = require('crypto').webcrypto;
@@ -155,6 +156,21 @@ export class CosmosBase {
     );
 
     return wallet;
+  }
+
+  async getWalletFromMnemonic(
+    mnemonic: string,
+    prefix: string
+  ): Promise<AccountData> {
+
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
+      mnemonic,
+      { prefix: prefix }
+    );
+
+    const accounts = await wallet.getAccounts();
+
+    return accounts[0];
   }
 
   async getAccountsfromPrivateKey(

@@ -63,7 +63,10 @@ export const validateSpender: Validator = mkValidator(
       val === 'vvs' ||
       val === 'pancakeswap' ||
       val === 'xsswap' ||
+<<<<<<< HEAD
       val === 'zigzag' ||
+=======
+>>>>>>> 540df48 (fork hummingbot/gateway repo)
       isAddress(val))
 );
 

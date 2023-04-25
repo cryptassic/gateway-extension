@@ -12,9 +12,9 @@
             "tokenListType": { "type": "string" },
             "tokenListSource": { "type": "string" },
             "chainId": { "type": "string" },
-            "bench32_prefix": { "type": "string"}
+            "bech32Prefix": { "type": "string"}
           },
-          "required": ["rpcURL", "tokenListType", "tokenListSource", "chainId", "bench32_prefix"],
+          "required": ["rpcURL", "tokenListType", "tokenListSource", "chainId", "bech32Prefix"],
           "additionalProperties": false
         }
       },

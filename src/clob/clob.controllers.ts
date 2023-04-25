@@ -1,9 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { EstimateGasResponse } from '../amm/amm.requests';
-<<<<<<< HEAD
 import { latency } from '../services/base';
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 import { NetworkSelectionRequest } from '../services/common-interfaces';
 import { getChain, getConnector } from '../services/connection-manager';
 import {
@@ -20,7 +17,6 @@ import {
   ClobPostOrderResponse,
   ClobTickerRequest,
   ClobTickerResponse,
-<<<<<<< HEAD
   PerpClobDeleteOrderRequest,
   PerpClobDeleteOrderResponse,
   PerpClobFundingInfoRequest,
@@ -51,10 +47,6 @@ import {
   TRADE_NOT_FOUND_ERROR_MESSAGE,
   TRADE_NOT_FOUND_ERROR_CODE,
 } from '../services/error-handler';
-=======
-} from './clob.requests';
-import { latency } from '../services/base';
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 /**
  * GET /clob/markets
@@ -250,7 +242,6 @@ export async function estimateGas(
     ...gasEstimates,
   } as EstimateGasResponse;
 }
-<<<<<<< HEAD
 
 // PerpClob functions
 
@@ -509,5 +500,3 @@ export async function perpBatchOrders(
     ...result,
   };
 }
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)

@@ -37,13 +37,10 @@ export const isCosmosPrivateKey = (str: string): boolean => {
   }
 };
 
-<<<<<<< HEAD
-=======
 export const isCosmosMnemonic = (str: string): boolean => {
   return str.split(' ').length === 12;
 };
 
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 // given a request, look for a key called privateKey that is an Ethereum private key
 export const validatePrivateKey: Validator = mkSelectingValidator(
   'chain',
@@ -77,11 +74,7 @@ export const validatePrivateKey: Validator = mkSelectingValidator(
     cosmos: mkValidator(
       'privateKey',
       invalidCosmosPrivateKeyError,
-<<<<<<< HEAD
-      (val) => typeof val === 'string' && isCosmosPrivateKey(val)
-=======
       (val) => typeof val === 'string' && (isCosmosPrivateKey(val) || isCosmosMnemonic(val))
->>>>>>> 540df48 (fork hummingbot/gateway repo)
     ),
     polygon: mkValidator(
       'privateKey',

@@ -15,6 +15,28 @@ import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 const { StargateClient } = require('@cosmjs/stargate');
 const { toBase64, fromBase64, fromHex } = require('@cosmjs/encoding');
 const crypto = require('crypto').webcrypto;
+
+
+export interface Asset {
+  description: string;
+  denom_units: Denomunit[];
+  base: string;
+  name: string;
+  display: string;
+  symbol: string;
+  logo_URIs: LogoURIs;
+  coingecko_id: string;
+}
+
+export interface LogoURIs {
+  png: string;
+  svg: string;
+}
+
+export interface Denomunit {
+  denom: string;
+  exponent: number;
+}
 export interface Token {
   base: string;
   address: string;
@@ -55,8 +77,16 @@ export type NewDebugMsgHandler = (msg: any) => void;
 
 export class CosmosBase {
   private _provider;
+
+  // Ensuring backward compatibility with the old CosmosBase
   protected tokenList: Token[] = [];
   private _tokenMap: Record<string, Token> = {};
+  //
+  
+  // New CosmosBase stores tokens as Assets
+  protected assetList: Asset[] = [];
+  private _assetMap: Record<string, Asset> = {};
+  private _version: number = 2;
 
   private _ready: boolean = false;
   private _initializing: boolean = false;
@@ -93,10 +123,16 @@ export class CosmosBase {
     return this._provider;
   }
 
+  public set version(value:number){
+    this._version = value;
+  }
+
+  // To revert back to the old CosmosBase change version to 1 by calling CosmosBase.version = 1;
   async init(): Promise<void> {
     if (!this.ready() && !this._initializing) {
       this._initializing = true;
-      this._initPromise = this.loadTokens(
+      const functionToCall = this._version === 1 ? this.loadTokens.bind(this) : this.loadAssets.bind(this);
+      this._initPromise = functionToCall(
         this.tokenListSource,
         this.tokenListType
       ).then(() => {
@@ -107,6 +143,8 @@ export class CosmosBase {
     return this._initPromise;
   }
 
+
+  // Ensuring backward compatibility with the old CosmosBase
   async loadTokens(
     tokenListSource: string,
     tokenListType: TokenListType
@@ -120,6 +158,20 @@ export class CosmosBase {
     }
   }
 
+  async loadAssets(
+    tokenListSource: string,
+    tokenListType: TokenListType
+  ): Promise<void> {
+    this.assetList = await this.getAssetList(tokenListSource, tokenListType);
+
+    if (this.assetList) {
+      this.assetList.forEach(
+        (asset: Asset) => (this._assetMap[asset.symbol] = asset)
+      );
+    }
+  }
+
+  // Ensuring backward compatibility with the old CosmosBase
   // returns a Tokens for a given list source and list type
   async getTokenList(
     tokenListSource: string,
@@ -134,17 +186,42 @@ export class CosmosBase {
     return tokens;
   }
 
+  // returns a Tokens for a given list source and list type
+  async getAssetList(
+    tokenListSource: string,
+    tokenListType: TokenListType
+  ): Promise<Asset[]> {
+    let assets;
+    if (tokenListType === 'URL') {
+      ({ data: {assets:assets} } = await axios.get(tokenListSource));
+    } else {
+      ({ assets } = JSON.parse(await fs.readFile(tokenListSource, 'utf8')));
+    }
+    return assets;
+  }
+
+
+  // Ensuring backward compatibility with the old CosmosBase
   // ethereum token lists are large. instead of reloading each time with
   // getTokenList, we can read the stored tokenList value from when the
   // object was initiated.
   public get storedTokenList(): Token[] {
     return this.tokenList;
   }
+  public get storedAssetList(): Asset[] {
+    return this.assetList;
+  }
 
+  //Ensuring backward compatibility with the old CosmosBase
   // return the Token object for a symbol
   getTokenForSymbol(symbol: string): Token | null {
     return this._tokenMap[symbol] ? this._tokenMap[symbol] : null;
   }
+
+  // return the Asset object for a symbol
+  getAssetForSymbol(symbol: string): Asset | null {
+    return this._assetMap[symbol.toUpperCase()] ?? null;
+}
 
   async getWalletFromPrivateKey(
     privateKey: string,
@@ -306,10 +383,13 @@ export class CosmosBase {
     return await provider.queryClient.bank.denomMetadata(denom);
   }
 
+  //Ensuring backward compatibility with the old CosmosBase
   getTokenDecimals(token: any): number {
     return token ? token.denom_units[token.denom_units.length - 1].exponent : 6; // Last denom unit has the decimal amount we need from our list
   }
-
+  getAssetDecimals(asset: any): number {
+    return asset ? asset.denom_units[asset.denom_units.length - 1].exponent : 6; // Last denom unit has the decimal amount we need from our list
+  }
   async getBalances(wallet: CosmosWallet): Promise<Record<string, TokenValue>> {
     const balances: Record<string, TokenValue> = {};
 
@@ -364,15 +444,24 @@ export class CosmosBase {
 
     return transaction;
   }
-
+  //Ensuring backward compatibility with the old CosmosBase
   public getTokenBySymbol(tokenSymbol: string): Token | undefined {
     return this.tokenList.find(
       (token: Token) => token.symbol.toUpperCase() === tokenSymbol.toUpperCase()
     );
   }
 
+  //Ensuring backward compatibility with the old CosmosBase
   public getTokenByBase(base: string): Token | undefined {
     return this.tokenList.find((token: Token) => token.base === base);
+  }
+
+  public getAssetBySymbol(assetSymbol: string): Asset | undefined {
+    return this.assetList.find(asset => asset.symbol.toUpperCase() === assetSymbol.toUpperCase());
+  }
+
+  public getAssetByBase(base: string): Asset | undefined {
+    return this.assetList.find((asset: Asset) => asset.base === base);
   }
 
   async getCurrentBlockNumber(): Promise<number> {

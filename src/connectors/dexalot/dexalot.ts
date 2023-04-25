@@ -109,13 +109,9 @@ export class DexalotCLOB implements CLOBish {
       )
     ).map(parseMarkerInfo);
     for (const market of rawMarkets) {
-<<<<<<< HEAD
       this.parsedMarkets[
         market.baseSymbol.toUpperCase() + '-' + market.quoteSymbol.toUpperCase()
       ] = market;
-=======
-      this.parsedMarkets[market.baseSymbol + '-' + market.quoteSymbol] = market;
->>>>>>> 540df48 (fork hummingbot/gateway repo)
     }
   }
 
@@ -165,11 +161,7 @@ export class DexalotCLOB implements CLOBish {
   }
 
   public async orderBook(req: ClobOrderbookRequest): Promise<Orderbook> {
-<<<<<<< HEAD
     const markerId = this.getDexalotTradingPair(req.market);
-=======
-    const markerId = fromUtf8(req.market.replace('-', '/'));
->>>>>>> 540df48 (fork hummingbot/gateway repo)
     const books = await Promise.all([
       this.tradePairsContract.getNBook(
         markerId,
@@ -266,11 +258,7 @@ export class DexalotCLOB implements CLOBish {
     const txData = await this.tradePairsContract.populateTransaction.addOrder(
       req.address,
       clientOrderID,
-<<<<<<< HEAD
       this.getDexalotTradingPair(req.market),
-=======
-      fromUtf8(req.market.replace('-', '/')), // market id
->>>>>>> 540df48 (fork hummingbot/gateway repo)
       utils.parseUnits(
         floatStringWithDecimalToFixed(req.price, market.quoteDisplayDecimals) ||
           req.price,
@@ -394,11 +382,7 @@ export class DexalotCLOB implements CLOBish {
     return {
       txData:
         await this.tradePairsContract.populateTransaction.addLimitOrderList(
-<<<<<<< HEAD
           this.getDexalotTradingPair(market),
-=======
-          fromUtf8(market.replace('-', '/')), // market id
->>>>>>> 540df48 (fork hummingbot/gateway repo)
           clientOrderID,
           prices,
           amounts,
@@ -429,13 +413,10 @@ export class DexalotCLOB implements CLOBish {
     const id = utils.toUtf8Bytes(`${address}${blocknumber}${timestamp}`);
     return utils.keccak256(id);
   }
-<<<<<<< HEAD
 
   getDexalotTradingPair(market: string): string {
     const marketInfo: MarketInfo = this.parsedMarkets[market];
     if (marketInfo === undefined) throw Error(`Invalid market ${market}`);
     return fromUtf8(`${marketInfo.baseSymbol}/${marketInfo.quoteSymbol}`);
   }
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 }

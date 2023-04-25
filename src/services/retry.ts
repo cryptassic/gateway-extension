@@ -26,8 +26,4 @@ export function throttleRetryWrapper<T>(f: () => Promise<T>): Promise<T> {
     },
     { retries: 10, maxTimeout: 1000 }
   );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 540df48 (fork hummingbot/gateway repo)

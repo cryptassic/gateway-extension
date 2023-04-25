@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {
   DerivativeTrade,
   FundingPayment,
@@ -8,11 +7,6 @@ import {
 } from '@injectivelabs/sdk-ts';
 import { OrderType, Side } from '../amm/amm.requests';
 import { NetworkSelectionRequest } from '../services/common-interfaces';
-=======
-import { NetworkSelectionRequest } from '../services/common-interfaces';
-import { OrderType, Side } from '../amm/amm.requests';
-import { Orderbook } from '@injectivelabs/sdk-ts';
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 export interface ClobMarketsRequest extends NetworkSelectionRequest {
   market?: string;
@@ -99,7 +93,6 @@ export interface ClobPostOrderResponse {
 export type ClobDeleteOrderRequest = ClobGetOrderRequest & { address: string };
 
 export type ClobDeleteOrderResponse = ClobPostOrderResponse;
-<<<<<<< HEAD
 
 // PerpClob requests and responses
 
@@ -247,5 +240,3 @@ export interface PerpClobPositionResponse {
   latency: number;
   positions: Array<Position>;
 }
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)

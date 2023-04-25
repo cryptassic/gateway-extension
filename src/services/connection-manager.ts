@@ -15,13 +15,9 @@ import { Uniswap } from '../connectors/uniswap/uniswap';
 import { UniswapLP } from '../connectors/uniswap/uniswap.lp';
 import { VVSConnector } from '../connectors/vvs/vvs';
 import { InjectiveCLOB } from '../connectors/injective/injective';
-<<<<<<< HEAD
 import { InjectiveClobPerp } from '../connectors/injective_perpetual/injective.perp';
 import { Injective } from '../chains/injective/injective';
 import { ZigZag } from '../connectors/zigzag/zigzag';
-=======
-import { Injective } from '../chains/injective/injective';
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 import {
   CLOBish,
   Ethereumish,
@@ -85,13 +81,9 @@ export type ConnectorUnion =
   | UniswapLPish
   | Perpish
   | RefAMMish
-<<<<<<< HEAD
   | CLOBish
   | ZigZag
   | InjectiveClobPerp;
-=======
-  | CLOBish;
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 export type Connector<T> = T extends Uniswapish
   ? Uniswapish
@@ -103,13 +95,10 @@ export type Connector<T> = T extends Uniswapish
   ? RefAMMish
   : T extends CLOBish
   ? CLOBish
-<<<<<<< HEAD
   : T extends ZigZag
   ? ZigZag
   : T extends InjectiveClobPerp
   ? InjectiveClobPerp
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
   : never;
 
 export async function getConnector<T>(
@@ -154,22 +143,16 @@ export async function getConnector<T>(
     connectorInstance = PancakeSwap.getInstance(chain, network);
   } else if (connector === 'sushiswap') {
     connectorInstance = Sushiswap.getInstance(chain, network);
-<<<<<<< HEAD
   } else if (chain === 'injective' && connector === 'injective_perpetual') {
     connectorInstance = InjectiveClobPerp.getInstance(chain, network);
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
   } else if (chain === 'xdc' && connector === 'xsswap') {
     connectorInstance = Xsswap.getInstance(chain, network);
   } else if (chain === 'injective' && connector === 'injective') {
     connectorInstance = InjectiveCLOB.getInstance(chain, network);
   } else if (chain === 'avalanche' && connector === 'dexalot') {
     connectorInstance = DexalotCLOB.getInstance(network);
-<<<<<<< HEAD
   } else if (chain === 'ethereum' && connector === 'zigzag') {
     connectorInstance = ZigZag.getInstance(network);
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
   } else {
     throw new Error('unsupported chain or connector');
   }

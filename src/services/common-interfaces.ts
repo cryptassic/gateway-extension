@@ -114,10 +114,7 @@ import {
   ClobTickerRequest,
 } from '../clob/clob.requests';
 import { BalanceRequest } from '../network/network.requests';
-<<<<<<< HEAD
 import { RouteMarket, ZigZagOrder } from '../connectors/zigzag/zigzag';
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 
 // TODO Check the possibility to have clob/solana/serum equivalents here
 //  Check this link https://hummingbot.org/developers/gateway/building-gateway-connectors/#5-add-sdk-classes-to-uniswapish-interface
@@ -312,7 +309,6 @@ export interface Uniswapish {
   ): Promise<Transaction>;
 }
 
-<<<<<<< HEAD
 export interface ZigZagTrade {
   newSwapPrice: number;
   bestSwapRoute: RouteMarket[];
@@ -341,8 +337,6 @@ export interface ZigZagish {
   ): Promise<Transaction>;
 }
 
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 export interface RefAMMish {
   /**
    * Router address.

@@ -1,16 +1,11 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable @typescript-eslint/ban-types */
-<<<<<<< HEAD
 import { Request, Response, Router } from 'express';
-=======
-import { Router, Request, Response } from 'express';
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 import { EstimateGasResponse } from '../amm/amm.requests';
 import { validateEstimateGasRequest } from '../amm/amm.validators';
 import { NetworkSelectionRequest } from '../services/common-interfaces';
 import { asyncHandler } from '../services/error-handler';
 import {
-<<<<<<< HEAD
   batchOrders,
   deleteOrder,
   estimateGas,
@@ -32,16 +27,6 @@ import {
   postOrder,
   perpLastTradePrice,
   perpBatchOrders,
-=======
-  getMarkets,
-  getOrderBooks,
-  getTickers,
-  getOrders,
-  postOrder,
-  deleteOrder,
-  estimateGas,
-  batchOrders,
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 } from './clob.controllers';
 import {
   ClobBatchUpdateRequest,
@@ -57,7 +42,6 @@ import {
   ClobPostOrderResponse,
   ClobTickerRequest,
   ClobTickerResponse,
-<<<<<<< HEAD
   PerpClobDeleteOrderRequest,
   PerpClobDeleteOrderResponse,
   PerpClobFundingInfoRequest,
@@ -95,15 +79,6 @@ import {
   validatePostOrderRequest,
   validatePostPerpOrderRequest,
   validatePerpLastTradePrice,
-=======
-} from './clob.requests';
-import {
-  validateBasicRequest,
-  validateMarketRequest,
-  validatePostOrderRequest,
-  validateOrderRequest,
-  validateBatchOrdersRequest,
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 } from './clob.validators';
 
 export namespace CLOBRoutes {
@@ -227,7 +202,6 @@ export namespace CLOBRoutes {
     )
   );
 }
-<<<<<<< HEAD
 
 export namespace PerpClobRoutes {
   export const router = Router();
@@ -435,5 +409,3 @@ export namespace PerpClobRoutes {
     )
   );
 }
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)

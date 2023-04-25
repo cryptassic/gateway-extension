@@ -17,11 +17,8 @@ import { Avalanche } from '../../chains/avalanche/avalanche';
 import { Ethereum } from '../../chains/ethereum/ethereum';
 import { Polygon } from '../../chains/polygon/polygon';
 import { Harmony } from '../../chains/harmony/harmony';
-<<<<<<< HEAD
 import { BinanceSmartChain } from '../../chains/binance-smart-chain/binance-smart-chain';
 import { Cronos } from '../../chains/cronos/cronos';
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
 import { ExpectedTrade, Uniswapish } from '../../services/common-interfaces';
 import {
   HttpException,
@@ -58,10 +55,7 @@ export class Openocean implements Uniswapish {
   private static _instances: { [name: string]: Openocean };
   private chainInstance;
   private _chain: string;
-<<<<<<< HEAD
   private _network: string;
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
   private _router: string;
   private _gasLimitEstimate: number;
   private _ttl: number;
@@ -71,10 +65,7 @@ export class Openocean implements Uniswapish {
 
   private constructor(chain: string, network: string) {
     this._chain = chain;
-<<<<<<< HEAD
     this._network = network;
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
     const config = OpenoceanConfig.config;
     this.chainInstance = this.getChainInstance(network);
     this.chainId = this.chainInstance.chainId;
@@ -103,13 +94,10 @@ export class Openocean implements Uniswapish {
       return Polygon.getInstance(network);
     } else if (this._chain === 'harmony') {
       return Harmony.getInstance(network);
-<<<<<<< HEAD
     } else if (this._chain === 'binance-smart-chain') {
       return BinanceSmartChain.getInstance(network);
     } else if (this._chain === 'cronos') {
       return Cronos.getInstance(network);
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)
     } else {
       throw new Error('unsupported chain');
     }
@@ -174,7 +162,6 @@ export class Openocean implements Uniswapish {
   }
 
   public get chainName(): string {
-<<<<<<< HEAD
     if (this._chain === 'ethereum' && this._network === 'mainnet') {
       return 'eth';
     } else if (this._chain === 'ethereum' && this._network === 'arbitrum_one') {
@@ -193,17 +180,6 @@ export class Openocean implements Uniswapish {
     // } else if (this._chain === 'cronos') {
     //   return 'cronos';
     // }
-=======
-    if (this._chain === 'ethereum') {
-      return 'eth';
-    } else if (this._chain === 'avalanche') {
-      return 'avax';
-    } else if (this._chain === 'polygon') {
-      return 'polygon';
-    } else if (this._chain === 'harmony') {
-      return 'harmony';
-    }
->>>>>>> 540df48 (fork hummingbot/gateway repo)
     return this._chain;
   }
 

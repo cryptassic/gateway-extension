@@ -103,10 +103,7 @@ configurations:
   $namespace xsswap:
     configurationPath: xsswap.yml
     schemaPath: xsswap-schema.json
-<<<<<<< HEAD
 
   $namespace zigzag:
     configurationPath: zigzag.yml
     schemaPath: zigzag-schema.json
-=======
->>>>>>> 540df48 (fork hummingbot/gateway repo)

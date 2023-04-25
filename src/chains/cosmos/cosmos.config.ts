@@ -1,5 +1,10 @@
 import { TokenListType } from '../../services/base';
 import { ConfigManagerV2 } from '../../services/config-manager-v2';
+
+export enum Network {
+  Mainnet = 'mainnet',
+  Testnet = 'testnet'
+}
 export interface NetworkConfig {
   name: string;
   rpcURL: string;
@@ -33,12 +38,11 @@ export namespace CosmosConfig {
 }
 
 export namespace CosmosConfigV2 {
-  export const config: ConfigV2 = getCosmosConfigV2('cosmos');
+  export const config: ConfigV2 = getCosmosConfigV2('cosmos',Network.Mainnet);
 }
 
-export function getCosmosConfigV2(chainName: string): ConfigV2 {
+export function getCosmosConfigV2(chainName: string, network: string): ConfigV2 {
   const configManager = ConfigManagerV2.getInstance();
-  const network = configManager.get(chainName + '.network');
   return {
     network: {
       name: network,

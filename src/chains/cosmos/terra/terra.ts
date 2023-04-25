@@ -1,12 +1,7 @@
 import { Cosmosish } from '../../../services/common-interfaces';
 import { CosmosBase } from '../cosmos-base';
-import { getCosmosConfigV2 } from '../cosmos.config';
+import { getCosmosConfigV2, Network } from '../cosmos.config';
 import { logger } from '../../../services/logger';
-
-export enum Network {
-    Mainnet = 'mainnet',
-    Testnet = 'testnet'
-}
 
 export class Terra2 extends CosmosBase implements Cosmosish {
   private static _instances: { [name: string]: Terra2 };
@@ -18,9 +13,9 @@ export class Terra2 extends CosmosBase implements Cosmosish {
   private _metricTimer;
 
   private constructor(network: Network) {
-    const config = getCosmosConfigV2('terra2');
+    const config = getCosmosConfigV2('terra2',network);
     super(
-      'cosmos',
+      'terra2',
       config.network.rpcURL,
       config.network.tokenListSource,
       config.network.tokenListType,

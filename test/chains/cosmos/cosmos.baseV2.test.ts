@@ -1,5 +1,5 @@
 import NodeCache from 'node-cache';
-import {CosmosBase, Asset} from '../../../src/chains/cosmos/cosmos-base';
+import {CosmosBaseV2, Asset} from '../../../src/chains/cosmos/cosmos-baseV2';
 import { TokenListType } from '../../../src/services/base';
 
 
@@ -25,7 +25,7 @@ const mockAsset: Asset =  {
     },
     coingecko_id: "cosmos",
   };
-  
+
 
 
 describe('CosmosBase', () => {
@@ -35,10 +35,10 @@ describe('CosmosBase', () => {
     const tokenListSource = 'https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json';
     const tokenListType: TokenListType = 'URL';
   
-    let cosmosBase: CosmosBase;
+    let cosmosBase: CosmosBaseV2;
   
     beforeEach(() => {
-        cosmosBase = new CosmosBase(chainName, rpcUrl, tokenListSource, tokenListType, gasPriceConstant);
+        cosmosBase = new CosmosBaseV2(chainName, rpcUrl, tokenListSource, tokenListType, gasPriceConstant);
     });
 
     describe('constructor', () => {
@@ -151,6 +151,25 @@ describe('CosmosBase', () => {
 
 
     });
+
+    describe('Cache', () => {
+      describe('cacheTransactionReceipt', () => {
+          it.todo('should cache transaction receipt');
+          
+      });
+      describe('getTransactionReceipt', () => {
+          it.todo('should cache transaction receipt');
+      });
+
+    });
+
+    describe('txStorage', () => {
+      
+      describe('getTxStorage', () => {
+          it.todo('should return tx storage');
+      });
+    });
+
     describe('getWalletFromPrivateKey', () => {
       it.skip('should create a wallet from a private key', async () => {
         const prefix = 'cosmos';

@@ -750,6 +750,77 @@ export interface Cosmosish extends CosmosBase {
   chain: string;
 }
 
+export interface CosmosishV2{
+  chainId: string;
+  network: string;
+
+  gasPrice: number;
+  nativeTokenSymbol: string;
+}
+
+export interface WhiteWhaleish {
+
+
+  /**
+   * Function for retrieving token list.
+   * @returns a list of available market pairs.
+   */
+  availablePairs(): string[];
+
+   /**
+   * Given the amount of `baseToken` to put into a transaction, calculate the
+   * amount of `quoteToken` that can be expected from the transaction.
+   *
+   * This is typically used for calculating token sell prices.
+   *
+   * @param baseToken Token input for the transaction
+   * @param quoteToken Output from the transaction
+   * @param amount Amount of `baseToken` to put into the transaction
+   */
+   estimateSellTrade(
+    baseToken: TokenMetadata,
+    quoteToken: TokenMetadata,
+    amount: string,
+    allowedSlippage?: string
+  ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }>;
+
+  /**
+   * Given the amount of `baseToken` desired to acquire from a transaction,
+   * calculate the amount of `quoteToken` needed for the transaction.
+   *
+   * This is typically used for calculating token buy prices.
+   *
+   * @param quoteToken Token input for the transaction
+   * @param baseToken Token output from the transaction
+   * @param amount Amount of `baseToken` desired from the transaction
+   */
+  estimateBuyTrade(
+    quoteToken: TokenMetadata,
+    baseToken: TokenMetadata,
+    amount: string,
+    allowedSlippage?: string
+  ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }>;
+
+  /**
+   * Given an Account and a Ref trade, try to execute it on blockchain.
+   *
+   * @param account Account
+   * @param trade Expected trade
+   * @param amountIn Amount to swap in
+   * @param tokenIn Token to be sent
+   * @param tokenOut Token to be received
+   * @param allowedSlippage Maximum allowable slippage
+   */
+  executeTrade(
+    account: Account,
+    trade: EstimateSwapView[],
+    amountIn: string,
+    tokenIn: TokenMetadata,
+    tokenOut: TokenMetadata,
+    allowedSlippage?: string
+  ): Promise<FinalExecutionOutcome>;
+}
+
 export interface NetworkSelectionRequest {
   chain: string; //the target chain (e.g. ethereum, avalanche, or harmony)
   network: string; // the target network of the chain (e.g. mainnet)

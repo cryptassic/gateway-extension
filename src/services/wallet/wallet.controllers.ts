@@ -167,14 +167,18 @@ export async function addWallet(
     );
   }
   const path = `${walletPath}/${req.chain}`;
-  await mkdirIfDoesNotExist(path);
-  await fse.writeFile(`${path}/${address}.json`, encryptedPrivateKey);
+  await storeWallet(path, address, encryptedPrivateKey);
   return { address };
 }
 
 // if the file does not exist, this should not fail
 export async function removeWallet(req: RemoveWalletRequest): Promise<void> {
   await fse.remove(`./conf/wallets/${req.chain}/${req.address}.json`);
+}
+
+export async function storeWallet(path:string, address:string, encryptedPrivateKey:string): Promise<void> {
+  await mkdirIfDoesNotExist(path);
+  await fse.writeFile(`${path}/${address}.json`, encryptedPrivateKey);
 }
 
 export async function signMessage(

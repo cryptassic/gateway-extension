@@ -4,7 +4,6 @@ import {
     EncryptedPrivateKey,
 } from '.'
 
-import { AccountData } from "@cosmjs/proto-signing"
 import { IndexedTx, StargateClient } from "@cosmjs/stargate"
 
 import { TokenListType, TokenValue } from "../../../services/base"
@@ -16,6 +15,11 @@ import NodeCache from "node-cache"
 export enum Network {
     Mainnet = "mainnet",
     Testnet = "testnet",
+}
+
+export enum TransactionStatus {
+    Success = "success",
+    Failure = "failure"
 }
 
 /**
@@ -162,13 +166,15 @@ export interface ICosmosBase {
       * @param {IndexedTx} tx - The indexed transaction whose receipt to cache.
       * @returns {void}
     */
-    cacheTransactionReceipt(tx: IndexedTx): void
-
+    cacheTransaction(tx: IndexedTx): void
+    
+    
+    retrieveTransaction(txHash: string): IndexedTx | undefined
 
     /**
-      * Retrieves the indexed transaction with the specified transaction hash.
-      * @param {string} txHash - The transaction hash of the indexed transaction to retrieve.
-      * @returns {Promise<IndexedTx>} A promise that resolves to the indexed transaction.
+      * Retrieves the transaction receipt of the indexed transaction with the specified transaction hash.
+      * @param {string} txHash - The transaction hash of the indexed transaction whose receipt to retrieve.
+      * @returns {Promise<IndexedTx>} A promise that resolves to the transaction receipt of the indexed transaction.
     */
     getTransaction(txHash: string): Promise<IndexedTx>
     
@@ -179,13 +185,6 @@ export interface ICosmosBase {
     */
     getTransactionStatus(txHash: string): Promise<string>
 
-    /**
-      * Retrieves the transaction receipt of the indexed transaction with the specified transaction hash.
-      * @param {string} txHash - The transaction hash of the indexed transaction whose receipt to retrieve.
-      * @returns {Promise<IndexedTx>} A promise that resolves to the transaction receipt of the indexed transaction.
-    */
-    getTransactionReceipt(txHash: string): Promise<IndexedTx>
-    
     /**
       * Retrieves the transaction history of the specified address.
       * @param {string} address - The address whose transaction history to retrieve.

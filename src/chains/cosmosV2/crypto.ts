@@ -1,3 +1,4 @@
+const crypto = require('crypto').webcrypto;
 const { toBase64, fromHex } = require('@cosmjs/encoding');
 const { DirectSecp256k1Wallet } = require('@cosmjs/proto-signing');
 

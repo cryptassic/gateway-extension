@@ -1,3 +1,12 @@
+import { 
+  Asset, 
+  CosmosWallet, 
+  EncryptedPrivateKey, 
+  ICosmosBase, 
+  ICosmosProvider, 
+  TransactionStatus 
+} from './types';
+
 import fse from 'fs-extra';
 import { promises as fs } from 'fs';
 
@@ -7,7 +16,6 @@ import NodeCache from 'node-cache';
 import { IndexedTx, StargateClient } from '@cosmjs/stargate';
 
 import { TokenListType, TokenValue, walletPath } from '../../services/base';
-import { Asset, CosmosWallet, EncryptedPrivateKey, ICosmosBase, ICosmosProvider } from './types';
 
 import { ConfigManagerCertPassphrase } from '../../services/config-manager-cert-passphrase';
 import { ReferenceCountingCloseable } from '../../services/refcounting-closeable';
@@ -193,25 +201,33 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   async getWallet(address: string, prefix: string): Promise<CosmosWallet> {
     const path = `${walletPath}/${this.chainName}`;
 
-    const encryptedPrivateKey: EncryptedPrivateKey = JSON.parse(
-      await fse.readFile(`${path}/${address}.json`, 'utf8'),
-      (key, value) => {
-        switch (key) {
-          case 'ciphertext':
-          case 'salt':
-          case 'iv':
-            return fromBase64(value);
-          default:
-            return value;
-        }
-      }
-    );
+    let encryptedPrivateKey: EncryptedPrivateKey;
 
-    const passphrase = ConfigManagerCertPassphrase.readPassphrase();
-    if (!passphrase) {
-      throw new Error('missing passphrase');
+    try{
+      encryptedPrivateKey = JSON.parse(
+        await fse.readFile(`${path}/${address}.json`, 'utf8'),
+        (key, value) => {
+          switch (key) {
+            case 'ciphertext':
+            case 'salt':
+            case 'iv':
+              return fromBase64(value);
+            default:
+              return value;
+          }
+        }
+      );
+    }
+    catch {
+      return Promise.reject(new Error('Wallet not found'));
     }
 
+    
+    const passphrase = ConfigManagerCertPassphrase.readPassphrase();
+    if (!passphrase) {
+      return Promise.reject(new Error('missing passphrase'));
+    }
+    
     return await this.decrypt(encryptedPrivateKey, passphrase, prefix);
   }
   async getWalletFromPrivateKey(
@@ -236,29 +252,49 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return super.decrypt(encryptedPrivateKey, password, prefix);
   }
 
-  cacheTransactionReceipt(tx: IndexedTx): void {
+  cacheTransaction(tx: IndexedTx): void {
     this._cache.set(tx.hash, tx);
+  }
+    
+  retrieveTransaction(txHash: string): IndexedTx | undefined {
+    const tx = this._cache.get(txHash) as any;
+
+    // NodeCache uses the built-in JSON.stringify and JSON.parse methods to store and retrieve values. 
+    // When a Uint8Array is stringified using JSON.stringify, it is converted to an object with numeric keys, 
+    // where each key represents an index in the array and each value represents the corresponding element of the array. 
+    // This object can be represented as a Record<string, number> in TypeScript.
+    //
+    // What does that mean to us?
+    // When we store a Uint8Array in the cache, it is converted to an object with numeric keys.
+    // 
+    // Example:
+    // Uint8Array: [1, 2, 3, 4, 5] -> cache.set -> cache.get -> Object: {0: 1, 1: 2, 2: 3, 3: 4, 4: 5}
+    // So, we can't do direct comparison... because it will fail with TypeError: this is not a typed array.
+    // 
+    // Solution: To convert the object back to Uint8Array. Ugly but works.
+    if(tx){
+      tx.tx = Uint8Array.from(Object.values(tx.tx));
+    }
+
+    return tx;
+  }
+
+  async getTransactionStatus(txHash: string): Promise<TransactionStatus> {
+
+    const tx = await this.getTransaction(txHash);
+
+    if (!tx) {
+      return Promise.reject(new Error(`Transaction not found`));
+    }
+
+    return Promise.resolve(tx.code ? TransactionStatus.Failure : TransactionStatus.Success);
   }
 
   async getTransaction(txHash: string): Promise<IndexedTx> {
-    const provider = await this.provider();
-    const transaction = await provider.getTx(txHash);
-
-    if (!transaction) {
-      return Promise.reject(new Error('Transaction not found'));
-    }
-    return transaction;
-  }
-
-  getTransactionStatus(txHash: string): Promise<string> {
-    return Promise.reject(new Error(`Method not implemented. [${txHash}]`));
-  }
-
-  async getTransactionReceipt(txHash: string): Promise<IndexedTx> {
     if (this.cache.keys().includes(txHash)) {
 
       // If it's in the cache, return the value in cache, whether it's null or not
-      return Promise.resolve(this.cache.get(txHash) as IndexedTx);
+      return Promise.resolve(this.retrieveTransaction(txHash) as IndexedTx);
 
     } else {
       // If it's not in the cache,

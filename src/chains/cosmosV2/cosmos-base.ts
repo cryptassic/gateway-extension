@@ -2,7 +2,7 @@ import {
   Asset, 
   CosmosWallet, 
   EncryptedPrivateKey, 
-  ICosmosBase, 
+  ICosmosBase,
   ICosmosProvider, 
   TransactionStatus 
 } from './types';
@@ -14,6 +14,9 @@ import axios from 'axios';
 import NodeCache from 'node-cache';
 
 import { IndexedTx, StargateClient } from '@cosmjs/stargate';
+import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+
+
 
 import { TokenListType, TokenValue, walletPath } from '../../services/base';
 
@@ -24,8 +27,11 @@ import { EvmTxStorage } from '../../evm/evm.tx-storage';
 import { Crypto } from './crypto';
 import { BigNumber } from 'ethers';
 import { resolveDBPath } from './utils';
+import { RateLimitedTendermint34Client} from './provider';
 
 const { fromBase64 } = require('@cosmjs/encoding');
+
+
 
 
 // TO-DO: Implement ICosmosProvider
@@ -46,12 +52,10 @@ export class CosmosProvider implements ICosmosProvider {
   }
 
 }
-
-
 export class CosmosBase extends Crypto implements ICosmosBase {
 
   private _providerStargate: StargateClient | undefined;
-
+  private _tmClient: Tendermint34Client | undefined;
   protected assetList: Asset[] = [];
   private _assetMap: Record<string, Asset> = {};
 
@@ -121,7 +125,14 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     if (!this.ready() && !this._initializing) {
       this._initializing = true;
 
-      this._providerStargate = await StargateClient.connect(this.rpcUrl);
+      this._tmClient = await RateLimitedTendermint34Client.connect(this.rpcUrl) as Tendermint34Client;
+
+      if(!this._tmClient){
+        return Promise.reject(new Error('Tendermint client not initialized'));
+      }
+
+      this._providerStargate = await StargateClient.create(this._tmClient);
+
 
       this._initPromise = this.loadAssets(
         this.tokenListSource,
@@ -138,6 +149,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     if(!this._providerStargate){
       return Promise.reject( new Error('Provider not initialized'));
     }
+
     return Promise.resolve(this._providerStargate);
   }
   getStoredAssetList(): Asset[] {

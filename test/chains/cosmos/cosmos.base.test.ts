@@ -4,6 +4,8 @@ import { CosmosBase } from '../../../src/chains/cosmosV2/cosmos-base';
 import { EvmTxStorage } from '../../../src/evm/evm.tx-storage';
 import { Crypto } from '../../../src/chains/cosmosV2/crypto';
 
+import { Event } from "@cosmjs/stargate";
+
 import { toHex } from '@cosmjs/encoding';
 import { IndexedTx } from '@cosmjs/stargate';
 import { storeWallet } from '../../../src/services/wallet/wallet.controllers';
@@ -57,6 +59,8 @@ const testnetTxMetadata: IndexedTx = {
     hash: "9AD9F104637589373EBD351506F6C8E455FB01946ECC981BA3B10220A8953019",
     code: 0,
     rawLog: '',
+    txIndex: 0,
+    events: new Array<Event>(),
     tx: new Uint8Array(12),
     gasWanted: 200000,
     gasUsed: 80688,

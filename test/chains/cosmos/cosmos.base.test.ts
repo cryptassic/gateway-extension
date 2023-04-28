@@ -10,29 +10,9 @@ import { toHex } from '@cosmjs/encoding';
 import { IndexedTx } from '@cosmjs/stargate';
 import { storeWallet } from '../../../src/services/wallet/wallet.controllers';
 import { ConfigManagerCertPassphrase } from '../../../src/services/config-manager-cert-passphrase';
-import { TransactionStatus } from '../../../src/chains/cosmosV2/types';
-// const dummyAsset: Asset = {
-//     description: "The native staking and governance token of the Cosmos Hub.",
-//     denom_units: [
-//       {
-//         denom: "uatom",
-//         exponent: 0
-//       },
-//       {
-//         denom: "atom",
-//         exponent: 6
-//       }
-//     ],
-//     base: "uatom",
-//     name: "Cosmos Hub Atom",
-//     display: "atom",
-//     symbol: "ATOM",
-//     logo_URIs: {
-//       png: "https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png",
-//       svg: "https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.svg"
-//     },
-//     coingecko_id: "cosmos"
-// };
+import { ProviderNotInitializedError, TransactionStatus } from '../../../src/chains/cosmosV2/types';
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+
 
 const dummyWallet = {
     "mnemonic": "present picnic avocado noise mutual mountain make business sentence laptop rail hurt",
@@ -61,7 +41,7 @@ const testnetTxMetadata: IndexedTx = {
     rawLog: '',
     txIndex: 0,
     events: new Array<Event>(),
-    tx: new Uint8Array(12),
+    tx: new Uint8Array(0),
     gasWanted: 200000,
     gasUsed: 80688,
 
@@ -126,14 +106,38 @@ describe('CosmosBase', () => {
 
   describe('provider', () => {
     it('should return an error if _providerStargate is not initialized', async () => {
-      await expect(cosmosBase.provider()).rejects.toThrow('Provider not initialized');
+      await expect(cosmosBase.provider()).rejects.toThrowError(ProviderNotInitializedError);
     });
-
     it('should return _providerStargate', async () => {
       await cosmosBase.init();
       const provider = await cosmosBase.provider();
       expect(provider).toBeDefined();
     });
+  });
+
+  describe("getTM32Client", () => {
+    it('should return an error if _tmClient is not initialized', async () => {
+      await expect(cosmosBase.getTM32Client()).rejects.toThrowError(ProviderNotInitializedError);
+    });
+    it('should return _tmClient', async () => {
+      await cosmosBase.init();
+      const tmClient = await cosmosBase.getTM32Client();
+      expect(tmClient).toBeDefined();
+      expect(tmClient).not.toBeNull();
+    });
+  });
+  describe('getCosmWasmClient', () => {
+    it('should return an error if _cosmWasmClient is not initialized', async () => {
+      await expect(cosmosBase.getCosmWasmClient()).rejects.toThrowError(ProviderNotInitializedError);
+    });
+    it('should return _cosmWasmClient', async () => {
+      await cosmosBase.init();
+      const cosmWasmClient = await cosmosBase.getCosmWasmClient();
+      expect(cosmWasmClient).toBeDefined();
+      expect(cosmWasmClient).not.toBeNull();
+      expect(cosmWasmClient).toBeInstanceOf(CosmWasmClient);
+    });
+
   });
 
   describe('cache', () => {
@@ -331,6 +335,18 @@ describe('CosmosBase', () => {
       await cosmosBase.init();
 
       expect(await cosmosBase.getChainId()).toEqual(NETWORK.chainId);
+    });
+  });
+
+  describe('getCurrentBlockNumber', () => {
+    it('should return block number', async () => {
+      await cosmosBase.init();
+
+      const cBlockNumber = await cosmosBase.getCurrentBlockNumber();
+
+      expect(cBlockNumber).toBeDefined();
+      expect(cBlockNumber).not.toBeNull();
+      expect(cBlockNumber).toBeGreaterThan(0);
     });
   });
 });

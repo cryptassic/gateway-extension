@@ -2,11 +2,10 @@ import Bottleneck from 'bottleneck';
 
 import { Tendermint34Client, TendermintClient, HttpEndpoint } from '@cosmjs/tendermint-rpc';
 
-
 import { Stream } from "xstream";
 import * as requests from '@cosmjs/tendermint-rpc';
-import { tendermint34 } from '@cosmjs/tendermint-rpc';
 import * as responses from '@cosmjs/tendermint-rpc';
+
 
 
 export const DEFAULT_LIMITER = new Bottleneck({
@@ -23,7 +22,7 @@ export class RateLimitedTendermint34Client {
     public static async connect(endpoint: string | HttpEndpoint): Promise<TendermintClient>{
         const tmClient = await Tendermint34Client.connect(endpoint);
 
-        return new RateLimitedTendermint34Client(tmClient, DEFAULT_LIMITER) as any;
+        return new RateLimitedTendermint34Client(tmClient) as any;
     }
 
     public static async create(
@@ -34,8 +33,8 @@ export class RateLimitedTendermint34Client {
         return new RateLimitedTendermint34Client(tmClient, limiter) as any;
     }
 
-    protected constructor(tmClient: Tendermint34Client,limiter: Bottleneck) {
-        this.rateLimiter = limiter;
+    protected constructor(tmClient: Tendermint34Client,limiter?: Bottleneck) {
+        this.rateLimiter = limiter ?? DEFAULT_LIMITER;
         this.tmClient = tmClient;
     }
 
@@ -59,10 +58,10 @@ export class RateLimitedTendermint34Client {
     public async blockResults(height?: number): Promise<responses.BlockResultsResponse>{
         return await this.rateLimiter.schedule(() => this.tmClient.blockResults(height));
     }
-    public async blockSearch(params: tendermint34.BlockSearchParams): Promise<tendermint34.BlockSearchResponse>{
+    public async blockSearch(params: requests.tendermint34.BlockSearchParams): Promise<requests.tendermint34.BlockSearchResponse>{
         return await this.rateLimiter.schedule(() => this.tmClient.blockSearch(params));
     }
-    public async blockSearchAll(params: tendermint34.BlockSearchParams): Promise<tendermint34.BlockSearchResponse>{
+    public async blockSearchAll(params: requests.tendermint34.BlockSearchParams): Promise<requests.tendermint34.BlockSearchResponse>{
         return await this.rateLimiter.schedule(() => this.tmClient.blockSearchAll(params));
     }
 

@@ -4,6 +4,7 @@ import {
   EncryptedPrivateKey, 
   ICosmosBase,
   ICosmosProvider, 
+  ProviderNotInitializedError, 
   TransactionStatus 
 } from './types';
 
@@ -13,10 +14,9 @@ import { promises as fs } from 'fs';
 import axios from 'axios';
 import NodeCache from 'node-cache';
 
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { IndexedTx, StargateClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
-
-
 
 import { TokenListType, TokenValue, walletPath } from '../../services/base';
 
@@ -27,7 +27,8 @@ import { EvmTxStorage } from '../../evm/evm.tx-storage';
 import { Crypto } from './crypto';
 import { BigNumber } from 'ethers';
 import { resolveDBPath } from './utils';
-import { RateLimitedTendermint34Client} from './provider';
+import { DEFAULT_LIMITER, RateLimitedTendermint34Client} from './provider';
+import Bottleneck from 'bottleneck';
 
 const { fromBase64 } = require('@cosmjs/encoding');
 
@@ -41,14 +42,16 @@ export class CosmosProvider implements ICosmosProvider {
     rpcUrl: string,
     tokenListSource: string,
     tokenListType: TokenListType,
-    transactionDbPath: string
+    transactionDbPath: string,
+    limiter?: Bottleneck
   ): ICosmosBase {
     return new CosmosBase(
       chainName,
       rpcUrl,
       tokenListSource,
       tokenListType,
-      transactionDbPath);
+      transactionDbPath,
+      limiter);
   }
 
 }
@@ -56,6 +59,9 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
   private _providerStargate: StargateClient | undefined;
   private _tmClient: Tendermint34Client | undefined;
+  private _cosmWasmClient: CosmWasmClient | undefined;
+  private _rateLimiter: Bottleneck | undefined;
+
   protected assetList: Asset[] = [];
   private _assetMap: Record<string, Asset> = {};
 
@@ -77,10 +83,13 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     tokenListSource: string,
     tokenListType: TokenListType,
     transactionDbPath: string,
+    limiter?: Bottleneck
   ) {
     super();
-    this._chainName = chainName;
     this._rpcUrl = rpcUrl;
+    this._chainName = chainName;
+    this._rateLimiter = limiter ?? DEFAULT_LIMITER;
+
     this._tokenListSource = tokenListSource;
     this._tokenListType = tokenListType;
     this._cache = new NodeCache({ stdTTL: 3600 }); // set default cache ttl to 1hr
@@ -125,7 +134,14 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     if (!this.ready() && !this._initializing) {
       this._initializing = true;
 
-      this._tmClient = await RateLimitedTendermint34Client.connect(this.rpcUrl) as Tendermint34Client;
+      const defaultTM32Client = await Tendermint34Client.connect(this.rpcUrl);
+
+
+      // Tendermint32Client does not expose its constructor, so we built a wrapper around it to throttle requests.
+      // Throttling is required, because some public RPC endpoints are really sensitive.
+      // If operating on a private RPC endpoint, you can pass a custom limiter to the constructor.
+      this._tmClient = await RateLimitedTendermint34Client.create(defaultTM32Client, this._rateLimiter as Bottleneck) as Tendermint34Client;
+      this._cosmWasmClient = await CosmWasmClient.create(defaultTM32Client);
 
       if(!this._tmClient){
         return Promise.reject(new Error('Tendermint client not initialized'));
@@ -147,10 +163,25 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
   provider(): Promise<StargateClient>{
     if(!this._providerStargate){
-      return Promise.reject( new Error('Provider not initialized'));
+      return Promise.reject( new ProviderNotInitializedError("Stargate client not initialized"));
     }
 
     return Promise.resolve(this._providerStargate);
+  }
+  getTM32Client(): Promise<Tendermint34Client>{
+    if(!this._tmClient){
+      return Promise.reject( new ProviderNotInitializedError("Tendermint client not initialized"));
+    }
+
+    return Promise.resolve(this._tmClient);
+  }
+  getCosmWasmClient(): Promise<CosmWasmClient>{
+    if(!this._cosmWasmClient){
+      return Promise.reject( new ProviderNotInitializedError("CosmWasm client not initialized"));
+    }
+
+    return Promise.resolve(this._cosmWasmClient);
+
   }
   getStoredAssetList(): Asset[] {
     return this.assetList;

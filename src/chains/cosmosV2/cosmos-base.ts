@@ -35,7 +35,7 @@ const { fromBase64 } = require('@cosmjs/encoding');
 
 
 export class CosmosBase extends Crypto implements ICosmosBase {
-
+  
   private _providerStargate: StargateClient | undefined;
   private _tmClient: Tendermint34Client | undefined;
   private _cosmWasmClient: CosmWasmClient | undefined;
@@ -56,7 +56,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   private _tokenListType: TokenListType;
   private readonly _cache: NodeCache;
   private readonly _refCountingHandle: string;
-  private readonly _txStorage: EvmTxStorage
+  private readonly _txStorage: EvmTxStorage;
 
   public constructor(
     chainName: string,
@@ -115,11 +115,6 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return this._txStorage;
   }
 
-  public get storedTokenList(): TokenInfo[]{
-    return this.tokenList;
-  }
-
-
   async init(): Promise<void> {
     if (!this.ready() && !this._initializing) {
       this._initializing = true;
@@ -143,6 +138,22 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
       this._providerStargate = await StargateClient.create(this._tmClient);
 
+      const defaultTM32Client = await Tendermint34Client.connect(this.rpcUrl);
+
+      // Tendermint32Client does not expose its constructor, so we built a wrapper around it to throttle requests.
+      // Throttling is required, because some public RPC endpoints are really sensitive.
+      // If operating on a private RPC endpoint, you can pass a custom limiter to the constructor.
+      this._tmClient = (await RateLimitedTendermint34Client.create(
+        defaultTM32Client,
+        this._rateLimiter as Bottleneck
+      )) as Tendermint34Client;
+      this._cosmWasmClient = await CosmWasmClient.create(defaultTM32Client);
+
+      if (!this._tmClient) {
+        return Promise.reject(new Error('Tendermint client not initialized'));
+      }
+
+      this._providerStargate = await StargateClient.create(this._tmClient);
 
       this._initPromise = this.loadAssets(
         this.tokenListSource,
@@ -182,20 +193,23 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   }
 
   getTokenForSymbol(symbol: string): TokenInfo | undefined {
-    return this.storedTokenList.find(token => token.symbol.toUpperCase() === symbol.toUpperCase());
+    return this.tokenList.find(token => token.symbol.toUpperCase() === symbol.toUpperCase());
   }
 
   getAssetBySymbol(assetSymbol: string): Asset | undefined {
-    return this.assetList.find(asset => asset.symbol.toUpperCase() === assetSymbol.toUpperCase());
+    return this.assetList.find(
+      (asset) => asset.symbol.toUpperCase() === assetSymbol.toUpperCase()
+    );
   }
   getAssetByBase(base: string): Asset | undefined {
-    return this.assetList.find((asset: Asset) => asset.base.toUpperCase() === base.toUpperCase());
+    return this.assetList.find(
+      (asset: Asset) => asset.base.toUpperCase() === base.toUpperCase()
+    );
   }
   getAssetDecimals(asset: Asset): number {
     return asset ? asset.denom_units[asset.denom_units.length - 1].exponent : 6; // Last denom unit has the decimal amount we need from our list
   }
   async getBalances(wallet: CosmosWallet): Promise<Record<string, TokenValue>> {
-    
     const balances: Record<string, TokenValue> = {};
 
     const provider = await this.provider();
@@ -227,14 +241,13 @@ export class CosmosBase extends Crypto implements ICosmosBase {
         //     }
         //   }
         // }
-        if(asset) {
+        if (asset) {
           // Not all tokens are added in the registry so we use the denom if the token doesn't exist
           balances[asset ? asset.symbol : t.denom] = {
-          value: BigNumber.from(parseInt(t.amount, 10)),
-          decimals: this.getAssetDecimals(asset as Asset),
-        };
+            value: BigNumber.from(parseInt(t.amount, 10)),
+            decimals: this.getAssetDecimals(asset as Asset),
+          };
         }
-        
       })
     );
 
@@ -290,7 +303,11 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return super.encrypt(privateKey, password);
   }
 
-  async decrypt(encryptedPrivateKey: EncryptedPrivateKey, password: string, prefix: string): Promise<CosmosWallet> {
+  async decrypt(
+    encryptedPrivateKey: EncryptedPrivateKey,
+    password: string,
+    prefix: string
+  ): Promise<CosmosWallet> {
     return super.decrypt(encryptedPrivateKey, password, prefix);
   }
 
@@ -322,22 +339,21 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   }
 
   async getTransactionStatus(txHash: string): Promise<TransactionStatus> {
-
     const tx = await this.getTransaction(txHash);
 
     if (!tx) {
       return Promise.reject(new Error(`Transaction not found`));
     }
 
-    return Promise.resolve(tx.code ? TransactionStatus.Failure : TransactionStatus.Success);
+    return Promise.resolve(
+      tx.code ? TransactionStatus.Failure : TransactionStatus.Success
+    );
   }
 
   async getTransaction(txHash: string): Promise<IndexedTx> {
     if (this.cache.keys().includes(txHash)) {
-
       // If it's in the cache, return the value in cache, whether it's null or not
       return Promise.resolve(this.retrieveTransaction(txHash) as IndexedTx);
-
     } else {
       // If it's not in the cache,
       const provider = await this.provider();
@@ -348,10 +364,10 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
       // TO-DO This part requires WebSocketSupport to introduce events to update the cache.
       // if (!fetchedTxReceipt) {
-        // this._provider.once(txHash, this.cacheTransactionReceipt.bind(this));
+      // this._provider.once(txHash, this.cacheTransactionReceipt.bind(this));
       // }
 
-      if(!fetchedTxReceipt) {
+      if (!fetchedTxReceipt) {
         return Promise.reject(new Error('Transaction not found'));
       }
 
@@ -363,8 +379,13 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return Promise.reject(new Error(`Method not implemented. [${address}]`));
   }
 
-  getTransactionHistoryByAsset(address: string, asset: string): Promise<IndexedTx[]> {
-    return Promise.reject(new Error(`Method not implemented. [${address}, ${asset}]`));
+  getTransactionHistoryByAsset(
+    address: string,
+    asset: string
+  ): Promise<IndexedTx[]> {
+    return Promise.reject(
+      new Error(`Method not implemented. [${address}, ${asset}]`)
+    );
   }
 
   async getCurrentBlockNumber(): Promise<number> {
@@ -402,7 +423,9 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   ): Promise<Asset[]> {
     let assets;
     if (tokenListType === 'URL') {
-      ({ data: { assets: assets } } = await axios.get(tokenListSource));
+      ({
+        data: { assets: assets },
+      } = await axios.get(tokenListSource));
     } else {
       ({ assets } = JSON.parse(await fs.readFile(tokenListSource, 'utf8')));
     }
@@ -427,4 +450,3 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   }
 
 }
-

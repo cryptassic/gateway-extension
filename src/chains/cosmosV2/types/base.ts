@@ -22,8 +22,11 @@ export enum TransactionStatus {
     Failure = "failure"
 }
 
+<<<<<<< HEAD
 export const SupportedChains = ['terra', 'juno', 'chihuahua'];
 
+=======
+>>>>>>> 9803855 (sync?)
 /**
  * Defines the interface for a Cosmos provider that creates a base client with a specified chain configuration.
  */

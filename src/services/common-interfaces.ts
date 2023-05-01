@@ -115,6 +115,7 @@ import {
 } from '../clob/clob.requests';
 import { BalanceRequest } from '../network/network.requests';
 import { RouteMarket, ZigZagOrder } from '../connectors/zigzag/zigzag';
+import { AssetInfo } from '../connectors/terraswap/interfaces';
 
 // TODO Check the possibility to have clob/solana/serum equivalents here
 //  Check this link https://hummingbot.org/developers/gateway/building-gateway-connectors/#5-add-sdk-classes-to-uniswapish-interface
@@ -750,7 +751,7 @@ export interface Cosmosish extends CosmosBase {
   chain: string;
 }
 
-export interface CosmosishV2{
+export interface CosmosishV2 {
   chainId: string;
   network: string;
 
@@ -759,15 +760,19 @@ export interface CosmosishV2{
 }
 
 export interface WhiteWhaleish {
-
-
   /**
    * Function for retrieving token list.
    * @returns a list of available market pairs.
    */
-  availablePairs(): string[];
+  availablePairs(): Promise<string[]>;
 
-   /**
+  /**
+   * Function for retrieving asset info list.
+   * @return a list of available market pairs' info.
+   */
+  availablePairsInfo(): Promise<{ asset1: AssetInfo; asset2: AssetInfo }[]>;
+
+  /**
    * Given the amount of `baseToken` to put into a transaction, calculate the
    * amount of `quoteToken` that can be expected from the transaction.
    *
@@ -777,7 +782,7 @@ export interface WhiteWhaleish {
    * @param quoteToken Output from the transaction
    * @param amount Amount of `baseToken` to put into the transaction
    */
-   estimateSellTrade(
+  estimateSellTrade(
     baseToken: TokenMetadata,
     quoteToken: TokenMetadata,
     amount: string,

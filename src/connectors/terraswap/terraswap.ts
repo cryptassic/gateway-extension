@@ -40,9 +40,9 @@ export class Terraswap implements WhiteWhaleish {
   }
 
   /**
-   * @todo implement
+   * @todo convert native denom to sumbol (eg. uluna -> LUNA)
    * @param denom - Denom of the native token
-   * @returns {symbol} - Returns the symbol of the native token
+   * @returns {string} symbol - The symbol of the native token
    */
   async symbolFromDenom(denom: string) {
     const ibcData = require('./ibc-denom-mappings.json');

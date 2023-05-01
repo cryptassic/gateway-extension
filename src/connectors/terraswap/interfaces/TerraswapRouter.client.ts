@@ -4,8 +4,12 @@
  * and run the @cosmwasm/ts-codegen generate command to regenerate this file.
  */
 
-import { CosmWasmClient, SigningCosmWasmClient, ExecuteResult } from '@cosmjs/cosmwasm-stargate'
-import { Coin, StdFee } from '@cosmjs/amino'
+import {
+  CosmWasmClient,
+  SigningCosmWasmClient,
+  ExecuteResult,
+} from '@cosmjs/cosmwasm-stargate';
+import { Coin, StdFee } from '@cosmjs/amino';
 import {
   InstantiateMsg,
   ExecuteMsg,
@@ -20,136 +24,140 @@ import {
   ConfigResponse,
   SimulateSwapOperationsResponse,
   ArrayOfSwapOperation,
-} from './TerraswapRouter.types'
+} from './TerraswapRouter.types';
 export interface TerraswapRouterReadOnlyInterface {
-  contractAddress: string
-  config: () => Promise<ConfigResponse>
+  contractAddress: string;
+  config: () => Promise<ConfigResponse>;
   simulateSwapOperations: ({
     offerAmount,
     operations,
   }: {
-    offerAmount: Uint128
-    operations: SwapOperation[]
-  }) => Promise<SimulateSwapOperationsResponse>
+    offerAmount: Uint128;
+    operations: SwapOperation[];
+  }) => Promise<SimulateSwapOperationsResponse>;
   reverseSimulateSwapOperations: ({
     askAmount,
     operations,
   }: {
-    askAmount: Uint128
-    operations: SwapOperation[]
-  }) => Promise<SimulateSwapOperationsResponse>
+    askAmount: Uint128;
+    operations: SwapOperation[];
+  }) => Promise<SimulateSwapOperationsResponse>;
   swapRoute: ({
     askAssetInfo,
     offerAssetInfo,
   }: {
-    askAssetInfo: AssetInfo
-    offerAssetInfo: AssetInfo
-  }) => Promise<ArrayOfSwapOperation>
+    askAssetInfo: AssetInfo;
+    offerAssetInfo: AssetInfo;
+  }) => Promise<ArrayOfSwapOperation>;
 }
-export class TerraswapRouterQueryClient implements TerraswapRouterReadOnlyInterface {
-  client: CosmWasmClient
-  contractAddress: string
+export class TerraswapRouterQueryClient
+  implements TerraswapRouterReadOnlyInterface
+{
+  client: CosmWasmClient;
+  contractAddress: string;
 
   constructor(client: CosmWasmClient, contractAddress: string) {
-    this.client = client
-    this.contractAddress = contractAddress
-    this.config = this.config.bind(this)
-    this.simulateSwapOperations = this.simulateSwapOperations.bind(this)
-    this.reverseSimulateSwapOperations = this.reverseSimulateSwapOperations.bind(this)
-    this.swapRoute = this.swapRoute.bind(this)
+    this.client = client;
+    this.contractAddress = contractAddress;
+    this.config = this.config.bind(this);
+    this.simulateSwapOperations = this.simulateSwapOperations.bind(this);
+    this.reverseSimulateSwapOperations =
+      this.reverseSimulateSwapOperations.bind(this);
+    this.swapRoute = this.swapRoute.bind(this);
   }
 
   config = async (): Promise<ConfigResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       config: {},
-    })
-  }
+    });
+  };
   simulateSwapOperations = async ({
     offerAmount,
     operations,
   }: {
-    offerAmount: Uint128
-    operations: SwapOperation[]
+    offerAmount: Uint128;
+    operations: SwapOperation[];
   }): Promise<SimulateSwapOperationsResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       simulate_swap_operations: {
         offer_amount: offerAmount,
         operations,
       },
-    })
-  }
+    });
+  };
   reverseSimulateSwapOperations = async ({
     askAmount,
     operations,
   }: {
-    askAmount: Uint128
-    operations: SwapOperation[]
+    askAmount: Uint128;
+    operations: SwapOperation[];
   }): Promise<SimulateSwapOperationsResponse> => {
     return this.client.queryContractSmart(this.contractAddress, {
       reverse_simulate_swap_operations: {
         ask_amount: askAmount,
         operations,
       },
-    })
-  }
+    });
+  };
   swapRoute = async ({
     askAssetInfo,
     offerAssetInfo,
   }: {
-    askAssetInfo: AssetInfo
-    offerAssetInfo: AssetInfo
+    askAssetInfo: AssetInfo;
+    offerAssetInfo: AssetInfo;
   }): Promise<ArrayOfSwapOperation> => {
     return this.client.queryContractSmart(this.contractAddress, {
       swap_route: {
         ask_asset_info: askAssetInfo,
         offer_asset_info: offerAssetInfo,
       },
-    })
-  }
+    });
+  };
 }
-export interface TerraswapRouterInterface extends TerraswapRouterReadOnlyInterface {
-  contractAddress: string
-  sender: string
+export interface TerraswapRouterInterface
+  extends TerraswapRouterReadOnlyInterface {
+  contractAddress: string;
+  sender: string;
   receive: (
     {
       amount,
       msg,
       sender,
     }: {
-      amount: Uint128
-      msg: Binary
-      sender: string
+      amount: Uint128;
+      msg: Binary;
+      sender: string;
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
     funds?: Coin[]
-  ) => Promise<ExecuteResult>
+  ) => Promise<ExecuteResult>;
   executeSwapOperations: (
     {
       minimumReceive,
       operations,
       to,
     }: {
-      minimumReceive?: Uint128
-      operations: SwapOperation[]
-      to?: string
+      minimumReceive?: Uint128;
+      operations: SwapOperation[];
+      to?: string;
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
     funds?: Coin[]
-  ) => Promise<ExecuteResult>
+  ) => Promise<ExecuteResult>;
   executeSwapOperation: (
     {
       operation,
       to,
     }: {
-      operation: SwapOperation
-      to?: string
+      operation: SwapOperation;
+      to?: string;
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
     funds?: Coin[]
-  ) => Promise<ExecuteResult>
+  ) => Promise<ExecuteResult>;
   assertMinimumReceive: (
     {
       assetInfo,
@@ -157,44 +165,48 @@ export interface TerraswapRouterInterface extends TerraswapRouterReadOnlyInterfa
       prevBalance,
       receiver,
     }: {
-      assetInfo: AssetInfo
-      minimumReceive: Uint128
-      prevBalance: Uint128
-      receiver: string
+      assetInfo: AssetInfo;
+      minimumReceive: Uint128;
+      prevBalance: Uint128;
+      receiver: string;
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
     funds?: Coin[]
-  ) => Promise<ExecuteResult>
+  ) => Promise<ExecuteResult>;
   addSwapRoutes: (
     {
       swapRoutes,
     }: {
-      swapRoutes: SwapRoute[]
+      swapRoutes: SwapRoute[];
     },
     fee?: number | StdFee | 'auto',
     memo?: string,
     funds?: Coin[]
-  ) => Promise<ExecuteResult>
+  ) => Promise<ExecuteResult>;
 }
 export class TerraswapRouterClient
   extends TerraswapRouterQueryClient
   implements TerraswapRouterInterface
 {
-  client: SigningCosmWasmClient
-  sender: string
-  contractAddress: string
+  client: SigningCosmWasmClient;
+  sender: string;
+  contractAddress: string;
 
-  constructor(client: SigningCosmWasmClient, sender: string, contractAddress: string) {
-    super(client, contractAddress)
-    this.client = client
-    this.sender = sender
-    this.contractAddress = contractAddress
-    this.receive = this.receive.bind(this)
-    this.executeSwapOperations = this.executeSwapOperations.bind(this)
-    this.executeSwapOperation = this.executeSwapOperation.bind(this)
-    this.assertMinimumReceive = this.assertMinimumReceive.bind(this)
-    this.addSwapRoutes = this.addSwapRoutes.bind(this)
+  constructor(
+    client: SigningCosmWasmClient,
+    sender: string,
+    contractAddress: string
+  ) {
+    super(client, contractAddress);
+    this.client = client;
+    this.sender = sender;
+    this.contractAddress = contractAddress;
+    this.receive = this.receive.bind(this);
+    this.executeSwapOperations = this.executeSwapOperations.bind(this);
+    this.executeSwapOperation = this.executeSwapOperation.bind(this);
+    this.assertMinimumReceive = this.assertMinimumReceive.bind(this);
+    this.addSwapRoutes = this.addSwapRoutes.bind(this);
   }
 
   receive = async (
@@ -203,9 +215,9 @@ export class TerraswapRouterClient
       msg,
       sender,
     }: {
-      amount: Uint128
-      msg: Binary
-      sender: string
+      amount: Uint128;
+      msg: Binary;
+      sender: string;
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -224,17 +236,17 @@ export class TerraswapRouterClient
       fee,
       memo,
       funds
-    )
-  }
+    );
+  };
   executeSwapOperations = async (
     {
       minimumReceive,
       operations,
       to,
     }: {
-      minimumReceive?: Uint128
-      operations: SwapOperation[]
-      to?: string
+      minimumReceive?: Uint128;
+      operations: SwapOperation[];
+      to?: string;
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -253,15 +265,15 @@ export class TerraswapRouterClient
       fee,
       memo,
       funds
-    )
-  }
+    );
+  };
   executeSwapOperation = async (
     {
       operation,
       to,
     }: {
-      operation: SwapOperation
-      to?: string
+      operation: SwapOperation;
+      to?: string;
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -279,8 +291,8 @@ export class TerraswapRouterClient
       fee,
       memo,
       funds
-    )
-  }
+    );
+  };
   assertMinimumReceive = async (
     {
       assetInfo,
@@ -288,10 +300,10 @@ export class TerraswapRouterClient
       prevBalance,
       receiver,
     }: {
-      assetInfo: AssetInfo
-      minimumReceive: Uint128
-      prevBalance: Uint128
-      receiver: string
+      assetInfo: AssetInfo;
+      minimumReceive: Uint128;
+      prevBalance: Uint128;
+      receiver: string;
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -311,13 +323,13 @@ export class TerraswapRouterClient
       fee,
       memo,
       funds
-    )
-  }
+    );
+  };
   addSwapRoutes = async (
     {
       swapRoutes,
     }: {
-      swapRoutes: SwapRoute[]
+      swapRoutes: SwapRoute[];
     },
     fee: number | StdFee | 'auto' = 'auto',
     memo?: string,
@@ -334,6 +346,6 @@ export class TerraswapRouterClient
       fee,
       memo,
       funds
-    )
-  }
+    );
+  };
 }

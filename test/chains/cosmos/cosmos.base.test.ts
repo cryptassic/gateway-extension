@@ -1,15 +1,8 @@
 
-<<<<<<< HEAD
 import { CosmosBase } from '../../../src/chains/cosmosV2/cosmos-base';
 import { EvmTxStorage } from '../../../src/evm/evm.tx-storage';
 import { Crypto } from '../../../src/chains/cosmosV2/crypto';
 import { getNetwork } from '../../../src/chains/cosmosV2/utils';
-=======
-// import { Asset } from '../../../src/chains/cosmosV2/types';
-import { CosmosBase } from '../../../src/chains/cosmosV2/cosmos-base';
-import { EvmTxStorage } from '../../../src/evm/evm.tx-storage';
-import { Crypto } from '../../../src/chains/cosmosV2/crypto';
->>>>>>> 9803855 (sync?)
 
 import { Event } from "@cosmjs/stargate";
 
@@ -78,10 +71,7 @@ describe('CosmosBase', () => {
   beforeEach(() => {
     cosmosBase = new CosmosBase(
       NETWORK.chain,
-<<<<<<< HEAD
       getNetwork(Object.keys(NETWORK)[0]),
-=======
->>>>>>> 9803855 (sync?)
       NETWORK.rpc,
       'https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json',
       'URL',
@@ -92,10 +82,7 @@ describe('CosmosBase', () => {
   describe('constructor', () => {
     test('should create a CosmosBase instance with the correct properties', () => {
       expect(cosmosBase.chainName).toEqual(NETWORK.chain);
-<<<<<<< HEAD
       expect(cosmosBase.network).toEqual(getNetwork(Object.keys(NETWORK)[0]));
-=======
->>>>>>> 9803855 (sync?)
       expect(cosmosBase.rpcUrl).toEqual(NETWORK.rpc);
       expect(cosmosBase.tokenListSource).toEqual('https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json');
       expect(cosmosBase.tokenListType).toEqual('URL');

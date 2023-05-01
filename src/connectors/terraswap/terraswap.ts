@@ -2,7 +2,7 @@ import { TokenMetadata, EstimateSwapView } from 'coinalpha-ref-sdk';
 import { Account } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
 import { WhiteWhaleish } from '../../services/common-interfaces';
-import { Cosmos } from '../../chains/cosmosV2/cosmos';
+import { CosmosBase as Cosmos } from '../../chains/cosmosV2/cosmos-base';
 import { TerraswapConfig } from './terraswap.config';
 import {
   TerraswapFactoryQueryClient,
@@ -24,9 +24,14 @@ export class Terraswap implements WhiteWhaleish {
   private factoryQueryClient: TerraswapFactoryQueryClient;
   private tokenList: Record<string, TokenMetadata> = {};
 
+  /**
+   *
+   * @param network - The network to onnect to
+   * @todo replace **broken** "new Cosmos()" with this.cosmos = cosmos.getInstance(network); once Cosmos class implemented
+   */
   private constructor(network: string) {
     const config = TerraswapConfig.config;
-    this.cosmos = cosmos.getInstance(network);
+    this.cosmos = new Cosmos();
     this._ttl = TerraswapConfig.config.ttl;
     this._gasLimitEstimate = TerraswapConfig.config.gasLimitEstimate;
     this._router = config.terraswapRouterAddress(network);
@@ -39,8 +44,18 @@ export class Terraswap implements WhiteWhaleish {
    * @param denom - Denom of the native token
    * @returns {symbol} - Returns the symbol of the native token
    */
-  symbolFromDenom(denom: string): Promise<string> {
-    throw new Error('Method not implemented.');
+  async symbolFromDenom(denom: string) {
+    const ibcData = require('./ibc-denom-mappings.json');
+    if (!denom.startsWith('ibc/')) return denom;
+    for (const key in ibcData) {
+      if (key.startsWith(denom)) {
+        const originDenom = ibcData[key]['origin']['denom'];
+        if (originDenom.startsWith('factory')) {
+          return originDenom.substring(originDenom.lastIndexOf('/') + 1);
+        }
+        return originDenom;
+      }
+    }
   }
 
   /**
@@ -48,8 +63,18 @@ export class Terraswap implements WhiteWhaleish {
    * @param address - Address of the cw20 token contract
    * @returns {symbol} - Returns the symbol of the cw20 token
    */
-  symbolFromAddress(address: string): Promise<string> {
-    throw new Error('Method not implemented.');
+  async symbolFromAddress(address: string) {
+    const tokenInfo = (
+      await this.cosmos.getCosmWasmClient()
+    ).queryContractSmart(address, {
+      token_info: {},
+    });
+
+    const symbol = tokenInfo['symbol'];
+    if (symbol.startsWith('factory')) {
+      return symbol.substring(symbol.lastIndexOf('/') + 1);
+    }
+    return symbol;
   }
 
   /**
@@ -97,13 +122,25 @@ export class Terraswap implements WhiteWhaleish {
     return availablePairs;
   }
 
-  simulateSwapOperations(offerAmount: string, pair: string): Uint128 {
-    throw new Error('Method not implemented.');
+  async simulateSwapOperations(
+    offerAmount: string,
+    pair: string
+  ): Promise<Uint128> {
+    const operations = await this._routerQueryClient.swapRoute({
+      askAssetInfo: this.cosmos.assetInfoFromSymbol(
+        pair.substring(0, pair.indexOf('-'))
+      ),
+      offerAssetInfo: this.cosmos.assetInfoFromSymbol(
+        pair.substring(pair.indexOf('-') + 1, pair.length)
+      ),
+    });
+    const simulationResponse =
+      await this._routerQueryClient.simulateSwapOperations({
+        offerAmount,
+        operations,
+      });
 
-    const swapRoutes = this._routerQueryClient.swapRoute()
-    this._routerQueryClient.simulateSwapOperations(
-      
-    )
+    return simulationResponse.amount;
   }
 
   estimateSellTrade(

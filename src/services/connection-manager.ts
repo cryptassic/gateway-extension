@@ -36,8 +36,12 @@ import { Near } from '../chains/near/near';
 import { Ref } from '../connectors/ref/ref';
 import { Xsswap } from '../connectors/xsswap/xsswap';
 import { DexalotCLOB } from '../connectors/dexalot/dexalot';
+import { CosmosV2 } from '../chains/cosmosV2/cosmos';
 
-export type ChainUnion = Ethereumish | Nearish | Injective | Xdcish;
+import { SupportedChains } from '../chains/cosmosV2/types';
+import { getNetwork } from '../chains/cosmosV2/utils';
+
+export type ChainUnion = Ethereumish | Nearish | Injective | Xdcish | CosmosV2;
 
 export type Chain<T> = T extends Ethereumish
   ? Ethereumish
@@ -47,6 +51,8 @@ export type Chain<T> = T extends Ethereumish
   ? Xdcish
   : T extends Injective
   ? Injective
+  : T extends CosmosV2
+  ? CosmosV2
   : never;
 
 export async function getChain<T>(
@@ -67,6 +73,10 @@ export async function getChain<T>(
   else if (chain === 'cronos') chainInstance = Cronos.getInstance(network);
   else if (chain === 'injective')
     chainInstance = Injective.getInstance(network);
+  else if (SupportedChains.includes(chain))
+    chainInstance = CosmosV2.getInstance(
+      chain,
+      getNetwork(network));
   else throw new Error('unsupported chain');
 
   if (!chainInstance.ready()) {

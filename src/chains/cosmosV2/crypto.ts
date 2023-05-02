@@ -1,10 +1,18 @@
 const crypto = require('crypto').webcrypto;
 const { toBase64, fromHex } = require('@cosmjs/encoding');
 const { DirectSecp256k1Wallet } = require('@cosmjs/proto-signing');
+import { HdPath, Slip10RawIndex } from "@cosmjs/crypto";
 
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { CosmosWallet, EncryptedPrivateKey } from "./types";
 
+
+// Keys are bech32 prefixes
+export const hdPathMapping: Record<string, number> = {
+    'cosmos': 118,
+    'juno': 118,
+    'terra': 330,
+}
 
 
 export class Crypto {
@@ -24,10 +32,10 @@ export class Crypto {
         mnemonic: string,
         prefix: string
       ): Promise<CosmosWallet> {
-    
+        const hdPath = makeHdPath(0,330);
         const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
           mnemonic,
-          { prefix: prefix }
+          { prefix: prefix, hdPaths: [hdPath as any] }
         ) as any;
     
         return wallet;
@@ -124,4 +132,16 @@ export class Crypto {
     }
 }
 
+
+
+
+export function makeHdPath(a: number, index: number): HdPath {
+  return [
+    Slip10RawIndex.hardened(44),
+    Slip10RawIndex.hardened(index),
+    Slip10RawIndex.hardened(0),
+    Slip10RawIndex.normal(0),
+    Slip10RawIndex.normal(a),
+  ];
+}
 

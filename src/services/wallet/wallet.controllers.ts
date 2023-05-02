@@ -6,8 +6,11 @@ import { Ethereum } from '../../chains/ethereum/ethereum';
 import { Polygon } from '../../chains/polygon/polygon';
 import { Xdc } from '../../chains/xdc/xdc';
 import { Cosmos } from '../../chains/cosmos/cosmos';
+import { CosmosV2 } from '../../chains/cosmosV2/cosmos';
 import { Harmony } from '../../chains/harmony/harmony';
 import { Injective } from '../../chains/injective/injective';
+
+import { SupportedChains } from '../../chains/cosmosV2/types';
 
 import {
   AddWalletRequest,
@@ -37,6 +40,7 @@ import { EthereumBase } from '../../chains/ethereum/ethereum-base';
 import { Near } from '../../chains/near/near';
 import { getChain } from '../connection-manager';
 import { Ethereumish } from '../common-interfaces';
+import { Network } from '../../chains/cosmosV2/types';
 
 export function convertXdcAddressToEthAddress(publicKey: string): string {
   return publicKey.length === 43 && publicKey.slice(0, 3) === 'xdc'
@@ -59,7 +63,7 @@ export async function addWallet(
   if (!passphrase) {
     throw new Error('There is no passphrase');
   }
-  let connection: EthereumBase | Near | Cosmos | Injective | Xdc;
+  let connection: EthereumBase | Near | Cosmos | CosmosV2 | Injective | Xdc;
   let address: string | undefined;
   let encryptedPrivateKey: string | undefined;
 
@@ -75,7 +79,10 @@ export async function addWallet(
     connection = Cronos.getInstance(req.network);
   } else if (req.chain === 'cosmos') {
     connection = Cosmos.getInstance(req.network);
-  } else if (req.chain === 'near') {
+  } else if (SupportedChains.includes(req.chain)) {
+    connection = CosmosV2.getInstance(req.chain,Network.Mainnet);
+  }
+  else if (req.chain === 'near') {
     if (!('address' in req))
       throw new HttpException(
         500,
@@ -131,7 +138,24 @@ export async function addWallet(
         req.privateKey,
         passphrase
       );
-    } else if (connection instanceof Near) {
+    }else if (connection instanceof CosmosV2) {
+
+      const fromPrivate = connection.getWalletFromPrivateKey;
+      const fromMnemonic = connection.getWalletFromMnemonic;
+
+      const wallet = isCosmosPrivateKey(req.privateKey) ?
+        await fromPrivate(req.privateKey, connection.bech32Prefix) :
+        await fromMnemonic(req.privateKey, connection.bech32Prefix);
+
+      const account = await wallet.getAccounts();
+
+      address = account[0].address;
+
+      encryptedPrivateKey = await connection.encrypt(
+        req.privateKey,
+        passphrase
+      );
+    }else if (connection instanceof Near) {
       address = (
         await connection.getWalletFromPrivateKey(
           req.privateKey,

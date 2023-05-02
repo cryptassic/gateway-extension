@@ -76,7 +76,7 @@ configurations:
     configurationPath: cosmos_v2.yml
     schemaPath: cosmos_v2-schema.json
 
-  $namespace terra2:
+  $namespace terra:
     configurationPath: terra2.yml
     schemaPath: cosmos_v2-schema.json
 

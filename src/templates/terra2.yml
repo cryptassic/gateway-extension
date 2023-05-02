@@ -3,14 +3,14 @@ networks:
     rpcURL: https://terra-rpc.polkachu.com/
     tokenListType: URL
     tokenListSource: >-
-      https://github.com/cosmos/chain-registry/blob/master/terra2/assetlist.json
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/assetlist.json
     chainId: phoenix-1
     bech32Prefix: terra
   testnet:
-    rpcURL: https://pisco-lcd.terra.dev
+    rpcURL: https://pisco-lcd.terra.dev/
     tokenListType: URL
     tokenListSource: >-
-      https://github.com/cosmos/chain-registry/blob/master/terra2/assetlist.json
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/assetlist.json
     chainId: pisco-1
     bech32Prefix: terra
 network: mainnet

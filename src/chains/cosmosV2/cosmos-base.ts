@@ -3,7 +3,6 @@ import {
   CosmosWallet, 
   EncryptedPrivateKey, 
   ICosmosBase,
-  ICosmosProvider, 
   ProviderNotInitializedError, 
   TransactionStatus 
 } from './types';
@@ -13,12 +12,15 @@ import { promises as fs } from 'fs';
 
 import axios from 'axios';
 import NodeCache from 'node-cache';
+import Bottleneck from 'bottleneck';
+
+import { Network } from './types';
 
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { IndexedTx, StargateClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 
-import { TokenListType, TokenValue, walletPath } from '../../services/base';
+import { TokenInfo, TokenListType, TokenValue, walletPath } from '../../services/base';
 
 import { ConfigManagerCertPassphrase } from '../../services/config-manager-cert-passphrase';
 import { ReferenceCountingCloseable } from '../../services/refcounting-closeable';
@@ -28,33 +30,10 @@ import { Crypto } from './crypto';
 import { BigNumber } from 'ethers';
 import { resolveDBPath } from './utils';
 import { DEFAULT_LIMITER, RateLimitedTendermint34Client} from './provider';
-import Bottleneck from 'bottleneck';
 
 const { fromBase64 } = require('@cosmjs/encoding');
 
 
-
-
-// TO-DO: Implement ICosmosProvider
-export class CosmosProvider implements ICosmosProvider {
-  createBase(
-    chainName: string,
-    rpcUrl: string,
-    tokenListSource: string,
-    tokenListType: TokenListType,
-    transactionDbPath: string,
-    limiter?: Bottleneck
-  ): ICosmosBase {
-    return new CosmosBase(
-      chainName,
-      rpcUrl,
-      tokenListSource,
-      tokenListType,
-      transactionDbPath,
-      limiter);
-  }
-
-}
 export class CosmosBase extends Crypto implements ICosmosBase {
 
   private _providerStargate: StargateClient | undefined;
@@ -62,6 +41,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   private _cosmWasmClient: CosmWasmClient | undefined;
   private _rateLimiter: Bottleneck | undefined;
 
+  protected tokenList: TokenInfo[] = [];
   protected assetList: Asset[] = [];
   private _assetMap: Record<string, Asset> = {};
 
@@ -69,8 +49,9 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   private _initializing: boolean = false;
   private _initPromise: Promise<void> = Promise.resolve();
 
+  private _rpcUrl: string;
+  private _network: Network;
   private _chainName: string;
-  private _rpcUrl;
   private _tokenListSource: string;
   private _tokenListType: TokenListType;
   private readonly _cache: NodeCache;
@@ -79,6 +60,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
   public constructor(
     chainName: string,
+    network: Network,
     rpcUrl: string,
     tokenListSource: string,
     tokenListType: TokenListType,
@@ -86,6 +68,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     limiter?: Bottleneck
   ) {
     super();
+    this._network = network;
     this._rpcUrl = rpcUrl;
     this._chainName = chainName;
     this._rateLimiter = limiter ?? DEFAULT_LIMITER;
@@ -103,6 +86,9 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
   ready(): boolean {
     return this._ready;
+  }
+  public get network(): string {
+    return this._network;
   }
 
   public get rpcUrl(): string {
@@ -129,22 +115,30 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return this._txStorage;
   }
 
+  public get storedTokenList(): TokenInfo[]{
+    return this.tokenList;
+  }
+
 
   async init(): Promise<void> {
     if (!this.ready() && !this._initializing) {
       this._initializing = true;
+      
+      try{
+        const defaultTM32Client = await Tendermint34Client.connect(this.rpcUrl);
+  
+        // Tendermint32Client does not expose its constructor, so we built a wrapper around it to throttle requests.
+        // Throttling is required, because some public RPC endpoints are really sensitive.
+        // If operating on a private RPC endpoint, you can pass a custom limiter to the constructor.
+        this._tmClient = await RateLimitedTendermint34Client.create(defaultTM32Client, this._rateLimiter as Bottleneck) as Tendermint34Client;
+        this._cosmWasmClient = await CosmWasmClient.create(defaultTM32Client);
 
-      const defaultTM32Client = await Tendermint34Client.connect(this.rpcUrl);
-
-
-      // Tendermint32Client does not expose its constructor, so we built a wrapper around it to throttle requests.
-      // Throttling is required, because some public RPC endpoints are really sensitive.
-      // If operating on a private RPC endpoint, you can pass a custom limiter to the constructor.
-      this._tmClient = await RateLimitedTendermint34Client.create(defaultTM32Client, this._rateLimiter as Bottleneck) as Tendermint34Client;
-      this._cosmWasmClient = await CosmWasmClient.create(defaultTM32Client);
-
-      if(!this._tmClient){
-        return Promise.reject(new Error('Tendermint client not initialized'));
+        if(!this._tmClient || !this._cosmWasmClient){
+          return Promise.reject(new ProviderNotInitializedError('Either Tendermint client or CosmWasm client not initialized'));
+        }
+      }
+      catch(error){
+        return Promise.reject(new ProviderNotInitializedError("Can't connect to Tendermint34Client",error));
       }
 
       this._providerStargate = await StargateClient.create(this._tmClient);
@@ -186,6 +180,11 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   getStoredAssetList(): Asset[] {
     return this.assetList;
   }
+
+  getTokenForSymbol(symbol: string): TokenInfo | undefined {
+    return this.storedTokenList.find(token => token.symbol.toUpperCase() === symbol.toUpperCase());
+  }
+
   getAssetBySymbol(assetSymbol: string): Asset | undefined {
     return this.assetList.find(asset => asset.symbol.toUpperCase() === assetSymbol.toUpperCase());
   }
@@ -386,7 +385,9 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     tokenListSource: string,
     tokenListType: TokenListType
   ): Promise<void> {
+
     this.assetList = await this.getAssetList(tokenListSource, tokenListType);
+    this.tokenList = await this.convertAssets(this.assetList);
 
     if (this.assetList) {
       this.assetList.forEach(
@@ -406,6 +407,23 @@ export class CosmosBase extends Crypto implements ICosmosBase {
       ({ assets } = JSON.parse(await fs.readFile(tokenListSource, 'utf8')));
     }
     return assets;
+  }
+
+  async convertAssets(assets: Asset[]): Promise<TokenInfo[]> {
+    const tokens: TokenInfo[] = [];
+    const chainId: number = this.network === 'mainnet' ? 1 : 2;
+    
+    assets.forEach((asset) => {
+      tokens.push({
+        chainId: chainId,
+        address: asset.address ? asset.address : '',
+        name: asset.name,
+        symbol: asset.symbol,
+        decimals: asset.denom_units[asset.denom_units.length - 1].exponent,
+      })
+    });
+
+    return tokens;
   }
 
 }

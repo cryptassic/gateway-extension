@@ -15,12 +15,13 @@ export interface Asset {
     description: string;
     denom_units: Denomunit[];
     base: string;
+    address?: string;
     name: string;
     display: string;
     symbol: string;
     logo_URIs: LogoURIs;
     coingecko_id: string;
-  }
+}
   
 /**
  * LogoURIs represents the URIs for an asset's logos.

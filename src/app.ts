@@ -19,6 +19,7 @@ import { ConnectorsRoutes } from './connectors/connectors.routes';
 import { EVMRoutes } from './evm/evm.routes';
 import { AmmRoutes, AmmLiquidityRoutes, PerpAmmRoutes } from './amm/amm.routes';
 import { InjectiveRoutes } from './chains/injective/injective.routes';
+import { CosmosRoutes as CosmosRoutesV2} from './chains/cosmosV2/cosmos.routes';
 import { NearRoutes } from './chains/near/near.routes';
 import { CLOBRoutes, PerpClobRoutes } from './clob/clob.routes';
 
@@ -59,6 +60,7 @@ gatewayApp.use('/wallet', WalletRoutes.router);
 gatewayApp.use('/clob', CLOBRoutes.router);
 gatewayApp.use('/clob/perp', PerpClobRoutes.router);
 gatewayApp.use('/cosmos', CosmosRoutes.router);
+gatewayApp.use('/cosmos/v2', CosmosRoutesV2.router);
 gatewayApp.use('/near', NearRoutes.router);
 
 // a simple route to test that the server is running
@@ -146,5 +148,5 @@ export const startGateway = async () => {
     }
   }
 
-  await startSwagger();
+  // await startSwagger();
 };

@@ -5,16 +5,8 @@ import { HdPath, Slip10RawIndex } from "@cosmjs/crypto";
 
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { CosmosWallet, EncryptedPrivateKey } from "./types";
-
-
-// Keys are bech32 prefixes
-export const hdPathMapping: Record<string, number> = {
-    'cosmos': 118,
-    'juno': 118,
-    'terra': 330,
-}
-
-
+import { hdPathMapping } from "./mapper";
+import { isCosmosPrivateKey } from "../../services/wallet/wallet.validators";
 export class Crypto {
     protected async getWalletFromPrivateKey(
         privateKey: string,
@@ -32,7 +24,9 @@ export class Crypto {
         mnemonic: string,
         prefix: string
       ): Promise<CosmosWallet> {
-        const hdPath = makeHdPath(0,330);
+
+        const hdPathIndex = hdPathMapping[prefix] ?? 118;
+        const hdPath = makeHdPath(0,hdPathIndex);
         const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
           mnemonic,
           { prefix: prefix, hdPaths: [hdPath as any] }
@@ -97,8 +91,14 @@ export class Crypto {
         );
         const dec = new TextDecoder();
         dec.decode(decrypted);
-    
-        return await this.getWalletFromPrivateKey(dec.decode(decrypted), prefix);
+        
+        const walletFromPrivateKey = this.getWalletFromPrivateKey;
+        const walletFromMnemonic = this.getWalletFromMnemonic;
+
+
+        return isCosmosPrivateKey(dec.decode(decrypted)) 
+          ? await walletFromPrivateKey(dec.decode(decrypted), prefix) 
+          : await walletFromMnemonic(dec.decode(decrypted), prefix);
     }
 
 

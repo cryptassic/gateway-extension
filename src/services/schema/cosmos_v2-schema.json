@@ -8,13 +8,13 @@
         "^\\w+$": {
           "type": "object",
           "properties": {
-            "rpcURL": { "type": "string" },
+            "nodeURL": { "type": "string" },
             "tokenListType": { "type": "string" },
             "tokenListSource": { "type": "string" },
             "chainId": { "type": "string" },
             "bech32Prefix": { "type": "string"}
           },
-          "required": ["rpcURL", "tokenListType", "tokenListSource", "chainId", "bech32Prefix"],
+          "required": ["nodeURL", "tokenListType", "tokenListSource", "chainId", "bech32Prefix"],
           "additionalProperties": false
         }
       },

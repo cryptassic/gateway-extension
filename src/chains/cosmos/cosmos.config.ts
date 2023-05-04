@@ -14,7 +14,7 @@ export interface NetworkConfig {
 
 export interface NetworkConfigV2 {
   name: string;
-  rpcURL: string;
+  nodeURL: string;
   tokenListType: TokenListType;
   tokenListSource: string;
   chainId: string;
@@ -46,7 +46,7 @@ export function getCosmosConfigV2(chainName: string, network: string): ConfigV2 
   return {
     network: {
       name: network,
-      rpcURL: configManager.get(chainName + '.networks.' + network + '.rpcURL'),
+      nodeURL: configManager.get(chainName + '.networks.' + network + '.nodeURL'),
       tokenListType: configManager.get(
         chainName + '.networks.' + network + '.tokenListType'
       ),

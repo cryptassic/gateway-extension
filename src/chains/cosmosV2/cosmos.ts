@@ -19,7 +19,7 @@ export class CosmosV2 extends CosmosBase implements CosmosishV2 {
     super(
       chain,
       network,
-      config.network.rpcURL,
+      config.network.nodeURL,
       config.network.tokenListSource,
       config.network.tokenListType,
       './random_db_path'

@@ -107,6 +107,10 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return this._tokenListType;
   }
 
+  public get storedTokenList(): TokenInfo[] {
+    return this.tokenList;
+  }
+
   public get cache(): NodeCache {
     return this._cache;
   }

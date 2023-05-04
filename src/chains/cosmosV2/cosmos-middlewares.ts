@@ -1,7 +1,9 @@
 import { CosmosV2 } from './cosmos';
 import { NextFunction, Request, Response } from 'express';
-import { isValidChain, isValidNetwork} from './cosmos.validators';
+import { isValidChain, isValidNetwork } from './cosmos.validators';
 // import { CosmosConfig } from './cosmos.config';
+
+
 
 export const verifyCosmosIsAvailable = async (
   _req: Request,

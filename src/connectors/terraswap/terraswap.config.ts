@@ -1,45 +1,39 @@
 import { ConfigManagerV2 } from '../../services/config-manager-v2';
 import { AvailableNetworks } from '../../services/config-manager-types';
-export namespace TerraswapConfig {
+export namespace WhiteWhaleConfig {
   export interface NetworkConfig {
     allowedSlippage: string;
     gasLimitEstimate: number;
     ttl: number;
     maximumHops: number;
-    terraswapRouterAddress: (network: string) => string;
-    terraswapFactoryAddress: (network: string) => string;
+    routerAddress: (network: string) => string;
+    factoryAddress: (network: string) => string;
     tradingTypes: (type: string) => Array<string>;
     availableNetworks: Array<AvailableNetworks>;
   }
 
   export const config: NetworkConfig = {
     allowedSlippage: ConfigManagerV2.getInstance().get(
-      `terraswap.allowedSlippage`
+      `whitewhale.allowedSlippage`
     ),
     gasLimitEstimate: ConfigManagerV2.getInstance().get(
-      `terraswap.gasLimitEstimate`
+      `whitewhale.gasLimitEstimate`
     ),
-    ttl: ConfigManagerV2.getInstance().get(`terraswap.ttl`),
-    maximumHops: ConfigManagerV2.getInstance().get(`terraswap.maximumHops`),
-    terraswapRouterAddress: (network: string) =>
+    ttl: ConfigManagerV2.getInstance().get(`whitewhale.ttl`),
+    maximumHops: ConfigManagerV2.getInstance().get(`whitewhale.maximumHops`),
+    routerAddress: (network: string) =>
       ConfigManagerV2.getInstance().get(
-        `terraswap.contractAddresses.${network}.terraswapRouterAddress`
+        `whitewhale.contractAddresses.${network}.routerAddress`
       ),
-    terraswapFactoryAddress: (network: string) =>
+    factoryAddress: (network: string) =>
       ConfigManagerV2.getInstance().get(
-        `terraswap.contractAddresses.${network}.terraswapFactoryAddress`
+        `whitewhale.contractAddresses.${network}.factoryAddress`
       ),
-    tradingTypes: () => ['COSMOS_AMM'], // Not really sure what this is for lol
+    tradingTypes: () => ['COSMOS_AMM'],
     availableNetworks: [
       {
         chain: 'terra',
-        networks: Object.keys(
-          ConfigManagerV2.getInstance().get('terraswap.contractAddresses')
-        ).filter((network) =>
-          Object.keys(
-            ConfigManagerV2.getInstance().get('terra2.networks')
-          ).includes(network)
-        ),
+        networks: Object.keys(ConfigManagerV2.getInstance().get('terra.networks'))
       },
       // {
       //   chain: 'juno',

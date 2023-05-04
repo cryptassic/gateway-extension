@@ -79,6 +79,10 @@ configurations:
   $namespace terra:
     configurationPath: terra2.yml
     schemaPath: cosmos_v2-schema.json
+  
+  $namespace whitewhale:
+    configurationPath: whitewhale.yml
+    schemaPath: whitewhale-schema.json
 
   $namespace cronos:
     configurationPath: cronos.yml

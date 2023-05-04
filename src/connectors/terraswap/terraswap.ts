@@ -1,9 +1,12 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { TokenMetadata, EstimateSwapView } from 'coinalpha-ref-sdk';
 import { Account } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
 import { WhiteWhaleish } from '../../services/common-interfaces';
 import { CosmosBase as Cosmos } from '../../chains/cosmosV2/cosmos-base';
-import { TerraswapConfig } from './terraswap.config';
+import { WhiteWhaleConfig } from './terraswap.config';
 import {
   TerraswapFactoryQueryClient,
   TerraswapRouterQueryClient,
@@ -30,12 +33,12 @@ export class Terraswap implements WhiteWhaleish {
    * @todo replace **broken** "new Cosmos()" with this.cosmos = cosmos.getInstance(network); once Cosmos class implemented
    */
   private constructor(network: string) {
-    const config = TerraswapConfig.config;
+    const config = WhiteWhaleConfig.config;
     this.cosmos = new Cosmos();
-    this._ttl = TerraswapConfig.config.ttl;
-    this._gasLimitEstimate = TerraswapConfig.config.gasLimitEstimate;
-    this._router = config.terraswapRouterAddress(network);
-    this._factory = config.terraswapFactoryAddress(network);
+    this._ttl = WhiteWhaleConfig.config.ttl;
+    this._gasLimitEstimate = WhiteWhaleConfig.config.gasLimitEstimate;
+    this._router = config.routerAddress(network);
+    this._factory = config.factoryAddress(network);
     // this.tokenList =
   }
 

@@ -110,6 +110,11 @@ export async function getStatus(
     connections = connections.concat(
       injectiveConnections ? Object.values(injectiveConnections) : []
     );
+
+    const cosmosConnections = CosmosV2.getConnectedInstances();
+    connections = connections.concat(
+      cosmosConnections ? Object.values(cosmosConnections) : []
+    );
   }
 
   for (const connection of connections) {

@@ -8,6 +8,7 @@ import {
 } from '../../services/validators';
 import { normalizeBech32 } from '@cosmjs/encoding';
 import { SupportedChains } from './types';
+import {  Request } from 'express';
 
 export const invalidCosmosAddressError: string =
   'The spender param is not a valid Cosmos address. (Bech32 format)';
@@ -43,3 +44,14 @@ export const isValidChain = (chain: string): boolean => {
 export const isValidNetwork = (network: string): boolean => {
   return network === 'mainnet' || network === 'testnet';
 };
+
+export function isValidRequestParams(_req: Request): boolean {
+  if(!isValidChain(_req.body.chain)){
+    return false;
+  }
+  if(!isValidNetwork(_req.body.network)){
+    return false;
+  }
+
+  return true;
+}

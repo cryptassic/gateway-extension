@@ -759,7 +759,21 @@ export interface CosmosishV2 {
   nativeTokenSymbol: string;
 }
 
-export interface WhiteWhaleish {
+export interface TerraSwapish {
+  
+  /**
+   * Default time-to-live for swap transactions, in seconds.
+  */
+  ttl: number;
+ 
+  /**
+    * Default gas estimate for swap transactions.
+  */
+  gasLimitEstimate: number;
+
+  init(): Promise<void>;
+  ready(): boolean;
+  
   /**
    * Function for retrieving token list.
    * @returns a list of available market pairs.

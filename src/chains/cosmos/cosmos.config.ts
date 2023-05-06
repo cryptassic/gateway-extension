@@ -3,7 +3,7 @@ import { ConfigManagerV2 } from '../../services/config-manager-v2';
 
 export enum Network {
   Mainnet = 'mainnet',
-  Testnet = 'testnet'
+  Testnet = 'testnet',
 }
 export interface NetworkConfig {
   name: string;
@@ -38,15 +38,20 @@ export namespace CosmosConfig {
 }
 
 export namespace CosmosConfigV2 {
-  export const config: ConfigV2 = getCosmosConfigV2('cosmos',Network.Mainnet);
+  export const config: ConfigV2 = getCosmosConfigV2('cosmos', Network.Mainnet);
 }
 
-export function getCosmosConfigV2(chainName: string, network: string): ConfigV2 {
+export function getCosmosConfigV2(
+  chainName: string,
+  network: string
+): ConfigV2 {
   const configManager = ConfigManagerV2.getInstance();
   return {
     network: {
       name: network,
-      nodeURL: configManager.get(chainName + '.networks.' + network + '.nodeURL'),
+      nodeURL: configManager.get(
+        chainName + '.networks.' + network + '.nodeURL'
+      ),
       tokenListType: configManager.get(
         chainName + '.networks.' + network + '.tokenListType'
       ),

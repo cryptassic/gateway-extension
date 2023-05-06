@@ -33,7 +33,9 @@ export namespace WhiteWhaleConfig {
     availableNetworks: [
       {
         chain: 'terra',
-        networks: Object.keys(ConfigManagerV2.getInstance().get('terra.networks'))
+        networks: Object.keys(
+          ConfigManagerV2.getInstance().get('terra.networks')
+        ),
       },
       // {
       //   chain: 'juno',

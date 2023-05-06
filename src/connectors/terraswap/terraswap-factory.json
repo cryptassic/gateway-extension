@@ -43,46 +43,29 @@
       {
         "description": "Updates contract's config, i.e. relevant code_ids, fee_collector address and owner",
         "type": "object",
-        "required": [
-          "update_config"
-        ],
+        "required": ["update_config"],
         "properties": {
           "update_config": {
             "type": "object",
             "properties": {
               "fee_collector_addr": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "owner": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "pair_code_id": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint64",
                 "minimum": 0.0
               },
               "token_code_id": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint64",
                 "minimum": 0.0
               },
               "trio_code_id": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint64",
                 "minimum": 0.0
               }
@@ -95,15 +78,11 @@
       {
         "description": "Updates a pair config",
         "type": "object",
-        "required": [
-          "update_pair_config"
-        ],
+        "required": ["update_pair_config"],
         "properties": {
           "update_pair_config": {
             "type": "object",
-            "required": [
-              "pair_addr"
-            ],
+            "required": ["pair_addr"],
             "properties": {
               "feature_toggle": {
                 "anyOf": [
@@ -116,16 +95,10 @@
                 ]
               },
               "fee_collector_addr": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "owner": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "pair_addr": {
                 "type": "string"
@@ -149,15 +122,11 @@
       {
         "description": "Updates a trio config",
         "type": "object",
-        "required": [
-          "update_trio_config"
-        ],
+        "required": ["update_trio_config"],
         "properties": {
           "update_trio_config": {
             "type": "object",
-            "required": [
-              "trio_addr"
-            ],
+            "required": ["trio_addr"],
             "properties": {
               "amp_factor": {
                 "anyOf": [
@@ -180,16 +149,10 @@
                 ]
               },
               "fee_collector_addr": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "owner": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               },
               "pool_fees": {
                 "anyOf": [
@@ -213,9 +176,7 @@
       {
         "description": "Instantiates pair contract",
         "type": "object",
-        "required": [
-          "create_pair"
-        ],
+        "required": ["create_pair"],
         "properties": {
           "create_pair": {
             "type": "object",
@@ -259,9 +220,7 @@
       {
         "description": "Instantiates pair contract",
         "type": "object",
-        "required": [
-          "create_trio"
-        ],
+        "required": ["create_trio"],
         "properties": {
           "create_trio": {
             "type": "object",
@@ -302,16 +261,11 @@
       {
         "description": "Adds native token info to the contract so it can instantiate pair contracts that include it",
         "type": "object",
-        "required": [
-          "add_native_token_decimals"
-        ],
+        "required": ["add_native_token_decimals"],
         "properties": {
           "add_native_token_decimals": {
             "type": "object",
-            "required": [
-              "decimals",
-              "denom"
-            ],
+            "required": ["decimals", "denom"],
             "properties": {
               "decimals": {
                 "type": "integer",
@@ -330,21 +284,14 @@
       {
         "description": "Migrates a pair contract to a given code_id",
         "type": "object",
-        "required": [
-          "migrate_pair"
-        ],
+        "required": ["migrate_pair"],
         "properties": {
           "migrate_pair": {
             "type": "object",
-            "required": [
-              "contract"
-            ],
+            "required": ["contract"],
             "properties": {
               "code_id": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint64",
                 "minimum": 0.0
               },
@@ -360,21 +307,14 @@
       {
         "description": "Migrates a trio contract to a given code_id",
         "type": "object",
-        "required": [
-          "migrate_trio"
-        ],
+        "required": ["migrate_trio"],
         "properties": {
           "migrate_trio": {
             "type": "object",
-            "required": [
-              "contract"
-            ],
+            "required": ["contract"],
             "properties": {
               "code_id": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint64",
                 "minimum": 0.0
               },
@@ -390,15 +330,11 @@
       {
         "description": "Removes pair contract given asset infos",
         "type": "object",
-        "required": [
-          "remove_pair"
-        ],
+        "required": ["remove_pair"],
         "properties": {
           "remove_pair": {
             "type": "object",
-            "required": [
-              "asset_infos"
-            ],
+            "required": ["asset_infos"],
             "properties": {
               "asset_infos": {
                 "type": "array",
@@ -417,15 +353,11 @@
       {
         "description": "Removes trio contract given asset infos",
         "type": "object",
-        "required": [
-          "remove_trio"
-        ],
+        "required": ["remove_trio"],
         "properties": {
           "remove_trio": {
             "type": "object",
-            "required": [
-              "asset_infos"
-            ],
+            "required": ["asset_infos"],
             "properties": {
               "asset_infos": {
                 "type": "array",
@@ -448,15 +380,11 @@
         "oneOf": [
           {
             "type": "object",
-            "required": [
-              "token"
-            ],
+            "required": ["token"],
             "properties": {
               "token": {
                 "type": "object",
-                "required": [
-                  "contract_addr"
-                ],
+                "required": ["contract_addr"],
                 "properties": {
                   "contract_addr": {
                     "type": "string"
@@ -469,15 +397,11 @@
           },
           {
             "type": "object",
-            "required": [
-              "native_token"
-            ],
+            "required": ["native_token"],
             "properties": {
               "native_token": {
                 "type": "object",
-                "required": [
-                  "denom"
-                ],
+                "required": ["denom"],
                 "properties": {
                   "denom": {
                     "type": "string"
@@ -517,9 +441,7 @@
       },
       "Fee": {
         "type": "object",
-        "required": [
-          "share"
-        ],
+        "required": ["share"],
         "properties": {
           "share": {
             "$ref": "#/definitions/Decimal"
@@ -531,21 +453,15 @@
         "oneOf": [
           {
             "type": "string",
-            "enum": [
-              "constant_product"
-            ]
+            "enum": ["constant_product"]
           },
           {
             "type": "object",
-            "required": [
-              "stable_swap"
-            ],
+            "required": ["stable_swap"],
             "properties": {
               "stable_swap": {
                 "type": "object",
-                "required": [
-                  "amp"
-                ],
+                "required": ["amp"],
                 "properties": {
                   "amp": {
                     "description": "The amount of amplification to perform on the constant product part of the swap formula.",
@@ -564,11 +480,7 @@
       "PoolFee": {
         "description": "Fees used by the pools on the pool network",
         "type": "object",
-        "required": [
-          "burn_fee",
-          "protocol_fee",
-          "swap_fee"
-        ],
+        "required": ["burn_fee", "protocol_fee", "swap_fee"],
         "properties": {
           "burn_fee": {
             "$ref": "#/definitions/Fee"
@@ -584,10 +496,7 @@
       },
       "RampAmp": {
         "type": "object",
-        "required": [
-          "future_a",
-          "future_block"
-        ],
+        "required": ["future_a", "future_block"],
         "properties": {
           "future_a": {
             "type": "integer",
@@ -611,9 +520,7 @@
       {
         "description": "Retrieves the configuration of the factory.",
         "type": "object",
-        "required": [
-          "config"
-        ],
+        "required": ["config"],
         "properties": {
           "config": {
             "type": "object",
@@ -625,15 +532,11 @@
       {
         "description": "Retrieves the info for the pair with the given asset_infos.",
         "type": "object",
-        "required": [
-          "pair"
-        ],
+        "required": ["pair"],
         "properties": {
           "pair": {
             "type": "object",
-            "required": [
-              "asset_infos"
-            ],
+            "required": ["asset_infos"],
             "properties": {
               "asset_infos": {
                 "type": "array",
@@ -652,26 +555,18 @@
       {
         "description": "Retrieves the pairs created by the factory. This query has pagination enabled, querying ten items by default if not specified otherwise. The max amount of items that can be queried at once is 30. `start_after` is the last asset_info of a page.",
         "type": "object",
-        "required": [
-          "pairs"
-        ],
+        "required": ["pairs"],
         "properties": {
           "pairs": {
             "type": "object",
             "properties": {
               "limit": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint32",
                 "minimum": 0.0
               },
               "start_after": {
-                "type": [
-                  "array",
-                  "null"
-                ],
+                "type": ["array", "null"],
                 "items": {
                   "$ref": "#/definitions/AssetInfo"
                 },
@@ -687,15 +582,11 @@
       {
         "description": "Retrieves the info for the trio with the given asset_infos.",
         "type": "object",
-        "required": [
-          "trio"
-        ],
+        "required": ["trio"],
         "properties": {
           "trio": {
             "type": "object",
-            "required": [
-              "asset_infos"
-            ],
+            "required": ["asset_infos"],
             "properties": {
               "asset_infos": {
                 "type": "array",
@@ -714,26 +605,18 @@
       {
         "description": "Retrieves the trios created by the factory. This query has pagination enabled, querying ten items by default if not specified otherwise. The max amount of items that can be queried at once is 30. `start_after` is the last asset_info of a page.",
         "type": "object",
-        "required": [
-          "trios"
-        ],
+        "required": ["trios"],
         "properties": {
           "trios": {
             "type": "object",
             "properties": {
               "limit": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
+                "type": ["integer", "null"],
                 "format": "uint32",
                 "minimum": 0.0
               },
               "start_after": {
-                "type": [
-                  "array",
-                  "null"
-                ],
+                "type": ["array", "null"],
                 "items": {
                   "$ref": "#/definitions/AssetInfo"
                 },
@@ -749,15 +632,11 @@
       {
         "description": "Retrieves the decimals for the given native or ibc denom.",
         "type": "object",
-        "required": [
-          "native_token_decimals"
-        ],
+        "required": ["native_token_decimals"],
         "properties": {
           "native_token_decimals": {
             "type": "object",
-            "required": [
-              "denom"
-            ],
+            "required": ["denom"],
             "properties": {
               "denom": {
                 "type": "string"
@@ -775,15 +654,11 @@
         "oneOf": [
           {
             "type": "object",
-            "required": [
-              "token"
-            ],
+            "required": ["token"],
             "properties": {
               "token": {
                 "type": "object",
-                "required": [
-                  "contract_addr"
-                ],
+                "required": ["contract_addr"],
                 "properties": {
                   "contract_addr": {
                     "type": "string"
@@ -796,15 +671,11 @@
           },
           {
             "type": "object",
-            "required": [
-              "native_token"
-            ],
+            "required": ["native_token"],
             "properties": {
               "native_token": {
                 "type": "object",
-                "required": [
-                  "denom"
-                ],
+                "required": ["denom"],
                 "properties": {
                   "denom": {
                     "type": "string"
@@ -868,9 +739,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "NativeTokenDecimalsResponse",
       "type": "object",
-      "required": [
-        "decimals"
-      ],
+      "required": ["decimals"],
       "properties": {
         "decimals": {
           "type": "integer",
@@ -927,15 +796,11 @@
           "oneOf": [
             {
               "type": "object",
-              "required": [
-                "token"
-              ],
+              "required": ["token"],
               "properties": {
                 "token": {
                   "type": "object",
-                  "required": [
-                    "contract_addr"
-                  ],
+                  "required": ["contract_addr"],
                   "properties": {
                     "contract_addr": {
                       "type": "string"
@@ -948,15 +813,11 @@
             },
             {
               "type": "object",
-              "required": [
-                "native_token"
-              ],
+              "required": ["native_token"],
               "properties": {
                 "native_token": {
                   "type": "object",
-                  "required": [
-                    "denom"
-                  ],
+                  "required": ["denom"],
                   "properties": {
                     "denom": {
                       "type": "string"
@@ -973,21 +834,15 @@
           "oneOf": [
             {
               "type": "string",
-              "enum": [
-                "constant_product"
-              ]
+              "enum": ["constant_product"]
             },
             {
               "type": "object",
-              "required": [
-                "stable_swap"
-              ],
+              "required": ["stable_swap"],
               "properties": {
                 "stable_swap": {
                   "type": "object",
-                  "required": [
-                    "amp"
-                  ],
+                  "required": ["amp"],
                   "properties": {
                     "amp": {
                       "description": "The amount of amplification to perform on the constant product part of the swap formula.",
@@ -1009,9 +864,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "PairsResponse",
       "type": "object",
-      "required": [
-        "pairs"
-      ],
+      "required": ["pairs"],
       "properties": {
         "pairs": {
           "type": "array",
@@ -1027,15 +880,11 @@
           "oneOf": [
             {
               "type": "object",
-              "required": [
-                "token"
-              ],
+              "required": ["token"],
               "properties": {
                 "token": {
                   "type": "object",
-                  "required": [
-                    "contract_addr"
-                  ],
+                  "required": ["contract_addr"],
                   "properties": {
                     "contract_addr": {
                       "type": "string"
@@ -1048,15 +897,11 @@
             },
             {
               "type": "object",
-              "required": [
-                "native_token"
-              ],
+              "required": ["native_token"],
               "properties": {
                 "native_token": {
                   "type": "object",
-                  "required": [
-                    "denom"
-                  ],
+                  "required": ["denom"],
                   "properties": {
                     "denom": {
                       "type": "string"
@@ -1113,21 +958,15 @@
           "oneOf": [
             {
               "type": "string",
-              "enum": [
-                "constant_product"
-              ]
+              "enum": ["constant_product"]
             },
             {
               "type": "object",
-              "required": [
-                "stable_swap"
-              ],
+              "required": ["stable_swap"],
               "properties": {
                 "stable_swap": {
                   "type": "object",
-                  "required": [
-                    "amp"
-                  ],
+                  "required": ["amp"],
                   "properties": {
                     "amp": {
                       "description": "The amount of amplification to perform on the constant product part of the swap formula.",
@@ -1188,15 +1027,11 @@
           "oneOf": [
             {
               "type": "object",
-              "required": [
-                "token"
-              ],
+              "required": ["token"],
               "properties": {
                 "token": {
                   "type": "object",
-                  "required": [
-                    "contract_addr"
-                  ],
+                  "required": ["contract_addr"],
                   "properties": {
                     "contract_addr": {
                       "type": "string"
@@ -1209,15 +1044,11 @@
             },
             {
               "type": "object",
-              "required": [
-                "native_token"
-              ],
+              "required": ["native_token"],
               "properties": {
                 "native_token": {
                   "type": "object",
-                  "required": [
-                    "denom"
-                  ],
+                  "required": ["denom"],
                   "properties": {
                     "denom": {
                       "type": "string"
@@ -1236,9 +1067,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "TriosResponse",
       "type": "object",
-      "required": [
-        "trios"
-      ],
+      "required": ["trios"],
       "properties": {
         "trios": {
           "type": "array",
@@ -1254,15 +1083,11 @@
           "oneOf": [
             {
               "type": "object",
-              "required": [
-                "token"
-              ],
+              "required": ["token"],
               "properties": {
                 "token": {
                   "type": "object",
-                  "required": [
-                    "contract_addr"
-                  ],
+                  "required": ["contract_addr"],
                   "properties": {
                     "contract_addr": {
                       "type": "string"
@@ -1275,15 +1100,11 @@
             },
             {
               "type": "object",
-              "required": [
-                "native_token"
-              ],
+              "required": ["native_token"],
               "properties": {
                 "native_token": {
                   "type": "object",
-                  "required": [
-                    "denom"
-                  ],
+                  "required": ["denom"],
                   "properties": {
                     "denom": {
                       "type": "string"

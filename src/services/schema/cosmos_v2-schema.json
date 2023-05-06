@@ -12,9 +12,15 @@
             "tokenListType": { "type": "string" },
             "tokenListSource": { "type": "string" },
             "chainId": { "type": "string" },
-            "bech32Prefix": { "type": "string"}
+            "bech32Prefix": { "type": "string" }
           },
-          "required": ["nodeURL", "tokenListType", "tokenListSource", "chainId", "bech32Prefix"],
+          "required": [
+            "nodeURL",
+            "tokenListType",
+            "tokenListSource",
+            "chainId",
+            "bech32Prefix"
+          ],
           "additionalProperties": false
         }
       },

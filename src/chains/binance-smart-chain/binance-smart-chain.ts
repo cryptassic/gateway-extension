@@ -102,7 +102,10 @@ export class BinanceSmartChain extends EthereumBase implements Ethereumish {
         this._chain
       );
     } else if (reqSpender === 'openocean') {
-      spender = OpenoceanConfig.config.routerAddress('binance-smart-chain', this._chain);
+      spender = OpenoceanConfig.config.routerAddress(
+        'binance-smart-chain',
+        this._chain
+      );
     } else {
       spender = reqSpender;
     }

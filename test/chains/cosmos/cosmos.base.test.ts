@@ -1,51 +1,52 @@
-
 import { CosmosBase } from '../../../src/chains/cosmosV2/cosmos-base';
 import { EvmTxStorage } from '../../../src/evm/evm.tx-storage';
 import { Crypto } from '../../../src/chains/cosmosV2/crypto';
 import { getNetwork } from '../../../src/chains/cosmosV2/utils';
 
-import { Event } from "@cosmjs/stargate";
+import { Event } from '@cosmjs/stargate';
 
 import { toHex } from '@cosmjs/encoding';
 import { IndexedTx } from '@cosmjs/stargate';
 import { storeWallet } from '../../../src/services/wallet/wallet.controllers';
 import { ConfigManagerCertPassphrase } from '../../../src/services/config-manager-cert-passphrase';
-import { ProviderNotInitializedError, TransactionStatus } from '../../../src/chains/cosmosV2/types';
+import {
+  ProviderNotInitializedError,
+  TransactionStatus,
+} from '../../../src/chains/cosmosV2/types';
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
-
 const dummyWallet = {
-    "mnemonic": "present picnic avocado noise mutual mountain make business sentence laptop rail hurt",
-    "address": "cosmos18jyzpf3056rvcq3nuhrcwfk7vtcfayw9p2nl4u",
-    "privateKey": "lNRbGdPclYqp2FVnw0dI/ZJxvOmGHNkawRi00xf+KVY="
-} 
+  mnemonic:
+    'present picnic avocado noise mutual mountain make business sentence laptop rail hurt',
+  address: 'cosmos18jyzpf3056rvcq3nuhrcwfk7vtcfayw9p2nl4u',
+  privateKey: 'lNRbGdPclYqp2FVnw0dI/ZJxvOmGHNkawRi00xf+KVY=',
+};
 const cosmosNetworks = {
-    "mainnet": {
-        "chain": "cosmos",
-        "rpc": "https://cosmos-rpc.polkachu.com/",
-        "chainId": "cosmoshub-4",
-    },
-    "testnet": {
-        "chain": "cosmos",
-        "rpc": "https://cosmos-testnet-rpc.allthatnode.com:26657/",
-        "chainId": "theta-testnet-001",
-    },
-}
+  mainnet: {
+    chain: 'cosmos',
+    rpc: 'https://cosmos-rpc.polkachu.com/',
+    chainId: 'cosmoshub-4',
+  },
+  testnet: {
+    chain: 'cosmos',
+    rpc: 'https://cosmos-testnet-rpc.allthatnode.com:26657/',
+    chainId: 'theta-testnet-001',
+  },
+};
 
 // Manually verified
 // For simplicity keeping rawLog and tx fields empty.
 const testnetTxMetadata: IndexedTx = {
-    height: 15691738,
-    hash: "9AD9F104637589373EBD351506F6C8E455FB01946ECC981BA3B10220A8953019",
-    code: 0,
-    rawLog: '',
-    txIndex: 0,
-    events: new Array<Event>(),
-    tx: new Uint8Array(0),
-    gasWanted: 200000,
-    gasUsed: 80688,
-
-}
+  height: 15691738,
+  hash: '9AD9F104637589373EBD351506F6C8E455FB01946ECC981BA3B10220A8953019',
+  code: 0,
+  rawLog: '',
+  txIndex: 0,
+  events: new Array<Event>(),
+  tx: new Uint8Array(0),
+  gasWanted: 200000,
+  gasUsed: 80688,
+};
 
 const NETWORK = cosmosNetworks.testnet;
 const PASSPHRASE = 'password';
@@ -53,19 +54,30 @@ const PASSPHRASE = 'password';
 describe('CosmosBase', () => {
   let cosmosBase: CosmosBase;
   beforeAll(async () => {
-
     // Bad practice, but we really really need this.
     const cryptoObj = new (class extends Crypto {
-      public encryptWrapper(privateKey: string, password: string): Promise<string> {
-        const privKeyHex = toHex(Uint8Array.from(Buffer.from(privateKey, 'base64')));
+      public encryptWrapper(
+        privateKey: string,
+        password: string
+      ): Promise<string> {
+        const privKeyHex = toHex(
+          Uint8Array.from(Buffer.from(privateKey, 'base64'))
+        );
         return this.encrypt(privKeyHex, password);
       }
     })();
 
     const walletStoragePath = `./conf/wallets/cosmos`;
-    const encryptedPrivateKey = await cryptoObj.encryptWrapper(dummyWallet.privateKey, PASSPHRASE)
+    const encryptedPrivateKey = await cryptoObj.encryptWrapper(
+      dummyWallet.privateKey,
+      PASSPHRASE
+    );
 
-    await storeWallet(walletStoragePath, dummyWallet.address, encryptedPrivateKey);
+    await storeWallet(
+      walletStoragePath,
+      dummyWallet.address,
+      encryptedPrivateKey
+    );
   });
 
   beforeEach(() => {
@@ -84,7 +96,9 @@ describe('CosmosBase', () => {
       expect(cosmosBase.chainName).toEqual(NETWORK.chain);
       expect(cosmosBase.network).toEqual(getNetwork(Object.keys(NETWORK)[0]));
       expect(cosmosBase.rpcUrl).toEqual(NETWORK.rpc);
-      expect(cosmosBase.tokenListSource).toEqual('https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json');
+      expect(cosmosBase.tokenListSource).toEqual(
+        'https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/assetlist.json'
+      );
       expect(cosmosBase.tokenListType).toEqual('URL');
       expect(cosmosBase.cache).toBeDefined();
       expect(cosmosBase.txStorage).toBeInstanceOf(EvmTxStorage);
@@ -108,7 +122,9 @@ describe('CosmosBase', () => {
 
   describe('provider', () => {
     it('should return an error if _providerStargate is not initialized', async () => {
-      await expect(cosmosBase.provider()).rejects.toThrowError(ProviderNotInitializedError);
+      await expect(cosmosBase.provider()).rejects.toThrowError(
+        ProviderNotInitializedError
+      );
     });
     it('should return _providerStargate', async () => {
       await cosmosBase.init();
@@ -117,9 +133,11 @@ describe('CosmosBase', () => {
     });
   });
 
-  describe("getTM32Client", () => {
+  describe('getTM32Client', () => {
     it('should return an error if _tmClient is not initialized', async () => {
-      await expect(cosmosBase.getTM32Client()).rejects.toThrowError(ProviderNotInitializedError);
+      await expect(cosmosBase.getTM32Client()).rejects.toThrowError(
+        ProviderNotInitializedError
+      );
     });
     it('should return _tmClient', async () => {
       await cosmosBase.init();
@@ -130,7 +148,9 @@ describe('CosmosBase', () => {
   });
   describe('getCosmWasmClient', () => {
     it('should return an error if _cosmWasmClient is not initialized', async () => {
-      await expect(cosmosBase.getCosmWasmClient()).rejects.toThrowError(ProviderNotInitializedError);
+      await expect(cosmosBase.getCosmWasmClient()).rejects.toThrowError(
+        ProviderNotInitializedError
+      );
     });
     it('should return _cosmWasmClient', async () => {
       await cosmosBase.init();
@@ -139,39 +159,35 @@ describe('CosmosBase', () => {
       expect(cosmWasmClient).not.toBeNull();
       expect(cosmWasmClient).toBeInstanceOf(CosmWasmClient);
     });
-
   });
 
   describe('cache', () => {
-    
     beforeEach(() => {
-      cosmosBase.cache.flushAll();}
-    );
+      cosmosBase.cache.flushAll();
+    });
 
     it('should store transaction at cache', () => {
-      
       cosmosBase.cacheTransaction(testnetTxMetadata);
 
-      const retrievedTx = cosmosBase.retrieveTransaction(testnetTxMetadata.hash) as IndexedTx;
-      
+      const retrievedTx = cosmosBase.retrieveTransaction(
+        testnetTxMetadata.hash
+      ) as IndexedTx;
+
       expect(retrievedTx).toBeDefined();
       expect(retrievedTx).not.toBeNull();
-
-
-
     });
     it('should retrieve transaction from cache before requesting from provider', async () => {
-      
       const spy = jest.spyOn(cosmosBase, 'provider');
 
       cosmosBase.cacheTransaction(testnetTxMetadata);
 
-      const retrievedTx = await cosmosBase.getTransaction(testnetTxMetadata.hash) as IndexedTx;
+      const retrievedTx = (await cosmosBase.getTransaction(
+        testnetTxMetadata.hash
+      )) as IndexedTx;
 
       expect(spy).not.toHaveBeenCalled();
 
       expect(testnetTxMetadata).toEqual(retrievedTx);
-      
     });
   });
 
@@ -218,82 +234,95 @@ describe('CosmosBase', () => {
 
   describe('getWallet', () => {
     it('should return a wallet from the given mnemonic', async () => {
-        const wallet = await cosmosBase.getWalletFromMnemonic(dummyWallet.mnemonic,'cosmos');
-        expect(wallet).toBeDefined();
+      const wallet = await cosmosBase.getWalletFromMnemonic(
+        dummyWallet.mnemonic,
+        'cosmos'
+      );
+      expect(wallet).toBeDefined();
 
-        const accounts = await wallet.getAccounts();
-        expect(accounts[0].address).toEqual(dummyWallet.address);
+      const accounts = await wallet.getAccounts();
+      expect(accounts[0].address).toEqual(dummyWallet.address);
     });
 
     it('should return a wallet from the given private key', async () => {
-        const privKey = toHex(Uint8Array.from(Buffer.from(dummyWallet.privateKey, 'base64')));
-        const wallet = await cosmosBase.getWalletFromPrivateKey(privKey,'cosmos');
-        expect(wallet).toBeDefined();
+      const privKey = toHex(
+        Uint8Array.from(Buffer.from(dummyWallet.privateKey, 'base64'))
+      );
+      const wallet = await cosmosBase.getWalletFromPrivateKey(
+        privKey,
+        'cosmos'
+      );
+      expect(wallet).toBeDefined();
 
-        const accounts = await wallet.getAccounts();
-        expect(accounts[0].address).toEqual(dummyWallet.address);
+      const accounts = await wallet.getAccounts();
+      expect(accounts[0].address).toEqual(dummyWallet.address);
     });
     it('should return a existing wallet from wallet store', async () => {
+      const spy = jest
+        .spyOn(ConfigManagerCertPassphrase, 'readPassphrase')
+        .mockImplementation(() => PASSPHRASE);
 
-        const spy = jest.spyOn(ConfigManagerCertPassphrase,'readPassphrase').mockImplementation(() => PASSPHRASE);
+      const wallet = await cosmosBase.getWallet(dummyWallet.address, 'cosmos');
 
-        const wallet = await cosmosBase.getWallet(dummyWallet.address,'cosmos');
-        
-        expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalled();
 
-        expect(wallet).toBeDefined();
-        expect(wallet).not.toBeNull();
+      expect(wallet).toBeDefined();
+      expect(wallet).not.toBeNull();
 
-        const account = await wallet.getAccounts();
+      const account = await wallet.getAccounts();
 
-        expect(account[0].address).toEqual(dummyWallet.address);
+      expect(account[0].address).toEqual(dummyWallet.address);
 
-        spy.mockRestore()
-    }
-    );
+      spy.mockRestore();
+    });
     it('should return a error when wallet is not present in keystore', async () => {
-
-        await expect(cosmosBase.getWallet('cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5','cosmos')).rejects.toThrow('Wallet not found');
-
+      await expect(
+        cosmosBase.getWallet(
+          'cosmos1xv9tklw7d82sezh9haa573wufgy59vmwe6xxe5',
+          'cosmos'
+        )
+      ).rejects.toThrow('Wallet not found');
     });
   });
 
   describe('getBalances', () => {
     it('should return balances', async () => {
-        await cosmosBase.init();
-        expect(cosmosBase.ready()).toBe(true);
+      await cosmosBase.init();
+      expect(cosmosBase.ready()).toBe(true);
 
-        const wallet = await cosmosBase.getWalletFromMnemonic(dummyWallet.mnemonic,'cosmos');
-        const balances = await cosmosBase.getBalances(wallet);
-        
-        expect(Object.keys(balances).length).not.toBe(0);
+      const wallet = await cosmosBase.getWalletFromMnemonic(
+        dummyWallet.mnemonic,
+        'cosmos'
+      );
+      const balances = await cosmosBase.getBalances(wallet);
 
-        const keys = Object.keys(balances) as (keyof {
-            [key:string]: string            
-        })[];
-        
-        expect(keys[0]).toEqual('ATOM');
-      });  
+      expect(Object.keys(balances).length).not.toBe(0);
+
+      const keys = Object.keys(balances) as (keyof {
+        [key: string]: string;
+      })[];
+
+      expect(keys[0]).toEqual('ATOM');
+    });
   });
-  
+
   describe('getTransaction', () => {
     let spy: jest.SpyInstance;
 
     beforeEach(async () => {
       await cosmosBase.init();
-      
+
       spy = jest.spyOn(cosmosBase, 'provider');
 
       cosmosBase.cache.flushAll();
-
     });
     it('should return a transaction from the given hash', async () => {
-
-      const tx = await cosmosBase.getTransaction(testnetTxMetadata.hash) as IndexedTx;
+      const tx = (await cosmosBase.getTransaction(
+        testnetTxMetadata.hash
+      )) as IndexedTx;
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledTimes(1);
-
 
       expect(testnetTxMetadata.hash).toEqual(tx.hash);
       expect(testnetTxMetadata.height).toEqual(tx.height);
@@ -304,13 +333,16 @@ describe('CosmosBase', () => {
       spy.mockRestore();
     });
     it('should store transaction at cache', async () => {
-      
-      const tx = await cosmosBase.getTransaction(testnetTxMetadata.hash) as IndexedTx;
+      const tx = (await cosmosBase.getTransaction(
+        testnetTxMetadata.hash
+      )) as IndexedTx;
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledTimes(1);
 
-      const cachedTx = cosmosBase.retrieveTransaction(testnetTxMetadata.hash) as IndexedTx;
+      const cachedTx = cosmosBase.retrieveTransaction(
+        testnetTxMetadata.hash
+      ) as IndexedTx;
 
       expect(cachedTx).toBeDefined();
       expect(cachedTx).not.toBeNull();
@@ -320,10 +352,16 @@ describe('CosmosBase', () => {
       spy.mockRestore();
     });
     it('should return error if transaction is not found', async () => {
-      await expect(cosmosBase.getTransaction('9AD9F104637589373EBD351506F6C8E455FB01946ECC981BA3B10220A8953111')).rejects.toThrow('Transaction not found');
+      await expect(
+        cosmosBase.getTransaction(
+          '9AD9F104637589373EBD351506F6C8E455FB01946ECC981BA3B10220A8953111'
+        )
+      ).rejects.toThrow('Transaction not found');
     });
     it('should return TransactionStatus.Success if transaction was successful', async () => {
-      const statusMessage = await cosmosBase.getTransactionStatus(testnetTxMetadata.hash);
+      const statusMessage = await cosmosBase.getTransactionStatus(
+        testnetTxMetadata.hash
+      );
 
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledTimes(1);

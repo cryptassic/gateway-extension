@@ -40,7 +40,7 @@ import {
   PerpClobGetLastTradePriceRequest,
   PerpClobGetLastTradePriceResponse,
   PerpClobBatchUpdateRequest,
-  PerpClobBatchUpdateResponse
+  PerpClobBatchUpdateResponse,
 } from './clob.requests';
 import {
   HttpException,

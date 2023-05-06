@@ -6,9 +6,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "InstantiateMsg",
     "type": "object",
-    "required": [
-      "terraswap_factory"
-    ],
+    "required": ["terraswap_factory"],
     "properties": {
       "terraswap_factory": {
         "type": "string"
@@ -22,9 +20,7 @@
     "oneOf": [
       {
         "type": "object",
-        "required": [
-          "receive"
-        ],
+        "required": ["receive"],
         "properties": {
           "receive": {
             "$ref": "#/definitions/Cw20ReceiveMsg"
@@ -35,15 +31,11 @@
       {
         "description": "Execute multiple [SwapOperation]s, i.e. multi-hop swaps.",
         "type": "object",
-        "required": [
-          "execute_swap_operations"
-        ],
+        "required": ["execute_swap_operations"],
         "properties": {
           "execute_swap_operations": {
             "type": "object",
-            "required": [
-              "operations"
-            ],
+            "required": ["operations"],
             "properties": {
               "minimum_receive": {
                 "anyOf": [
@@ -62,10 +54,7 @@
                 }
               },
               "to": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               }
             },
             "additionalProperties": false
@@ -76,24 +65,17 @@
       {
         "description": "Swap the offer to ask token. This message can only be called internally by the router contract.",
         "type": "object",
-        "required": [
-          "execute_swap_operation"
-        ],
+        "required": ["execute_swap_operation"],
         "properties": {
           "execute_swap_operation": {
             "type": "object",
-            "required": [
-              "operation"
-            ],
+            "required": ["operation"],
             "properties": {
               "operation": {
                 "$ref": "#/definitions/SwapOperation"
               },
               "to": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": ["string", "null"]
               }
             },
             "additionalProperties": false
@@ -104,9 +86,7 @@
       {
         "description": "Checks if the swap amount exceeds the minimum_receive. This message can only be called internally by the router contract.",
         "type": "object",
-        "required": [
-          "assert_minimum_receive"
-        ],
+        "required": ["assert_minimum_receive"],
         "properties": {
           "assert_minimum_receive": {
             "type": "object",
@@ -138,15 +118,11 @@
       {
         "description": "Adds swap routes to the router.",
         "type": "object",
-        "required": [
-          "add_swap_routes"
-        ],
+        "required": ["add_swap_routes"],
         "properties": {
           "add_swap_routes": {
             "type": "object",
-            "required": [
-              "swap_routes"
-            ],
+            "required": ["swap_routes"],
             "properties": {
               "swap_routes": {
                 "type": "array",
@@ -167,15 +143,11 @@
         "oneOf": [
           {
             "type": "object",
-            "required": [
-              "token"
-            ],
+            "required": ["token"],
             "properties": {
               "token": {
                 "type": "object",
-                "required": [
-                  "contract_addr"
-                ],
+                "required": ["contract_addr"],
                 "properties": {
                   "contract_addr": {
                     "type": "string"
@@ -188,15 +160,11 @@
           },
           {
             "type": "object",
-            "required": [
-              "native_token"
-            ],
+            "required": ["native_token"],
             "properties": {
               "native_token": {
                 "type": "object",
-                "required": [
-                  "denom"
-                ],
+                "required": ["denom"],
                 "properties": {
                   "denom": {
                     "type": "string"
@@ -216,11 +184,7 @@
       "Cw20ReceiveMsg": {
         "description": "Cw20ReceiveMsg should be de/serialized under `Receive()` variant in a ExecuteMsg",
         "type": "object",
-        "required": [
-          "amount",
-          "msg",
-          "sender"
-        ],
+        "required": ["amount", "msg", "sender"],
         "properties": {
           "amount": {
             "$ref": "#/definitions/Uint128"
@@ -238,16 +202,11 @@
         "oneOf": [
           {
             "type": "object",
-            "required": [
-              "terra_swap"
-            ],
+            "required": ["terra_swap"],
             "properties": {
               "terra_swap": {
                 "type": "object",
-                "required": [
-                  "ask_asset_info",
-                  "offer_asset_info"
-                ],
+                "required": ["ask_asset_info", "offer_asset_info"],
                 "properties": {
                   "ask_asset_info": {
                     "$ref": "#/definitions/AssetInfo"
@@ -265,11 +224,7 @@
       },
       "SwapRoute": {
         "type": "object",
-        "required": [
-          "ask_asset_info",
-          "offer_asset_info",
-          "swap_operations"
-        ],
+        "required": ["ask_asset_info", "offer_asset_info", "swap_operations"],
         "properties": {
           "ask_asset_info": {
             "$ref": "#/definitions/AssetInfo"
@@ -299,9 +254,7 @@
       {
         "description": "Retrieves the configuration of the router.",
         "type": "object",
-        "required": [
-          "config"
-        ],
+        "required": ["config"],
         "properties": {
           "config": {
             "type": "object",
@@ -313,16 +266,11 @@
       {
         "description": "Simulates swap operations.",
         "type": "object",
-        "required": [
-          "simulate_swap_operations"
-        ],
+        "required": ["simulate_swap_operations"],
         "properties": {
           "simulate_swap_operations": {
             "type": "object",
-            "required": [
-              "offer_amount",
-              "operations"
-            ],
+            "required": ["offer_amount", "operations"],
             "properties": {
               "offer_amount": {
                 "$ref": "#/definitions/Uint128"
@@ -342,16 +290,11 @@
       {
         "description": "Simulates a reverse swap operations, i.e. given the ask asset, how much of the offer asset is needed to perform the swap.",
         "type": "object",
-        "required": [
-          "reverse_simulate_swap_operations"
-        ],
+        "required": ["reverse_simulate_swap_operations"],
         "properties": {
           "reverse_simulate_swap_operations": {
             "type": "object",
-            "required": [
-              "ask_amount",
-              "operations"
-            ],
+            "required": ["ask_amount", "operations"],
             "properties": {
               "ask_amount": {
                 "$ref": "#/definitions/Uint128"
@@ -371,16 +314,11 @@
       {
         "description": "Gets the swap route for the given offer and ask assets.",
         "type": "object",
-        "required": [
-          "swap_route"
-        ],
+        "required": ["swap_route"],
         "properties": {
           "swap_route": {
             "type": "object",
-            "required": [
-              "ask_asset_info",
-              "offer_asset_info"
-            ],
+            "required": ["ask_asset_info", "offer_asset_info"],
             "properties": {
               "ask_asset_info": {
                 "$ref": "#/definitions/AssetInfo"
@@ -401,15 +339,11 @@
         "oneOf": [
           {
             "type": "object",
-            "required": [
-              "token"
-            ],
+            "required": ["token"],
             "properties": {
               "token": {
                 "type": "object",
-                "required": [
-                  "contract_addr"
-                ],
+                "required": ["contract_addr"],
                 "properties": {
                   "contract_addr": {
                     "type": "string"
@@ -422,15 +356,11 @@
           },
           {
             "type": "object",
-            "required": [
-              "native_token"
-            ],
+            "required": ["native_token"],
             "properties": {
               "native_token": {
                 "type": "object",
-                "required": [
-                  "denom"
-                ],
+                "required": ["denom"],
                 "properties": {
                   "denom": {
                     "type": "string"
@@ -447,16 +377,11 @@
         "oneOf": [
           {
             "type": "object",
-            "required": [
-              "terra_swap"
-            ],
+            "required": ["terra_swap"],
             "properties": {
               "terra_swap": {
                 "type": "object",
-                "required": [
-                  "ask_asset_info",
-                  "offer_asset_info"
-                ],
+                "required": ["ask_asset_info", "offer_asset_info"],
                 "properties": {
                   "ask_asset_info": {
                     "$ref": "#/definitions/AssetInfo"
@@ -491,9 +416,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "ConfigResponse",
       "type": "object",
-      "required": [
-        "terraswap_factory"
-      ],
+      "required": ["terraswap_factory"],
       "properties": {
         "terraswap_factory": {
           "type": "string"
@@ -505,9 +428,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "SimulateSwapOperationsResponse",
       "type": "object",
-      "required": [
-        "amount"
-      ],
+      "required": ["amount"],
       "properties": {
         "amount": {
           "$ref": "#/definitions/Uint128"
@@ -525,9 +446,7 @@
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "SimulateSwapOperationsResponse",
       "type": "object",
-      "required": [
-        "amount"
-      ],
+      "required": ["amount"],
       "properties": {
         "amount": {
           "$ref": "#/definitions/Uint128"
@@ -554,15 +473,11 @@
           "oneOf": [
             {
               "type": "object",
-              "required": [
-                "token"
-              ],
+              "required": ["token"],
               "properties": {
                 "token": {
                   "type": "object",
-                  "required": [
-                    "contract_addr"
-                  ],
+                  "required": ["contract_addr"],
                   "properties": {
                     "contract_addr": {
                       "type": "string"
@@ -575,15 +490,11 @@
             },
             {
               "type": "object",
-              "required": [
-                "native_token"
-              ],
+              "required": ["native_token"],
               "properties": {
                 "native_token": {
                   "type": "object",
-                  "required": [
-                    "denom"
-                  ],
+                  "required": ["denom"],
                   "properties": {
                     "denom": {
                       "type": "string"
@@ -600,16 +511,11 @@
           "oneOf": [
             {
               "type": "object",
-              "required": [
-                "terra_swap"
-              ],
+              "required": ["terra_swap"],
               "properties": {
                 "terra_swap": {
                   "type": "object",
-                  "required": [
-                    "ask_asset_info",
-                    "offer_asset_info"
-                  ],
+                  "required": ["ask_asset_info", "offer_asset_info"],
                   "properties": {
                     "ask_asset_info": {
                       "$ref": "#/definitions/AssetInfo"

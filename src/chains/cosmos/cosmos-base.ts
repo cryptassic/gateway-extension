@@ -11,11 +11,10 @@ import { IndexedTx, setupIbcExtension } from '@cosmjs/stargate';
 
 //Cosmos
 const { DirectSecp256k1Wallet } = require('@cosmjs/proto-signing');
-import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { DirectSecp256k1HdWallet } from '@cosmjs/proto-signing';
 const { StargateClient } = require('@cosmjs/stargate');
 const { toBase64, fromBase64, fromHex } = require('@cosmjs/encoding');
 const crypto = require('crypto').webcrypto;
-
 
 export interface Token {
   base: string;
@@ -110,7 +109,6 @@ export class CosmosBase {
     return this._initPromise;
   }
 
-
   async loadTokens(
     tokenListSource: string,
     tokenListType: TokenListType
@@ -166,11 +164,9 @@ export class CosmosBase {
     mnemonic: string,
     prefix: string
   ): Promise<AccountData> {
-
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(
-      mnemonic,
-      { prefix: prefix }
-    );
+    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
+      prefix: prefix,
+    });
 
     const accounts = await wallet.getAccounts();
 
@@ -192,7 +188,7 @@ export class CosmosBase {
   // TODO: Abstract-away into base.ts
   async getWallet(address: string, prefix: string): Promise<CosmosWallet> {
     const path = `${walletPath}/${this.chainName}`;
-    
+
     const encryptedPrivateKey: EncryptedPrivateKey = JSON.parse(
       await fse.readFile(`${path}/${address}.json`, 'utf8'),
       (key, value) => {

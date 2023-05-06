@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { NextFunction, Router, Request, Response } from 'express';
-import { verifyCosmosIsAvailable,verifyRequestParams } from './cosmos-middlewares';
+import {
+  verifyCosmosIsAvailable,
+  verifyRequestParams,
+} from './cosmos-middlewares';
 import { asyncHandler } from '../../services/error-handler';
 import { CosmosV2 } from './cosmos';
 import { balances, poll } from './cosmos.controllers';
@@ -18,7 +21,10 @@ import {
 export namespace CosmosRoutes {
   export const router = Router();
   export const getCosmos = async (request: Request) => {
-    const cosmos = await CosmosV2.getInstance(request.body.chain,request.body.network);
+    const cosmos = await CosmosV2.getInstance(
+      request.body.chain,
+      request.body.network
+    );
     await cosmos.init();
 
     return cosmos;

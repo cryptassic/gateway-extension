@@ -55,12 +55,14 @@ export async function getStatus(
       connections.push(await Cronos.getInstance(req.network as string));
     } else if (req.chain === 'injective') {
       connections.push(Injective.getInstance(req.network as string));
-    } else if (SupportedChains.includes(req.chain)){
-      connections.push(CosmosV2.getInstance(
-        req.chain as string, 
-        getNetwork(req.network as string)));
-    }
-    else {
+    } else if (SupportedChains.includes(req.chain)) {
+      connections.push(
+        CosmosV2.getInstance(
+          req.chain as string,
+          getNetwork(req.network as string)
+        )
+      );
+    } else {
       throw new HttpException(
         500,
         UNKNOWN_KNOWN_CHAIN_ERROR_MESSAGE(req.chain),
@@ -166,13 +168,12 @@ export async function getTokens(req: TokensRequest): Promise<TokensResponse> {
       connection = await Cronos.getInstance(req.network);
     } else if (req.chain === 'injective') {
       connection = Injective.getInstance(req.network);
-    } else if (SupportedChains.includes(req.chain)){
+    } else if (SupportedChains.includes(req.chain)) {
       connection = CosmosV2.getInstance(
         req.chain as string,
         getNetwork(req.network as string)
-      )
-    }
-    else {
+      );
+    } else {
       throw new HttpException(
         500,
         UNKNOWN_KNOWN_CHAIN_ERROR_MESSAGE(req.chain),

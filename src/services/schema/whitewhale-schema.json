@@ -18,7 +18,7 @@
                 "routerAddress": { "type": "string" },
                 "factoryAddress": { "type": "string" }
               },
-              "required": ["routerAddress","factoryAddress"],
+              "required": ["routerAddress", "factoryAddress"],
               "additionalProperties": false
             }
           },

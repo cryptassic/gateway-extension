@@ -1,9 +1,9 @@
-import { 
-  Asset, 
-  CosmosWallet, 
-  EncryptedPrivateKey, 
+import {
+  Asset,
+  CosmosWallet,
+  EncryptedPrivateKey,
   ICosmosBase,
-  ProviderNotInitializedError, 
+  ProviderNotInitializedError,
 } from './types';
 
 import fse from 'fs-extra';
@@ -19,7 +19,12 @@ import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { IndexedTx, StargateClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 
-import { TokenInfo, TokenListType, TokenValue, walletPath } from '../../services/base';
+import {
+  TokenInfo,
+  TokenListType,
+  TokenValue,
+  walletPath,
+} from '../../services/base';
 
 import { ConfigManagerCertPassphrase } from '../../services/config-manager-cert-passphrase';
 import { ReferenceCountingCloseable } from '../../services/refcounting-closeable';
@@ -28,13 +33,11 @@ import { EvmTxStorage } from '../../evm/evm.tx-storage';
 import { Crypto } from './crypto';
 import { BigNumber } from 'ethers';
 import { resolveDBPath } from './utils';
-import { DEFAULT_LIMITER, RateLimitedTendermint34Client} from './provider';
+import { DEFAULT_LIMITER, RateLimitedTendermint34Client } from './provider';
 
 const { fromBase64 } = require('@cosmjs/encoding');
 
-
 export class CosmosBase extends Crypto implements ICosmosBase {
-  
   private _providerStargate: StargateClient | undefined;
   private _tmClient: Tendermint34Client | undefined;
   private _cosmWasmClient: CosmWasmClient | undefined;
@@ -121,22 +124,33 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   async init(): Promise<void> {
     if (!this.ready() && !this._initializing) {
       this._initializing = true;
-      
-      try{
+
+      try {
         const defaultTM32Client = await Tendermint34Client.connect(this.rpcUrl);
-  
+
         // Tendermint32Client does not expose its constructor, so we built a wrapper around it to throttle requests.
         // Throttling is required, because some public RPC endpoints are really sensitive.
         // If operating on a private RPC endpoint, you can pass a custom limiter to the constructor.
-        this._tmClient = await RateLimitedTendermint34Client.create(defaultTM32Client, this._rateLimiter as Bottleneck) as Tendermint34Client;
+        this._tmClient = (await RateLimitedTendermint34Client.create(
+          defaultTM32Client,
+          this._rateLimiter as Bottleneck
+        )) as Tendermint34Client;
         this._cosmWasmClient = await CosmWasmClient.create(defaultTM32Client);
 
-        if(!this._tmClient || !this._cosmWasmClient){
-          return Promise.reject(new ProviderNotInitializedError('Either Tendermint client or CosmWasm client not initialized'));
+        if (!this._tmClient || !this._cosmWasmClient) {
+          return Promise.reject(
+            new ProviderNotInitializedError(
+              'Either Tendermint client or CosmWasm client not initialized'
+            )
+          );
         }
-      }
-      catch(error){
-        return Promise.reject(new ProviderNotInitializedError("Can't connect to Tendermint34Client",error));
+      } catch (error) {
+        return Promise.reject(
+          new ProviderNotInitializedError(
+            "Can't connect to Tendermint34Client",
+            error
+          )
+        );
       }
 
       this._providerStargate = await StargateClient.create(this._tmClient);
@@ -169,34 +183,41 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return this._initPromise;
   }
 
-  provider(): Promise<StargateClient>{
-    if(!this._providerStargate){
-      return Promise.reject( new ProviderNotInitializedError("Stargate client not initialized"));
+  provider(): Promise<StargateClient> {
+    if (!this._providerStargate) {
+      return Promise.reject(
+        new ProviderNotInitializedError('Stargate client not initialized')
+      );
     }
 
     return Promise.resolve(this._providerStargate);
   }
-  getTM32Client(): Promise<Tendermint34Client>{
-    if(!this._tmClient){
-      return Promise.reject( new ProviderNotInitializedError("Tendermint client not initialized"));
+  getTM32Client(): Promise<Tendermint34Client> {
+    if (!this._tmClient) {
+      return Promise.reject(
+        new ProviderNotInitializedError('Tendermint client not initialized')
+      );
     }
 
     return Promise.resolve(this._tmClient);
   }
-  getCosmWasmClient(): Promise<CosmWasmClient>{
-    if(!this._cosmWasmClient){
-      return Promise.reject( new ProviderNotInitializedError("CosmWasm client not initialized"));
+  getCosmWasmClient(): Promise<CosmWasmClient> {
+    if (!this._cosmWasmClient) {
+      return Promise.reject(
+        new ProviderNotInitializedError('CosmWasm client not initialized')
+      );
     }
 
     return Promise.resolve(this._cosmWasmClient);
-
   }
   getStoredAssetList(): Asset[] {
     return this.assetList;
   }
 
   getTokenForSymbol(symbol: string): TokenInfo | undefined {
-    return this.tokenList.find(token => token.symbol.toUpperCase() === symbol.toUpperCase());
+    return this.tokenList.find(
+      (token) => token.symbol.toUpperCase() === symbol.toUpperCase()
+    );
   }
 
   getAssetBySymbol(assetSymbol: string): Asset | undefined {
@@ -225,7 +246,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
     await Promise.all(
       allTokens.map(async (t: { denom: string; amount: string }) => {
-        let asset = this.getAssetByBase(t.denom);
+        const asset = this.getAssetByBase(t.denom);
 
         // TO-DO IBC token integration. Current support is only for native tokens.
         // if (!asset && t.denom.startsWith('ibc/')) {
@@ -261,7 +282,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
     let encryptedPrivateKey: EncryptedPrivateKey;
 
-    try{
+    try {
       encryptedPrivateKey = JSON.parse(
         await fse.readFile(`${path}/${address}.json`, 'utf8'),
         (key, value) => {
@@ -275,17 +296,15 @@ export class CosmosBase extends Crypto implements ICosmosBase {
           }
         }
       );
-    }
-    catch {
+    } catch {
       return Promise.reject(new Error('Wallet not found'));
     }
 
-    
     const passphrase = ConfigManagerCertPassphrase.readPassphrase();
     if (!passphrase) {
       return Promise.reject(new Error('missing passphrase'));
     }
-    
+
     return await this.decrypt(encryptedPrivateKey, passphrase, prefix);
   }
   async getWalletFromPrivateKey(
@@ -317,24 +336,24 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   cacheTransaction(tx: IndexedTx): void {
     this._cache.set(tx.hash, tx);
   }
-    
+
   retrieveTransaction(txHash: string): IndexedTx | undefined {
     const tx = this._cache.get(txHash) as any;
 
-    // NodeCache uses the built-in JSON.stringify and JSON.parse methods to store and retrieve values. 
-    // When a Uint8Array is stringified using JSON.stringify, it is converted to an object with numeric keys, 
-    // where each key represents an index in the array and each value represents the corresponding element of the array. 
+    // NodeCache uses the built-in JSON.stringify and JSON.parse methods to store and retrieve values.
+    // When a Uint8Array is stringified using JSON.stringify, it is converted to an object with numeric keys,
+    // where each key represents an index in the array and each value represents the corresponding element of the array.
     // This object can be represented as a Record<string, number> in TypeScript.
     //
     // What does that mean to us?
     // When we store a Uint8Array in the cache, it is converted to an object with numeric keys.
-    // 
+    //
     // Example:
     // Uint8Array: [1, 2, 3, 4, 5] -> cache.set -> cache.get -> Object: {0: 1, 1: 2, 2: 3, 3: 4, 4: 5}
     // So, we can't do direct comparison... because it will fail with TypeError: this is not a typed array.
-    // 
+    //
     // Solution: To convert the object back to Uint8Array. Ugly but works.
-    if(tx){
+    if (tx) {
       tx.tx = Uint8Array.from(Object.values(tx.tx));
     }
 
@@ -409,7 +428,6 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     tokenListSource: string,
     tokenListType: TokenListType
   ): Promise<void> {
-
     this.assetList = await this.getAssetList(tokenListSource, tokenListType);
     this.tokenList = await this.convertAssets(this.assetList);
 
@@ -438,7 +456,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   async convertAssets(assets: Asset[]): Promise<TokenInfo[]> {
     const tokens: TokenInfo[] = [];
     const chainId: number = this.network === 'mainnet' ? 1 : 2;
-    
+
     assets.forEach((asset) => {
       tokens.push({
         chainId: chainId,
@@ -446,10 +464,9 @@ export class CosmosBase extends Crypto implements ICosmosBase {
         name: asset.name,
         symbol: asset.symbol,
         decimals: asset.denom_units[asset.denom_units.length - 1].exponent,
-      })
+      });
     });
 
     return tokens;
   }
-
 }

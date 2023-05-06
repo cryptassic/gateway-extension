@@ -74,9 +74,7 @@ export async function getChain<T>(
   else if (chain === 'injective')
     chainInstance = Injective.getInstance(network);
   else if (SupportedChains.includes(chain))
-    chainInstance = CosmosV2.getInstance(
-      chain,
-      getNetwork(network));
+    chainInstance = CosmosV2.getInstance(chain, getNetwork(network));
   else throw new Error('unsupported chain');
 
   if (!chainInstance.ready()) {

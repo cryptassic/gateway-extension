@@ -8,14 +8,14 @@ export class CosmosV2 extends CosmosBase implements CosmosishV2 {
   private static _instances: { [name: string]: CosmosV2 };
   private _gasPrice: number;
   private _nativeTokenSymbol: string;
-  private _chainId:string;
-  private _bech32Prefix:string;
+  private _chainId: string;
+  private _bech32Prefix: string;
   private _requestCount: number;
   private _metricsLogInterval: number;
   private _metricTimer;
 
   private constructor(chain: string, network: Network) {
-    const config = getCosmosConfigV2(chain,network);
+    const config = getCosmosConfigV2(chain, network);
     super(
       chain,
       network,
@@ -40,18 +40,17 @@ export class CosmosV2 extends CosmosBase implements CosmosishV2 {
     );
   }
 
-  public static getInstance(chain: string,network: Network): CosmosV2 {
+  public static getInstance(chain: string, network: Network): CosmosV2 {
     const index = `${chain}_${network}`;
-    
+
     if (CosmosV2._instances === undefined) {
       CosmosV2._instances = {};
     }
     if (!(index in CosmosV2._instances)) {
-      CosmosV2._instances[index] = new CosmosV2(chain,network);
+      CosmosV2._instances[index] = new CosmosV2(chain, network);
     }
     return CosmosV2._instances[index];
   }
-
 
   public static getConnectedInstances(): { [name: string]: CosmosV2 } {
     return CosmosV2._instances;
@@ -76,7 +75,7 @@ export class CosmosV2 extends CosmosBase implements CosmosishV2 {
   }
 
   public get chain(): string {
-    return this.chainName
+    return this.chainName;
   }
 
   public get chainId(): string {
@@ -105,6 +104,4 @@ export class CosmosV2 extends CosmosBase implements CosmosishV2 {
       delete CosmosV2._instances[index];
     }
   }
-
-  
 }

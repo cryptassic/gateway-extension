@@ -21,9 +21,7 @@ import {
   WalletSignResponse,
 } from './wallet.requests';
 
-import {
-  isCosmosPrivateKey,
-} from './wallet.validators';
+import { isCosmosPrivateKey } from './wallet.validators';
 
 import { ConfigManagerCertPassphrase } from '../config-manager-cert-passphrase';
 
@@ -80,9 +78,8 @@ export async function addWallet(
   } else if (req.chain === 'cosmos') {
     connection = Cosmos.getInstance(req.network);
   } else if (SupportedChains.includes(req.chain)) {
-    connection = CosmosV2.getInstance(req.chain,Network.Mainnet);
-  }
-  else if (req.chain === 'near') {
+    connection = CosmosV2.getInstance(req.chain, Network.Mainnet);
+  } else if (req.chain === 'near') {
     if (!('address' in req))
       throw new HttpException(
         500,
@@ -124,13 +121,12 @@ export async function addWallet(
         passphrase
       );
     } else if (connection instanceof Cosmos) {
-
       const fromPrivate = connection.getAccountsfromPrivateKey;
       const fromMnemonic = connection.getWalletFromMnemonic;
 
-      const wallet = isCosmosPrivateKey(req.privateKey) ?
-        await fromPrivate(req.privateKey, 'cosmos') :
-        await fromMnemonic(req.privateKey, 'cosmos');
+      const wallet = isCosmosPrivateKey(req.privateKey)
+        ? await fromPrivate(req.privateKey, 'cosmos')
+        : await fromMnemonic(req.privateKey, 'cosmos');
 
       address = wallet.address;
 
@@ -138,14 +134,13 @@ export async function addWallet(
         req.privateKey,
         passphrase
       );
-    }else if (connection instanceof CosmosV2) {
-
+    } else if (connection instanceof CosmosV2) {
       const fromPrivate = connection.getWalletFromPrivateKey;
       const fromMnemonic = connection.getWalletFromMnemonic;
 
-      const wallet = isCosmosPrivateKey(req.privateKey) ?
-        await fromPrivate(req.privateKey, connection.bech32Prefix) :
-        await fromMnemonic(req.privateKey, connection.bech32Prefix);
+      const wallet = isCosmosPrivateKey(req.privateKey)
+        ? await fromPrivate(req.privateKey, connection.bech32Prefix)
+        : await fromMnemonic(req.privateKey, connection.bech32Prefix);
 
       const account = await wallet.getAccounts();
 
@@ -155,7 +150,7 @@ export async function addWallet(
         req.privateKey,
         passphrase
       );
-    }else if (connection instanceof Near) {
+    } else if (connection instanceof Near) {
       address = (
         await connection.getWalletFromPrivateKey(
           req.privateKey,
@@ -200,7 +195,11 @@ export async function removeWallet(req: RemoveWalletRequest): Promise<void> {
   await fse.remove(`./conf/wallets/${req.chain}/${req.address}.json`);
 }
 
-export async function storeWallet(path:string, address:string, encryptedPrivateKey:string): Promise<void> {
+export async function storeWallet(
+  path: string,
+  address: string,
+  encryptedPrivateKey: string
+): Promise<void> {
   await mkdirIfDoesNotExist(path);
   await fse.writeFile(`${path}/${address}.json`, encryptedPrivateKey);
 }

@@ -6,8 +6,8 @@ export namespace WhiteWhaleConfig {
     gasLimitEstimate: number;
     ttl: number;
     maximumHops: number;
-    routerAddress: (network: string) => string;
-    factoryAddress: (network: string) => string;
+    routerAddress: (chain:string,network: string) => string;
+    factoryAddress: (chain:string,network: string) => string;
     tradingTypes: (type: string) => Array<string>;
     availableNetworks: Array<AvailableNetworks>;
   }
@@ -21,13 +21,13 @@ export namespace WhiteWhaleConfig {
     ),
     ttl: ConfigManagerV2.getInstance().get(`whitewhale.ttl`),
     maximumHops: ConfigManagerV2.getInstance().get(`whitewhale.maximumHops`),
-    routerAddress: (network: string) =>
+    routerAddress: (chain:string,network: string) =>
       ConfigManagerV2.getInstance().get(
-        `whitewhale.contractAddresses.${network}.routerAddress`
+        `whitewhale.contractAddresses.${chain}.${network}.routerAddress`
       ),
-    factoryAddress: (network: string) =>
+    factoryAddress: (chain:string,network: string) =>
       ConfigManagerV2.getInstance().get(
-        `whitewhale.contractAddresses.${network}.factoryAddress`
+        `whitewhale.contractAddresses.${chain}.${network}.factoryAddress`
       ),
     tradingTypes: () => ['COSMOS_AMM'],
     availableNetworks: [

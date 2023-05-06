@@ -4,7 +4,6 @@ import {
   EncryptedPrivateKey, 
   ICosmosBase,
   ProviderNotInitializedError, 
-  TransactionStatus 
 } from './types';
 
 import fse from 'fs-extra';
@@ -342,7 +341,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return tx;
   }
 
-  async getTransactionStatus(txHash: string): Promise<TransactionStatus> {
+  async getTransactionStatus(txHash: string): Promise<boolean> {
     const tx = await this.getTransaction(txHash);
 
     if (!tx) {
@@ -350,7 +349,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     }
 
     return Promise.resolve(
-      tx.code ? TransactionStatus.Failure : TransactionStatus.Success
+      tx.code == 0 // 0 means success, anything else is an failure
     );
   }
 

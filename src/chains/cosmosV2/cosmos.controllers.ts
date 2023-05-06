@@ -71,10 +71,13 @@ export async function poll(
 ): Promise<CosmosPollResponse> {
   const initTime = Date.now();
   const transaction = await cosmos.getTransaction(req.txHash);
+  const status = await cosmos.getTransactionStatus(req.txHash);
+
   const currentBlock = await cosmos.getCurrentBlockNumber();
 
   return {
     network: cosmos.chain,
+    status: status ? 1 : 0,
     timestamp: initTime,
     txHash: req.txHash,
     currentBlock,

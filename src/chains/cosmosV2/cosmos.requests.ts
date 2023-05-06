@@ -27,6 +27,7 @@ export enum TransactionResponseStatusCode {
 
 export interface CosmosPollResponse {
   network: string;
+  status: number;
   timestamp: number;
   txHash: string;
   currentBlock: number;

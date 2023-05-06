@@ -183,9 +183,9 @@ export interface ICosmosBase {
     /**
       * Retrieves the status of the indexed transaction with the specified transaction hash.
       * @param {string} txHash - The transaction hash of the indexed transaction to retrieve.
-      * @returns {Promise<string>} A promise that resolves to the status of the indexed transaction.
+      * @returns {Promise<boolean>} A promise that resolves to the status of the indexed transaction.
     */
-    getTransactionStatus(txHash: string): Promise<string>
+    getTransactionStatus(txHash: string): Promise<boolean>
 
     /**
       * Retrieves the transaction history of the specified address.

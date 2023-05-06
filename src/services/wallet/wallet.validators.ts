@@ -74,12 +74,16 @@ export const validatePrivateKey: Validator = mkSelectingValidator(
     cosmos: mkValidator(
       'privateKey',
       invalidCosmosPrivateKeyError,
-      (val) => typeof val === 'string' && (isCosmosPrivateKey(val) || isCosmosMnemonic(val))
+      (val) =>
+        typeof val === 'string' &&
+        (isCosmosPrivateKey(val) || isCosmosMnemonic(val))
     ),
     terra: mkValidator(
       'privateKey',
       invalidCosmosPrivateKeyError,
-      (val) => typeof val === 'string' && (isCosmosPrivateKey(val) || isCosmosMnemonic(val))
+      (val) =>
+        typeof val === 'string' &&
+        (isCosmosPrivateKey(val) || isCosmosMnemonic(val))
     ),
     polygon: mkValidator(
       'privateKey',

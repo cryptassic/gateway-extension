@@ -78,7 +78,7 @@ export const validatePrivateKey: Validator = mkSelectingValidator(
         typeof val === 'string' &&
         (isCosmosPrivateKey(val) || isCosmosMnemonic(val))
     ),
-    terra: mkValidator(
+    terra2: mkValidator(
       'privateKey',
       invalidCosmosPrivateKeyError,
       (val) =>
@@ -135,7 +135,7 @@ export const validateChain: Validator = mkValidator(
       val === 'harmony' ||
       val === 'cronos' ||
       val === 'cosmos' ||
-      val === 'terra' ||
+      val === 'terra2' ||
       val === 'binance-smart-chain' ||
       val === 'injective')
 );

@@ -2,6 +2,7 @@ export const prefixMapping: Record<string, string> = {
   cosmos: 'cosmos',
   juno: 'juno',
   terra: 'terra',
+  terra2: 'terra',
   chihuahua: 'chihuahua',
 };
 
@@ -10,4 +11,5 @@ export const hdPathMapping: Record<string, number> = {
   cosmos: 118,
   juno: 118,
   terra: 330,
+  terra2: 330,
 };

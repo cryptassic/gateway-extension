@@ -6,8 +6,8 @@ export namespace WhiteWhaleConfig {
     gasLimitEstimate: number;
     ttl: number;
     maximumHops: number;
-    routerAddress: (chain:string,network: string) => string;
-    factoryAddress: (chain:string,network: string) => string;
+    routerAddress: (chain: string, network: string) => string;
+    factoryAddress: (chain: string, network: string) => string;
     tradingTypes: (type: string) => Array<string>;
     availableNetworks: Array<AvailableNetworks>;
   }
@@ -21,20 +21,20 @@ export namespace WhiteWhaleConfig {
     ),
     ttl: ConfigManagerV2.getInstance().get(`whitewhale.ttl`),
     maximumHops: ConfigManagerV2.getInstance().get(`whitewhale.maximumHops`),
-    routerAddress: (chain:string,network: string) =>
+    routerAddress: (chain: string, network: string) =>
       ConfigManagerV2.getInstance().get(
         `whitewhale.contractAddresses.${chain}.${network}.routerAddress`
       ),
-    factoryAddress: (chain:string,network: string) =>
+    factoryAddress: (chain: string, network: string) =>
       ConfigManagerV2.getInstance().get(
         `whitewhale.contractAddresses.${chain}.${network}.factoryAddress`
       ),
     tradingTypes: () => ['COSMOS_AMM'],
     availableNetworks: [
       {
-        chain: 'terra',
+        chain: 'terra2',
         networks: Object.keys(
-          ConfigManagerV2.getInstance().get('terra.networks')
+          ConfigManagerV2.getInstance().get('terra2.networks')
         ),
       },
       // {

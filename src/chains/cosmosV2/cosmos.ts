@@ -3,6 +3,7 @@ import { CosmosBase } from './cosmos-base';
 import { Network } from './types';
 import { getCosmosConfigV2 } from '../cosmos/cosmos.config';
 import { logger } from '../../services/logger';
+import { getIndex } from './utils';
 
 export class CosmosV2 extends CosmosBase implements CosmosishV2 {
   private static _instances: { [name: string]: CosmosV2 };
@@ -41,7 +42,7 @@ export class CosmosV2 extends CosmosBase implements CosmosishV2 {
   }
 
   public static getInstance(chain: string, network: Network): CosmosV2 {
-    const index = `${chain}_${network}`;
+    const index = getIndex(chain, network);
 
     if (CosmosV2._instances === undefined) {
       CosmosV2._instances = {};

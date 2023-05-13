@@ -13,3 +13,7 @@ export function resolveDBPath(oldPath: string): string {
 export function getNetwork(network: string): Network {
   return network === 'mainnet' ? Network.Mainnet : Network.Testnet;
 }
+
+export function getIndex(chain:string, network:string): string {
+  return `${chain}_${network}`;
+}

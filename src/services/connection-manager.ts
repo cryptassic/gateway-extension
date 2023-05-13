@@ -18,6 +18,7 @@ import { InjectiveCLOB } from '../connectors/injective/injective';
 import { InjectiveClobPerp } from '../connectors/injective_perpetual/injective.perp';
 import { Injective } from '../chains/injective/injective';
 import { ZigZag } from '../connectors/zigzag/zigzag';
+import { WhiteWhale } from '../connectors/terraswap/terraswap';
 import {
   CLOBish,
   Ethereumish,
@@ -26,6 +27,7 @@ import {
   RefAMMish,
   Uniswapish,
   UniswapLPish,
+  TerraSwapish,
   Xdcish,
 } from './common-interfaces';
 import { Traderjoe } from '../connectors/traderjoe/traderjoe';
@@ -91,7 +93,8 @@ export type ConnectorUnion =
   | RefAMMish
   | CLOBish
   | ZigZag
-  | InjectiveClobPerp;
+  | InjectiveClobPerp
+  | TerraSwapish;
 
 export type Connector<T> = T extends Uniswapish
   ? Uniswapish
@@ -107,6 +110,8 @@ export type Connector<T> = T extends Uniswapish
   ? ZigZag
   : T extends InjectiveClobPerp
   ? InjectiveClobPerp
+  : T extends TerraSwapish
+  ? TerraSwapish
   : never;
 
 export async function getConnector<T>(
@@ -161,6 +166,8 @@ export async function getConnector<T>(
     connectorInstance = DexalotCLOB.getInstance(network);
   } else if (chain === 'ethereum' && connector === 'zigzag') {
     connectorInstance = ZigZag.getInstance(network);
+  } else if (SupportedChains.includes(chain) && connector === 'white_whale') {
+    connectorInstance = WhiteWhale.getInstance(chain, network);
   } else {
     throw new Error('unsupported chain or connector');
   }

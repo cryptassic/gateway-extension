@@ -11,6 +11,8 @@
  * @property {LogoURIs} logo_URIs - An object with png and svg properties that represent the URIs for the asset's logos.
  * @property {string} coingecko_id - The CoinGecko ID for the asset.
  */
+
+
 export interface Asset {
   description: string;
   denom_units: Denomunit[];
@@ -45,4 +47,16 @@ export interface LogoURIs {
 export interface Denomunit {
   denom: string;
   exponent: number;
+}
+
+export type NativeAsset = {
+  native_token: {
+    denom: string;
+  };
+}
+
+export type ExternalAsset = {
+  token: {
+    contract_addr: string;
+  };
 }

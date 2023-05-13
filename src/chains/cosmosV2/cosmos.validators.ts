@@ -23,6 +23,10 @@ export const isValidCosmosAddress = (str: string): boolean => {
   }
 };
 
+export const isValidCosmosNetwork = (network: string): boolean => {
+  return network === 'mainnet' || network === 'testnet';
+}
+
 // given a request, look for a key called address that is a Cosmos address
 export const validatePublicKey: Validator = mkValidator(
   'address',

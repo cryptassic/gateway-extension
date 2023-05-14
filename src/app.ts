@@ -2,7 +2,7 @@
 import express from 'express';
 import { Request, Response, NextFunction } from 'express';
 import { ConfigRoutes } from './services/config/config.routes';
-import { CosmosRoutes } from './chains/cosmos/cosmos.routes';
+// import { CosmosRoutes } from './chains/cosmos/cosmos.routes';
 import { WalletRoutes } from './services/wallet/wallet.routes';
 import { logger } from './services/logger';
 import { addHttps } from './https';
@@ -20,6 +20,7 @@ import { EVMRoutes } from './evm/evm.routes';
 import { AmmRoutes, AmmLiquidityRoutes, PerpAmmRoutes } from './amm/amm.routes';
 import { InjectiveRoutes } from './chains/injective/injective.routes';
 import { CosmosRoutes as CosmosRoutesV2 } from './chains/cosmosV2/cosmos.routes';
+import { DEXRoutes } from './chains/cosmosV2/dex/dex.routes';
 import { NearRoutes } from './chains/near/near.routes';
 import { CLOBRoutes, PerpClobRoutes } from './clob/clob.routes';
 
@@ -59,8 +60,9 @@ gatewayApp.use('/amm/liquidity', AmmLiquidityRoutes.router);
 gatewayApp.use('/wallet', WalletRoutes.router);
 gatewayApp.use('/clob', CLOBRoutes.router);
 gatewayApp.use('/clob/perp', PerpClobRoutes.router);
-gatewayApp.use('/cosmos', CosmosRoutes.router);
-gatewayApp.use('/cosmos/v2', CosmosRoutesV2.router);
+gatewayApp.use('/cosmos/core', CosmosRoutesV2.router);
+gatewayApp.use('/cosmos/dex', DEXRoutes.router);
+// gatewayApp.use('/cosmos/v2', CosmosRoutesV2.router);
 gatewayApp.use('/near', NearRoutes.router);
 
 // a simple route to test that the server is running

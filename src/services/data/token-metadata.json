@@ -1,307 +1,566 @@
 {
-    "uwhale_migaloo":{
-        "description": "The native token of Migaloo Chain",
-        "denom_units": [
-        {
-            "denom": "uwhale",
-            "exponent": 0
+  "uwhale_migaloo": {
+    "description": "The native token of Migaloo Chain",
+    "denom_units": [
+      {
+        "denom": "uwhale",
+        "exponent": 0
+      },
+      {
+        "denom": "whale",
+        "exponent": 6
+      }
+    ],
+    "base": "uwhale",
+    "name": "Whale",
+    "display": "whale",
+    "symbol": "WHALE",
+    "logo_URIs": {
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/white-whale.svg",
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/white-whale.png"
+    },
+    "coingecko_id": "white-whale"
+  },
+  "uatom_cosmoshub": {
+    "description": "The native staking and governance token of the Cosmos Hub.",
+    "denom_units": [
+      {
+        "denom": "uatom",
+        "exponent": 0
+      },
+      {
+        "denom": "atom",
+        "exponent": 6
+      }
+    ],
+    "base": "uatom",
+    "name": "Cosmos Hub Atom",
+    "display": "atom",
+    "symbol": "ATOM",
+    "logo_URIs": {
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png",
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.svg"
+    },
+    "coingecko_id": "cosmos"
+  },
+  "ujuno_juno": {
+    "description": "The native token of JUNO Chain",
+    "denom_units": [
+      {
+        "denom": "ujuno",
+        "exponent": 0
+      },
+      {
+        "denom": "juno",
+        "exponent": 6
+      }
+    ],
+    "base": "ujuno",
+    "name": "Juno",
+    "display": "juno",
+    "symbol": "JUNO",
+    "logo_URIs": {
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/juno.png",
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/juno.svg"
+    },
+    "coingecko_id": "juno-network"
+  },
+  "uusdc_axelar": {
+    "description": "Circle's stablecoin on Axelar",
+    "denom_units": [
+      {
+        "denom": "uusdc",
+        "exponent": 0
+      },
+      {
+        "denom": "usdc",
+        "exponent": 6
+      }
+    ],
+    "base": "uusdc",
+    "name": "USD Coin",
+    "display": "usdc",
+    "symbol": "USDC",
+    "traces": [
+      {
+        "type": "bridge",
+        "counterparty": {
+          "chain_name": "ethereum",
+          "base_denom": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
         },
-        {
-            "denom": "whale",
-            "exponent": 6
-        }
-        ],
-        "base": "uwhale",
-        "name": "Whale",
-        "display": "whale",
-        "symbol": "WHALE",
-        "logo_URIs": {
-        "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/white-whale.svg",
-        "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/white-whale.png"
-        },
-        "coingecko_id": "white-whale"
-    },
-    "uatom_cosmoshub":{
-        "description": "The native staking and governance token of the Cosmos Hub.",
-        "denom_units": [
-        {
-            "denom": "uatom",
-            "exponent": 0
-        },
-        {
-            "denom": "atom",
-            "exponent": 6
-        }
-        ],
-        "base": "uatom",
-        "name": "Cosmos Hub Atom",
-        "display": "atom",
-        "symbol": "ATOM",
-        "logo_URIs": {
-        "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.png",
-        "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/cosmoshub/images/atom.svg"
-        },
-        "coingecko_id": "cosmos"
-    },
-    "ujuno_juno":{
-        "description": "The native token of JUNO Chain",
-        "denom_units": [
-          {
-            "denom": "ujuno",
-            "exponent": 0
-          },
-          {
-            "denom": "juno",
-            "exponent": 6
-          }
-        ],
-        "base": "ujuno",
-        "name": "Juno",
-        "display": "juno",
-        "symbol": "JUNO",
-        "logo_URIs": {
-          "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/juno.png",
-          "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/juno.svg"
-        },
-        "coingecko_id": "juno-network"
-    },
-    "uusdc_axelar":{
-        "description": "Circle's stablecoin on Axelar",
-        "denom_units": [
-          {
-            "denom": "uusdc",
-            "exponent": 0
-          },
-          {
-            "denom": "usdc",
-            "exponent": 6
-          }
-        ],
-        "base": "uusdc",
-        "name": "USD Coin",
-        "display": "usdc",
-        "symbol": "USDC",
-        "traces": [
-          {
-            "type": "bridge",
-            "counterparty": {
-              "chain_name": "ethereum",
-              "base_denom": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
-            },
-            "provider": "Axelar"
-          }
-        ],
-        "logo_URIs": {
-          "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.svg",
-          "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png"
-        }
-    },
-    "uluna_terra2":{
-        "description": "The native staking token of Terra.",
-        "denom_units": [
-          {
-            "denom": "uluna",
-            "exponent": 0
-          },
-          {
-            "denom": "luna",
-            "exponent": 6
-          }
-        ],
-        "base": "uluna",
-        "name": "Luna",
-        "display": "luna",
-        "symbol": "LUNA",
-        "logo_URIs": {
-          "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/images/luna.svg",
-          "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/images/luna.png"
-        },
-        "coingecko_id": "terra-luna-2"
-    },
-    "factory/migaloo1mf6ptkssddfmxvhdx0ech0k03ktp6kf9yk59renau2gvht3nq2gqdhts4u/boneWhale_migaloo":{
-        "description": "boneWHALE",
-        "denom_units": [
-          {
-            "denom": "factory/migaloo1mf6ptkssddfmxvhdx0ech0k03ktp6kf9yk59renau2gvht3nq2gqdhts4u/boneWhale",
-            "exponent": 0
-          },
-          {
-            "denom": "boneWHALE",
-            "exponent": 6
-          }
-        ],
-        "base": "factory/migaloo1mf6ptkssddfmxvhdx0ech0k03ktp6kf9yk59renau2gvht3nq2gqdhts4u/boneWhale",
-        "name": "boneWHALE",
-        "display": "boneWHALE",
-        "symbol": "bWHALE",
-        "logo_URIs": {
-          "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/bWHALE.svg",
-          "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/bWHALE.png"
-        }
-    },
-    "factory/migaloo1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgshqdky4/ampWHALE_migaloo":{
-        "description": "ampWHALE",
-        "denom_units": [
-          {
-            "denom": "factory/migaloo1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgshqdky4/ampWHALE",
-            "exponent": 0
-          },
-          {
-            "denom": "ampWHALE",
-            "exponent": 6
-          }
-        ],
-        "base": "factory/migaloo1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgshqdky4/ampWHALE",
-        "name": "ampWHALE",
-        "display": "ampWHALE",
-        "symbol": "ampWHALE",
-        "logo_URIs": {
-          "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/ampWhale.svg"
-        }
-    },
-    "terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv_terra2":{
-        "description": "Lion DAO is a community DAO that lives on the Terra blockchain with the mission to reactivate the LUNAtic community and showcase Terra protocols & tooling",
-        "type_asset": "cw20",
-        "address": "terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv",
-        "denom_units": [
-          {
-            "denom": "cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv",
-            "exponent": 0
-          },
-          {
-            "denom": "roar",
-            "exponent": 6
-          }
-        ],
-        "base": "cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv",
-        "name": "Lion DAO",
-        "display": "roar",
-        "symbol": "ROAR",
-        "logo_URIs": {
-          "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/images/roar.png"
-        }
-    },
-    "terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26_terra2":{
-        "description": "Astroport is a neutral marketplace where anyone, from anywhere in the galaxy, can dock to trade their wares.",
-        "denom_units": [
-          {
-            "denom": "cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26",
-            "exponent": 0
-          },
-          {
-            "denom": "astro",
-            "exponent": 6
-          }
-        ],
-        "type_asset": "cw20",
-        "address": "terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26",
-        "base": "cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26",
-        "name": "Astroport",
-        "display": "astro",
-        "symbol": "ASTRO",
-        "logo_URIs": {
-          "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra/images/astro.png"
-        },
-        "coingecko_id": "astroport-fi"
-    },
-    "terra1wy6c9dxvr3998cgueewh77nsg0lsykssgg7dldyp8prvc35n0sls0gxcy4_terra2":{
-        "name": "ibc/36A0...B8DB-ibc/2739...5EB2-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "0",
-        "mint": {
-            "minter": "terra1ma4ar7ygensq2pplw0ss9v289tzmc728f3qv84u43k5n8mp6ex7q7uv93s",
-            "cap": null
-        }
-    },
-    "terra1avfsch3ee82wyrpwlawecyz6zktr9jln0zaxp58xuvmxyl5g305q3rwuj3_terra2":{
-        "name": "ibc/2739...5EB2-ibc/4CD5...3D04-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "2646799",
-        "mint": {
-            "minter": "terra1p2xgcr2ewnetug8ahqms5y3k6rxyh2xglnzzx500ylh4420h9ucqz8w7x5",
-            "cap": null
-        }
-    },
-    "terra17ly9laewec70qu6tl0e3qrwh2vhz9akpf2jd7mxqram63xg2n0rsj36xvr_terra2":{
-        "name": "ibc/2739...5EB2-ibc/B350...C9E4-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "6530614",
-        "mint": {
-          "minter": "terra17l9xj8f6m8smumhn8wgpgnswr3mu60wfkcm6pjc69drxp0t398rs7335vn",
-          "cap": null
-        }
-    },
-    "terra1adp223mw8937arxcfl36acjjyn2dcf7wzp8h09jek5k0gw3vch8sqlq6su_terra2":{
-        "name": "ibc/2739...5EB2-uluna-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "1954836944",
-        "mint": {
-          "minter": "terra1frfcj4xhvx0emkup4vel5jun9zun0797j5yhn7ant3r4jzy9mkxqzcwev6",
-          "cap": null
-        }
-    },
-    "terra1le46uu9qjk53aktjs8dev96sl9sd2ujvcpspk75pdeg0txfvhyuswm6653_terra2":{
-        "name": "ibc/517E...D84E-ibc/36A0...B8DB-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "1078059453151",
-        "mint": {
-          "minter": "terra1j9jmsplecj9ay2py27953p84nfmv7f6ce75ms5fleyhd0aecpc7q0hgmsa",
-          "cap": null
-        }
-    },
-    "terra1necjy4mmes4fvsvjvne5kkl3zhszg7s3s3jayfgzudsshnpv69kss5m2k2_terra2":{
-        "name": "ibc/36A0...B8DB-ibc/B350...C9E4-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "178586281729",
-        "mint": {
-          "minter": "terra1qdu4g5zxxtmwsd95v8vjslq5874nkcull7ejycm0gy2v7p5qc67qenkf8t",
-          "cap": null
-        }
-    },
-    "terra16z3ksy6aqjkug8l3u48q0kvdaqk3dgaytl7ykt6vg2he9d6z9rgslr4k7l_terra2":{
-        "name": "ibc/B3F6...EC36-ibc/36A0...B8DB-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "1027595450401",
-        "mint": {
-          "minter": "terra1ntx595elf3ukxcd0wy76h24rzztcv2p6n3wmfd358ks95prv42fs9mn63n",
-          "cap": null
-        }
-    },
-    "terra1j7zej67gl6kjmgc2tl2hggp4xcvchnrn5reffc489u6ffsvm7aeq5k4sas_terra2":{
-        "name": "ibc/36A0...B8DB-ROAR-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "120779790073680",
-        "mint": {
-          "minter": "terra1g8clplgv3ah405qjrf9yhkgur9zqlqayt8ftrvkuzsm5am7pr9ls7s26rx",
-          "cap": null
-        }
-    },
-    "terra1rlmjwapg7y3p39aucq2rq5rffyns7z94twm8acl59na4d9aehu9sl2dfkc_terra2":{
-        "name": "uluna-ibc/B350...C9E4-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "6611282004",
-        "mint": {
-          "minter": "terra1ck8nkz35sa8mmqez3lqrm77vh36n2gd2f0dxjde4uemkwsjt22pqgk49zj",
-          "cap": null
-        }
-    },
-    "terra19glrs2vtgxaxww39cq5acxapgv2v8hyw562zmsk7ucn4yznmyv3sljewv9_terra2":{
-        "name": "uluna-ASTRO-LP",
-        "symbol": "uLP",
-        "decimals": 6,
-        "total_supply": "116659066684",
-        "mint": {
-          "minter": "terra1e6t37fgjkxrzdx2s95fyq6jdra5s82720vhtmxvx4yhcvnsrey4ssmrya6",
-          "cap": null
-        }
+        "provider": "Axelar"
+      }
+    ],
+    "logo_URIs": {
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.svg",
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/axelar/images/usdc.png"
     }
+  },
+  "uluna_terra2": {
+    "description": "The native staking token of Terra.",
+    "denom_units": [
+      {
+        "denom": "uluna",
+        "exponent": 0
+      },
+      {
+        "denom": "luna",
+        "exponent": 6
+      }
+    ],
+    "base": "uluna",
+    "name": "Luna",
+    "display": "luna",
+    "symbol": "LUNA",
+    "logo_URIs": {
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/images/luna.svg",
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/images/luna.png"
+    },
+    "coingecko_id": "terra-luna-2"
+  },
+  "factory/migaloo1mf6ptkssddfmxvhdx0ech0k03ktp6kf9yk59renau2gvht3nq2gqdhts4u/boneWhale_migaloo": {
+    "description": "boneWHALE",
+    "denom_units": [
+      {
+        "denom": "factory/migaloo1mf6ptkssddfmxvhdx0ech0k03ktp6kf9yk59renau2gvht3nq2gqdhts4u/boneWhale",
+        "exponent": 0
+      },
+      {
+        "denom": "boneWHALE",
+        "exponent": 6
+      }
+    ],
+    "base": "factory/migaloo1mf6ptkssddfmxvhdx0ech0k03ktp6kf9yk59renau2gvht3nq2gqdhts4u/boneWhale",
+    "name": "boneWHALE",
+    "display": "boneWHALE",
+    "symbol": "bWHALE",
+    "logo_URIs": {
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/bWHALE.svg",
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/bWHALE.png"
+    }
+  },
+  "factory/migaloo1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgshqdky4/ampWHALE_migaloo": {
+    "description": "ampWHALE",
+    "denom_units": [
+      {
+        "denom": "factory/migaloo1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgshqdky4/ampWHALE",
+        "exponent": 0
+      },
+      {
+        "denom": "ampWHALE",
+        "exponent": 6
+      }
+    ],
+    "base": "factory/migaloo1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgshqdky4/ampWHALE",
+    "name": "ampWHALE",
+    "display": "ampWHALE",
+    "symbol": "ampWHALE",
+    "logo_URIs": {
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/migaloo/images/ampWhale.svg"
+    }
+  },
+  "terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv_terra2": {
+    "description": "Lion DAO is a community DAO that lives on the Terra blockchain with the mission to reactivate the LUNAtic community and showcase Terra protocols & tooling",
+    "type_asset": "cw20",
+    "address": "terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv",
+    "denom_units": [
+      {
+        "denom": "cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv",
+        "exponent": 0
+      },
+      {
+        "denom": "roar",
+        "exponent": 6
+      }
+    ],
+    "base": "cw20:terra1lxx40s29qvkrcj8fsa3yzyehy7w50umdvvnls2r830rys6lu2zns63eelv",
+    "name": "Lion DAO",
+    "display": "roar",
+    "symbol": "ROAR",
+    "logo_URIs": {
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/images/roar.png"
+    }
+  },
+  "terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26_terra2": {
+    "description": "Astroport is a neutral marketplace where anyone, from anywhere in the galaxy, can dock to trade their wares.",
+    "denom_units": [
+      {
+        "denom": "cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26",
+        "exponent": 0
+      },
+      {
+        "denom": "astro",
+        "exponent": 6
+      }
+    ],
+    "type_asset": "cw20",
+    "address": "terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26",
+    "base": "cw20:terra1nsuqsk6kh58ulczatwev87ttq2z6r3pusulg9r24mfj2fvtzd4uq3exn26",
+    "name": "Astroport",
+    "display": "astro",
+    "symbol": "ASTRO",
+    "logo_URIs": {
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/terra/images/astro.png"
+    },
+    "coingecko_id": "astroport-fi"
+  },
+  "terra1wy6c9dxvr3998cgueewh77nsg0lsykssgg7dldyp8prvc35n0sls0gxcy4_terra2": {
+    "name": "ibc/36A0...B8DB-ibc/2739...5EB2-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "0",
+    "mint": {
+      "minter": "terra1ma4ar7ygensq2pplw0ss9v289tzmc728f3qv84u43k5n8mp6ex7q7uv93s",
+      "cap": null
+    }
+  },
+  "terra1avfsch3ee82wyrpwlawecyz6zktr9jln0zaxp58xuvmxyl5g305q3rwuj3_terra2": {
+    "name": "ibc/2739...5EB2-ibc/4CD5...3D04-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "2646799",
+    "mint": {
+      "minter": "terra1p2xgcr2ewnetug8ahqms5y3k6rxyh2xglnzzx500ylh4420h9ucqz8w7x5",
+      "cap": null
+    }
+  },
+  "terra17ly9laewec70qu6tl0e3qrwh2vhz9akpf2jd7mxqram63xg2n0rsj36xvr_terra2": {
+    "name": "ibc/2739...5EB2-ibc/B350...C9E4-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "6530614",
+    "mint": {
+      "minter": "terra17l9xj8f6m8smumhn8wgpgnswr3mu60wfkcm6pjc69drxp0t398rs7335vn",
+      "cap": null
+    }
+  },
+  "terra1adp223mw8937arxcfl36acjjyn2dcf7wzp8h09jek5k0gw3vch8sqlq6su_terra2": {
+    "name": "ibc/2739...5EB2-uluna-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "1954836944",
+    "mint": {
+      "minter": "terra1frfcj4xhvx0emkup4vel5jun9zun0797j5yhn7ant3r4jzy9mkxqzcwev6",
+      "cap": null
+    }
+  },
+  "terra1le46uu9qjk53aktjs8dev96sl9sd2ujvcpspk75pdeg0txfvhyuswm6653_terra2": {
+    "name": "ibc/517E...D84E-ibc/36A0...B8DB-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "1078059453151",
+    "mint": {
+      "minter": "terra1j9jmsplecj9ay2py27953p84nfmv7f6ce75ms5fleyhd0aecpc7q0hgmsa",
+      "cap": null
+    }
+  },
+  "terra1necjy4mmes4fvsvjvne5kkl3zhszg7s3s3jayfgzudsshnpv69kss5m2k2_terra2": {
+    "name": "ibc/36A0...B8DB-ibc/B350...C9E4-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "178586281729",
+    "mint": {
+      "minter": "terra1qdu4g5zxxtmwsd95v8vjslq5874nkcull7ejycm0gy2v7p5qc67qenkf8t",
+      "cap": null
+    }
+  },
+  "terra16z3ksy6aqjkug8l3u48q0kvdaqk3dgaytl7ykt6vg2he9d6z9rgslr4k7l_terra2": {
+    "name": "ibc/B3F6...EC36-ibc/36A0...B8DB-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "1027595450401",
+    "mint": {
+      "minter": "terra1ntx595elf3ukxcd0wy76h24rzztcv2p6n3wmfd358ks95prv42fs9mn63n",
+      "cap": null
+    }
+  },
+  "terra1j7zej67gl6kjmgc2tl2hggp4xcvchnrn5reffc489u6ffsvm7aeq5k4sas_terra2": {
+    "name": "ibc/36A0...B8DB-ROAR-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "120779790073680",
+    "mint": {
+      "minter": "terra1g8clplgv3ah405qjrf9yhkgur9zqlqayt8ftrvkuzsm5am7pr9ls7s26rx",
+      "cap": null
+    }
+  },
+  "terra1rlmjwapg7y3p39aucq2rq5rffyns7z94twm8acl59na4d9aehu9sl2dfkc_terra2": {
+    "name": "uluna-ibc/B350...C9E4-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "6611282004",
+    "mint": {
+      "minter": "terra1ck8nkz35sa8mmqez3lqrm77vh36n2gd2f0dxjde4uemkwsjt22pqgk49zj",
+      "cap": null
+    }
+  },
+  "terra19glrs2vtgxaxww39cq5acxapgv2v8hyw562zmsk7ucn4yznmyv3sljewv9_terra2": {
+    "name": "uluna-ASTRO-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "total_supply": "116659066684",
+    "mint": {
+      "minter": "terra1e6t37fgjkxrzdx2s95fyq6jdra5s82720vhtmxvx4yhcvnsrey4ssmrya6",
+      "cap": null
+    }
+  },
+  "juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup_juno": {
+    "description": "The native token cw20 for Loop Finance on Juno Chain",
+    "type_asset": "cw20",
+    "address": "juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup",
+    "denom_units": [
+      {
+        "denom": "cw20:juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup",
+        "exponent": 0
+      },
+      {
+        "denom": "loop",
+        "exponent": 6
+      }
+    ],
+    "base": "cw20:juno1qsrercqegvs4ye0yqg93knv73ye5dc3prqwd6jcdcuj8ggp6w0us66deup",
+    "name": "Loop Finance",
+    "display": "loop",
+    "symbol": "LOOP",
+    "logo_URIs": {
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/loop.png"
+    },
+    "coingecko_id": "loop"
+  },
+  "juno1zmsgdpdej4g4m4fc5y5p6wr8gn6peh9vx5dk5vf7v7w32jjmcetshl0yw4_juno": {
+    "name": "ujuno-LOOP-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno158mcxa5ajpjfxgy60asrg3m0823m2el5n333xdypcw8h5uwhuvyqkyc4a7",
+      "cap": null
+    }
+  },
+  "juno1a68d46fyzyq50t3geqe5c50kmswhrezyec8hz6sfngts6k4e77nqqd3yd0_juno": {
+    "name": "ibc/01BA...2ABF-ibc/3A6A...5A5C-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno160uh2xtegzvc7ekte5x377aud0y40hw75m9l92h7pkqk3l3eg9vqltel48",
+      "cap": null
+    }
+  },
+  "juno1fkejwm7alyfnjngtpgtxvreqfcz8uwer2jgwjn40suvgq20tm8ss73cj05_juno": {
+    "name": "ibc/C4CF...19F9-ibc/107D...5CBF-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1k9cw9yghf04cqlu290n4zlveker5cev5ahweqkh07y7zc3xq9hrshjruk8",
+      "cap": null
+    }
+  },
+  "juno1cvnwcgkhxaj70gjg7x57fh447m2wj5yx7p2puu4mqgtf62qphtds88mdsd_juno": {
+    "name": "ibc/2F7C...C0AF-ibc/3A6A...5A5C-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1dwmrkyhed4szdxxk6l0c98hseancjtdet58n77tfhv2as8cdjdlq7vps00",
+      "cap": null
+    }
+  },
+  "juno1lqc9u7lv52jpqgewhtl4w2yjch0234ewfz2z3ykl0z2q67xyfrnsjqw95j_juno": {
+    "name": "ibc/3A6A...5A5C-ibc/EAC3...8034-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1g7ctm7dynjsduf597d8nvt36kwvhfutmzrczdnm00tsz48uryvzqp7p32h",
+      "cap": null
+    }
+  },
+  "juno12caca3ymhxr7a73wtdefye86djs69704ktzkv02xkf59se8hx72qwyxq72_juno": {
+    "name": "ibc/C4CF...19F9-ibc/EAC3...8034-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1v6stcdrvwrthfvcwvlmmzht32ft9g9nw85tthcjqer242xg3nvdq8fjasx",
+      "cap": null
+    }
+  },
+  "juno1g3549wm0tffdzdpasufjr0nccu9ynzpzway5g3u6ucmhfd4ds05swswasc_juno": {
+    "name": "ibc/C4CF...19F9-ujuno-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1p9z8xe96fyvg3h5gtvnpjjv2u47q6l7sdhg6asmyfgc6q8l8ttgqfvxnxh",
+      "cap": null
+    }
+  },
+  "juno19mkjyvydnq440a3ms4fccpltrzmxlvlz6nvz6qul0mgxvse42n2q9qkf72_juno": {
+    "name": "ujuno-ibc/EAC3...8034-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1wkjy5wl0pd5xxvwtrx37r7ydkt3dkwvghs00tvvqyd3xnjukah7qpj0vj7",
+      "cap": null
+    }
+  },
+  "juno15u3dt79t6sxxa3x3kpkhzsy56edaa5a66wvt3kxmukqjz2sx0hes5sn38g_juno": {
+    "description": "Token governance for Junoswap",
+    "type_asset": "cw20",
+    "address": "juno15u3dt79t6sxxa3x3kpkhzsy56edaa5a66wvt3kxmukqjz2sx0hes5sn38g",
+    "denom_units": [
+      {
+        "denom": "cw20:juno15u3dt79t6sxxa3x3kpkhzsy56edaa5a66wvt3kxmukqjz2sx0hes5sn38g",
+        "exponent": 0
+      },
+      {
+        "denom": "raw",
+        "exponent": 6
+      }
+    ],
+    "base": "cw20:juno15u3dt79t6sxxa3x3kpkhzsy56edaa5a66wvt3kxmukqjz2sx0hes5sn38g",
+    "name": "JunoSwap",
+    "display": "raw",
+    "symbol": "RAW",
+    "logo_URIs": {
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/raw.svg",
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/images/raw.png"
+    },
+    "coingecko_id": "junoswap-raw-dao"
+  },
+  "juno1zetjfu8j0ndt4d3mgewhatgpfrj8pwhev2tdp3sa9dwwmqlgdxws4257we_juno": {
+    "name": "ujuno-RAW-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno1xpt9mkncxadadn5t8s4t74nmw5zlarghmpme26857s07xz388d6sukvtnz",
+      "cap": null
+    }
+  },
+  "juno1mvkgcr5uce2rnpzr4qrzf50hx4qreuwzlt7fzsjrhjud3xnjmttq5mkh2m_juno": {
+    "description": "The GraveDigger is the Liquid Staking Product of BackBone Labs. It's liquid staking derivative (LSD) is bJuno.",
+    "type_asset": "cw20",
+    "address": "juno1mvkgcr5uce2rnpzr4qrzf50hx4qreuwzlt7fzsjrhjud3xnjmttq5mkh2m",
+    "denom_units": [
+      {
+        "denom": "cw20:juno1mvkgcr5uce2rnpzr4qrzf50hx4qreuwzlt7fzsjrhjud3xnjmttq5mkh2m",
+        "exponent": 0
+      },
+      {
+        "denom": "bjuno",
+        "exponent": 6
+      }
+    ],
+    "base": "cw20:juno1mvkgcr5uce2rnpzr4qrzf50hx4qreuwzlt7fzsjrhjud3xnjmttq5mkh2m",
+    "name": "bJuno Token",
+    "display": "",
+    "symbol": "bJuno",
+    "logo_URIs": {},
+    "coingecko_id": ""
+  },
+  "juno1qdj9shhfasyjuvncawstvmcqp2afxet0x36jaaxt0udp6gq27ftq9xr5d4_juno": {
+    "name": "bJuno-ujuno-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "juno12w6f755zx9l0vflfvql2jvl2jlyv348esyh7utvx727nwpy2jg5qsjemyx",
+      "cap": null
+    }
+  },
+  "inj185gqewrlde8vrqw7j8lpad67v8jfrx9u28w38t_injective": {
+    "name": "ibc/168C...0A32-ibc/D6E6...F445-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "inj1gyxlm5j537d8pvl5eqfswya93delvh3nlhustk",
+      "cap": null
+    }
+  },
+  "peggy0xdAC17F958D2ee523a2206206994597C13D831ec7_injective": {
+    "description": "Injective bridged ERC20 Tether USDT token",
+    "type_asset": "cw20",
+    "address": "",
+    "denom_units": [
+      {
+        "denom": "peggy0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "exponent": 6
+      }
+    ],
+    "base": "cw20:peggy0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    "name": "Tether",
+    "display": "Tether USDT",
+    "symbol": "USDT",
+    "logo_URIs": {
+      "png": "https://static.alchemyapi.io/images/assets/825.png"
+    },
+    "coingecko_id": ""
+  },
+  "inj1j30wx6kjfsessdx5mlp32hqwklj48ufvxx6tyc_injective": {
+    "name": "ibc/C4CF...19F9-peggy0xdAC...ec7-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "inj14zykjnz94dr9nj4v2yzpvnlrw5uurk5hhea8xw",
+      "cap": null
+    }
+  },
+  "inj1a6tcf60pyz8qq2n532dzcs7s7sj8klcmj94nhd_injective": {
+    "name": "ibc/ECB0...7CC2-ibc/D6E6...F445-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "inj17dez7atlgwrl7lxzszxjy7gzuj325n8re3f7mh",
+      "cap": null
+    }
+  },
+  "inj1869zena97sctemj78sgjmu737p2g9490esftk5_injective": {
+    "name": "peggy0xdAC...ec7-ibc/D6E6...F445-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "inj1t9daxn85sz688vkn8wu4w47jnrak296hh2q579",
+      "cap": null
+    }
+  },
+  "inj_injective": {
+    "description": "The INJ token is the native governance token for the Injective chain.",
+    "denom_units": [
+      {
+        "denom": "inj",
+        "exponent": 0
+      },
+      {
+        "denom": "INJ",
+        "exponent": 18
+      }
+    ],
+    "base": "inj",
+    "name": "Injective",
+    "display": "INJ",
+    "symbol": "INJ",
+    "logo_URIs": {
+      "png": "https://raw.githubusercontent.com/cosmos/chain-registry/master/injective/images/inj.png",
+      "svg": "https://raw.githubusercontent.com/cosmos/chain-registry/master/injective/images/inj.svg"
+    },
+    "coingecko_id": "injective-protocol"
+  },
+  "inj14n26cr7dj79smrgg44hfylhph9y45h4yx5gvzm_injective": {
+    "name": "inj-peggy0xdAC...ec7-LP",
+    "symbol": "uLP",
+    "decimals": 6,
+    "initial_balances": [],
+    "mint": {
+      "minter": "inj1zfw930csx0k5qzf35vndaulwada4wa3pywekyx",
+      "cap": null
+    }
+  }
 }

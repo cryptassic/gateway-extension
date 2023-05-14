@@ -32,3 +32,10 @@ contractAddresses:
     mainnet:
      routerAddress: 'chihuahua1w3z9kpv08ya8ketrd8sc9008wxq6ygeuur40dlvh3df2u54pcdmq52sguh'
      factoryAddress: 'chihuahua1s8ehad3r9wxyk08ls2nmz8mqh4vlfmaxd2nw0crxwh04t4l5je4s8ljv0j'
+  injective:
+    mainnet:
+     routerAddress: 'inj1657pee2jhf4jk8pq6yq64e758ngvum45nft8rf'
+     factoryAddress: 'inj1x22q8lfhz7qcvtzs0dakhgx2th64l79kfye5lk'
+    testnet:
+     routerAddress: 'inj1e40kslczvwzset7c20p92pg3hzhuesms4j96f2'
+     factoryAddress: 'inj1e40kslczvwzset7c20p92pg3hzhuesms4j96f2'

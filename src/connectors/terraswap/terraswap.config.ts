@@ -37,6 +37,18 @@ export namespace WhiteWhaleConfig {
           ConfigManagerV2.getInstance().get('terra2.networks')
         ),
       },
+      {
+        chain: 'injective',
+        networks: Object.keys(
+          ConfigManagerV2.getInstance().get('injective.networks')
+        ),
+      },
+      {
+        chain: 'juno',
+        networks: Object.keys(
+          ConfigManagerV2.getInstance().get('juno.networks')
+        ),
+      },
       // {
       //   chain: 'juno',
       //   networks: Object.keys(

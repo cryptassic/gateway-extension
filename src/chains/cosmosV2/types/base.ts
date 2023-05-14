@@ -17,7 +17,7 @@ export enum TransactionStatus {
   Failure = 'failure',
 }
 
-export const SupportedChains = ['terra2', 'juno', 'chihuahua'];
+export const SupportedChains = ['terra2', 'juno', 'chihuahua','injective'];
 
 /**
  * Defines the interface for a Cosmos provider that creates a base client with a specified chain configuration.

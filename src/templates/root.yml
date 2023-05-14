@@ -80,6 +80,14 @@ configurations:
     configurationPath: terra2.yml
     schemaPath: cosmos_v2-schema.json
   
+  $namespace juno:
+    configurationPath: juno.yml
+    schemaPath: cosmos_v2-schema.json
+
+  $namespace injective:
+    configurationPath: injective_v2.yml
+    schemaPath: cosmos_v2-schema.json
+  
   $namespace whitewhale:
     configurationPath: whitewhale.yml
     schemaPath: whitewhale-schema.json
@@ -103,10 +111,6 @@ configurations:
   $namespace pancakeswap:
     configurationPath: pancakeswap.yml
     schemaPath: pangolin-schema.json
-
-  $namespace injective:
-    configurationPath: injective.yml
-    schemaPath: injective-schema.json
 
   $namespace xdc:
     configurationPath: xdc.yml

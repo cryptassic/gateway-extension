@@ -1,150 +1,291 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
 
 import { TokenMetadata, EstimateSwapView } from 'coinalpha-ref-sdk';
 import { Account } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
-import { WhiteWhaleish } from '../../services/common-interfaces';
-import { CosmosBase as Cosmos } from '../../chains/cosmosV2/cosmos-base';
+import { TerraSwapish } from '../../services/common-interfaces';
+import { CosmosV2 } from '../../chains/cosmosV2/cosmos';
 import { WhiteWhaleConfig } from './terraswap.config';
 import {
   TerraswapFactoryQueryClient,
   TerraswapRouterQueryClient,
-} from './interfaces';
-import { Uint128 } from './interfaces/TerraswapRouter.types';
+} from './types';
+import {
+  IBCMap,
+  TokenMetadataMap,
+  getIBCMap,
+  getTokenMetadata,
+} from './data-provider';
+import { getNetwork, getIndex } from '../../chains/cosmosV2/utils';
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
-/**
- * @todo refactor to use cosmosv2 wrapper once implemented
- */
-export class Terraswap implements WhiteWhaleish {
-  private static _instances: { [name: string]: Terraswap };
-  private cosmos: Cosmos;
+import { Asset, LiquidityToken, PairInfo } from '../../chains/cosmosV2/types';
+
+import { getTokenMetadataIndex, getTokenValue } from './helpers';
+import { logger } from '../../services/logger';
+import { AssetInfo } from './types/TerraswapFactory.types';
+
+export interface IBCData {
+  chain: string;
+  hash: string;
+  supply: string;
+  path: string;
+  origin: TokenOrigin;
+}
+
+export interface TokenOrigin {
+  chain: string;
+  denom: string;
+}
+
+function isStringProperty(obj: any, propertyName: string): boolean {
+  return typeof obj[propertyName] === 'string';
+}
+
+export class WhiteWhale implements TerraSwapish {
+  private static _instances: { [name: string]: WhiteWhale };
+
   private _ttl: number;
   private _gasLimitEstimate: number;
+  private _ready: boolean = false;
+
   private _router: string;
-  private _routerQueryClient: TerraswapRouterQueryClient;
   private _factory: string;
-  private factoryQueryClient: TerraswapFactoryQueryClient;
-  private tokenList: Record<string, TokenMetadata> = {};
+  private _ibcTokenMap: IBCMap | undefined;
+  private _tokenMetadata: TokenMetadataMap | undefined;
 
+  private _routerQueryClient: TerraswapRouterQueryClient | undefined;
+  private _factoryQueryClient: TerraswapFactoryQueryClient | undefined;
+
+  private _chain: CosmosV2;
+
+  public get ttl(): number {
+    return this._ttl;
+  }
+
+  public get gasLimitEstimate(): number {
+    return this._gasLimitEstimate;
+  }
   /**
-   *
-   * @param network - The network to onnect to
-   * @todo replace **broken** "new Cosmos()" with this.cosmos = cosmos.getInstance(network); once Cosmos class implemented
+   * @param chain - The chain to connect to
+   * @param network - The network to connect to
    */
-  private constructor(network: string) {
+  private constructor(chain: string, network: string) {
     const config = WhiteWhaleConfig.config;
-    this.cosmos = new Cosmos();
-    this._ttl = WhiteWhaleConfig.config.ttl;
-    this._gasLimitEstimate = WhiteWhaleConfig.config.gasLimitEstimate;
-    this._router = config.routerAddress(network);
-    this._factory = config.factoryAddress(network);
-    // this.tokenList =
+
+    this._ttl = config.ttl;
+    this._gasLimitEstimate = config.gasLimitEstimate;
+    this._router = config.routerAddress(chain, network);
+    this._factory = config.factoryAddress(chain, network);
+
+    this._chain = CosmosV2.getInstance(chain, getNetwork(network));
   }
 
-  /**
-   * @todo convert native denom to sumbol (eg. uluna -> LUNA)
-   * @param denom - Denom of the native token
-   * @returns {string} symbol - The symbol of the native token
-   */
-  async symbolFromDenom(denom: string) {
-    const ibcData = require('./ibc-denom-mappings.json');
-    if (!denom.startsWith('ibc/')) return denom;
-    for (const key in ibcData) {
-      if (key.startsWith(denom)) {
-        const originDenom = ibcData[key]['origin']['denom'];
-        if (originDenom.startsWith('factory')) {
-          return originDenom.substring(originDenom.lastIndexOf('/') + 1);
-        }
-        return originDenom;
-      }
+  private async _initIBCMap(): Promise<void> {
+    const ibcMap = await getIBCMap();
+
+    if (!ibcMap || ibcMap.size === 0) {
+      throw new Error('Unable to get IBC Map');
+    }
+
+    this._ibcTokenMap = ibcMap;
+  }
+
+  private async _initQueryClients(): Promise<void> {
+    let cosmWasmClient: CosmWasmClient = await this._chain.getCosmWasmClient();
+
+    if (!this._routerQueryClient) {
+      this._routerQueryClient = new TerraswapRouterQueryClient(
+        cosmWasmClient,
+        this._router
+      );
+    }
+
+    if (!this._factoryQueryClient) {
+      this._factoryQueryClient = new TerraswapFactoryQueryClient(
+        cosmWasmClient,
+        this._factory
+      );
     }
   }
 
-  /**
-   * @todo implement
-   * @param address - Address of the cw20 token contract
-   * @returns {symbol} - Returns the symbol of the cw20 token
-   */
-  async symbolFromAddress(address: string) {
-    const tokenInfo = (
-      await this.cosmos.getCosmWasmClient()
-    ).queryContractSmart(address, {
-      token_info: {},
-    });
+  private async _initTokenMetadata(): Promise<void> {
+    const tokenMetadata = await getTokenMetadata();
 
-    const symbol = tokenInfo['symbol'];
-    if (symbol.startsWith('factory')) {
-      return symbol.substring(symbol.lastIndexOf('/') + 1);
+    if (!tokenMetadata || tokenMetadata.size === 0) {
+      throw new Error('Unable to get Token Metadata');
     }
-    return symbol;
+
+    this._tokenMetadata = tokenMetadata;
+  }
+
+  public async init(): Promise<void> {
+    // Init Cosmos Chain
+    if (!this._chain.ready()) {
+      await this._chain.init();
+    }
+
+    // Init IBC Token Map
+    if (this._ibcTokenMap === undefined || this._ibcTokenMap.size === 0) {
+      await this._initIBCMap();
+    }
+
+    // Init Token Metadata
+    if (this._tokenMetadata === undefined || this._tokenMetadata.size === 0) {
+      await this._initTokenMetadata();
+    }
+
+    // Init Query and Factory Clients
+    if (!this._routerQueryClient || !this._factoryQueryClient) {
+      await this._initQueryClients();
+    }
+
+    // Check if all is ready
+    if (this.isReadyToSetFlag()) {
+      this._ready = true;
+    } else {
+      throw new Error('Unable to initialize WhiteWhale');
+    }
+  }
+
+  // Checks if all the required data is ready to be used.
+  // This is used to set ready flag.
+  private isReadyToSetFlag(): boolean {
+    const isChainReady = this._chain.ready();
+
+    const ibcTokenMapSize = this._ibcTokenMap?.size || 0;
+    const tokenMetadataMapSize = this._tokenMetadata?.size || 0;
+
+    const hasNonEmptyIbcTokenMap = ibcTokenMapSize > 0;
+    const hasNonEmptyTokenMetadataMap = tokenMetadataMapSize > 0;
+
+    // The variable hasRouterQueryClient will be true if this._routerQueryClient has a truthy value,
+    // and false if this._routerQueryClient is falsy or undefined.
+    const hasRouterQueryClient = !!this._routerQueryClient;
+    const hasFactoryQueryClient = !!this._factoryQueryClient;
+
+    if (
+      isChainReady &&
+      hasNonEmptyIbcTokenMap &&
+      hasNonEmptyTokenMetadataMap &&
+      hasRouterQueryClient &&
+      hasFactoryQueryClient
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  public ready(): boolean {
+    return this._ready;
+  }
+
+  public static getInstance(chain: string, network: string): WhiteWhale {
+    const index = getIndex(chain, network);
+
+    if (WhiteWhale._instances === undefined) {
+      WhiteWhale._instances = {};
+    }
+    if (!(index in WhiteWhale._instances)) {
+      WhiteWhale._instances[index] = new WhiteWhale(chain, network);
+    }
+
+    return WhiteWhale._instances[index];
   }
 
   /**
    * @todo
    * @returns {availablePairs} - Returns an array of available pairs in string format
    */
-  async availablePairs(): Promise<string[]> {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error('Method not implemented.');
+  async Pairs(limit?: number, start_after?: AssetInfo[]): Promise<PairInfo[]> {
+    if (!this._factoryQueryClient) {
+      throw new Error('Factory Query Client not initialized');
+    }
+    if (!this._ibcTokenMap){
+      throw new Error('IBC Token Map not initialized');
     }
 
-    const factoryQueryClient = new TerraswapFactoryQueryClient(
-      await this.cosmos.getCosmWasmClient(),
-      this._factory
-    );
-
-    const pairsResponse = await factoryQueryClient.pairs({
-      limit: 30,
+    const pairsResponse = await this._factoryQueryClient.pairs({
+      limit: limit,
+      startAfter: start_after
     });
+
+    let pairsResult: PairInfo[] = [];
+    
     const pairs = pairsResponse.pairs;
 
-    const availablePairs = [];
+    pairs.forEach((pair) => {
+      try {
+        const index1 = getTokenMetadataIndex(
+          pair.asset_infos[0],
+          this._ibcTokenMap as IBCMap,
+          this._chain.chainName
+        );
+        const index2 = getTokenMetadataIndex(
+          pair.asset_infos[1],
+          this._ibcTokenMap as IBCMap,
+          this._chain.chainName
+        );
 
-    for (const pair of pairs) {
-      const assetInfos = pair.asset_infos;
-      const asset1 = assetInfos[0];
-      const asset2 = assetInfos[1];
-      let token1Symbol;
-      let token2Symbol;
-      if ('token' in asset1) {
-        token1Symbol = await this.symbolFromAddress(asset1.token.contract_addr);
-      } else {
-        token1Symbol = await this.symbolFromDenom(asset1.native_token.denom);
+        // LP Token Index
+        let lpTokenAddress;
+        if (isStringProperty(pair, 'liquidity_token')) {
+          lpTokenAddress = pair.liquidity_token;
+        } else {
+          lpTokenAddress = getTokenValue(pair.liquidity_token); 
+        }
+
+        const indexLP = lpTokenAddress + "_" + this._chain.chainName;
+        
+        const asset1 = this._tokenMetadata?.get(index1 as string) as Asset;
+        const asset2 = this._tokenMetadata?.get(index2 as string) as Asset;
+        const assetLP = this._tokenMetadata?.get(indexLP as string) as LiquidityToken;
+
+        if(!asset1 || !asset2 || !assetLP) {
+          logger.warn(`Pair: ${pair.contract_addr} - Failed to get Token Metadata for any of these [${index1},${index2},${assetLP}]`);
+          return;
+        }
+
+        const pairInfo: PairInfo = {
+          asset_infos: [asset1, asset2],
+          symbol: `${asset1?.symbol}-${asset2?.symbol}`,
+          contract_addr: pair.contract_addr,
+          liquidity_token: assetLP,
+          pair_type: pair.pair_type,
+
+        }
+
+        pairsResult.push(pairInfo);
+
+      } catch (e) {
+        console.log(
+          `Error ${e} getting Pairs Token Info: ${pair.asset_infos[0]} - ${pair.asset_infos[1]}`
+        );
       }
-
-      if ('token' in asset2) {
-        token2Symbol = await this.symbolFromAddress(asset2.token.contract_addr);
-      } else {
-        token2Symbol = await this.symbolFromDenom(asset2.native_token.denom);
-      }
-      // Should look like 'ujuno-luna' once fully implemented
-      const pairSymbol = `${token1Symbol}-${token2Symbol}`;
-      availablePairs.push(pairSymbol);
-    }
-    return availablePairs;
-  }
-
-  async simulateSwapOperations(
-    offerAmount: string,
-    pair: string
-  ): Promise<Uint128> {
-    const operations = await this._routerQueryClient.swapRoute({
-      askAssetInfo: this.cosmos.assetInfoFromSymbol(
-        pair.substring(0, pair.indexOf('-'))
-      ),
-      offerAssetInfo: this.cosmos.assetInfoFromSymbol(
-        pair.substring(pair.indexOf('-') + 1, pair.length)
-      ),
     });
-    const simulationResponse =
-      await this._routerQueryClient.simulateSwapOperations({
-        offerAmount,
-        operations,
-      });
-
-    return simulationResponse.amount;
+    return pairsResult
   }
+  
+  // async simulateSwapOperations(
+  //   offerAmount: string,
+  //   pair: string
+  // ): Promise<Uint128> {
+  //   const operations = await this._routerQueryClient.swapRoute({
+  //     askAssetInfo: this._chain.assetInfoFromSymbol(
+  //       pair.substring(0, pair.indexOf('-'))
+  //     ),
+  //     offerAssetInfo: this._chain.assetInfoFromSymbol(
+  //       pair.substring(pair.indexOf('-') + 1, pair.length)
+  //     ),
+  //   });
+  //   const simulationResponse =
+  //     await this._routerQueryClient.simulateSwapOperations({
+  //       offerAmount,
+  //       operations,
+  //     });
+
+  //   return simulationResponse.amount;
+  // }
 
   estimateSellTrade(
     baseToken: TokenMetadata,
@@ -152,16 +293,18 @@ export class Terraswap implements WhiteWhaleish {
     amount: string,
     allowedSlippage?: string | undefined
   ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented.${baseToken} ${quoteToken} ${amount} ${allowedSlippage}}`);
   }
+
   estimateBuyTrade(
     quoteToken: TokenMetadata,
     baseToken: TokenMetadata,
     amount: string,
     allowedSlippage?: string | undefined
   ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }> {
-    throw new Error('Method not implemented.');
+    throw new Error(`Method not implemented.${baseToken} ${quoteToken} ${amount} ${allowedSlippage}}`);
   }
+
   executeTrade(
     account: Account,
     trade: EstimateSwapView[],
@@ -170,6 +313,6 @@ export class Terraswap implements WhiteWhaleish {
     tokenOut: TokenMetadata,
     allowedSlippage?: string | undefined
   ): Promise<FinalExecutionOutcome> {
-    throw new Error('Method not implemented.');
+    throw new Error( `Method not implemented. ${account} ${trade} ${amountIn} ${tokenIn} ${tokenOut} ${allowedSlippage}`);
   }
 }

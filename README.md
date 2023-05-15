@@ -1,11 +1,21 @@
 
+## User focused summary
 
 
+## Investor pitch
 
 
+## Development Deepdive
 
 
+## Presentation
+Video: https://vimeo.com/827020448
 
+Slideshow:https://www.canva.com/design/DAFiCdFXKLc/aDM112fV_M6bO4alrP6COA/view?utm_content=DAFiCdFXKLc&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink
+
+
+## DEMO
+Video: https://vimeo.com/827016331
 
 
 
@@ -21,8 +31,16 @@ Gateway may be used alongside the main [Hummingbot client](https://github.com/hu
 ### Generate certificates
 
 To run Gateway in `https` (default):
-* **CERTS_PATH**: path to folder where Hummingbot generated and saved self-signed SSL certificates
-* **PASSPHRASE**: passphrase used to generate the certificates above
+```bash
+# Create certificate folder in root directory
+mkdir certs/
+
+# Create certs using Python util
+python3 ssl_cers.py YOUR_PASSPHRASE
+
+# Verify that certs folder is has certificates.
+```
+
 
 ### Run Gateway from source
 
@@ -83,8 +101,8 @@ The API is documented using [Swagger](./docs/swagger). When Gateway is started, 
 
 Read this document for more details about how to write unit test in gateway: [How we write unit tests for gateway](./docs/testing.md).
 
-Run an individual test folder or file
+Run an individual test folder or file, because all tests are will be resource intensive
 
 ```bash
-yarn jest test/<folder>/<file>
+npx jest cosmos.base.test.ts
 ```

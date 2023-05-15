@@ -94,14 +94,10 @@ TAG=dev make docker
 
 See the [official Gateway docs](https://docs.hummingbot.org/gateway/).
 
-The API is documented using [Swagger](./docs/swagger). When Gateway is started, it also generates Swagger API docs at: https://localhost:8080
-
 
 #### Unit tests
 
-Read this document for more details about how to write unit test in gateway: [How we write unit tests for gateway](./docs/testing.md).
-
-Run an individual test folder or file, because all tests are will be resource intensive
+Run an individual test folder or file, because all tests will be resource intensive.
 
 ```bash
 npx jest cosmos.base.test.ts

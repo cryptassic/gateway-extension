@@ -11,7 +11,6 @@ import { storeWallet } from '../../../src/services/wallet/wallet.controllers';
 import { ConfigManagerCertPassphrase } from '../../../src/services/config-manager-cert-passphrase';
 import {
   ProviderNotInitializedError,
-  TransactionStatus,
 } from '../../../src/chains/cosmosV2/types';
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
@@ -29,7 +28,8 @@ const cosmosNetworks = {
   },
   testnet: {
     chain: 'cosmos',
-    rpc: 'https://cosmos-testnet-rpc.allthatnode.com:26657/',
+    // rpc: 'https://cosmos-testnet-rpc.allthatnode.com:26657/',
+    rpc: 'https://rpc.sentry-01.theta-testnet.polypore.xyz',
     chainId: 'theta-testnet-001',
   },
 };
@@ -366,7 +366,7 @@ describe('CosmosBase', () => {
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledTimes(1);
 
-      expect(statusMessage).toEqual(TransactionStatus.Success);
+      expect(statusMessage).toBe(true);
     });
   });
 

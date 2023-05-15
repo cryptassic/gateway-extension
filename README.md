@@ -36,7 +36,7 @@ To run Gateway in `https` (default):
 mkdir certs/
 
 # Create certs using Python util
-python3 ssl_cers.py YOUR_PASSPHRASE
+python3 ssl_cert.py YOUR_PASSPHRASE
 
 # Verify that certs folder is has certificates.
 ```

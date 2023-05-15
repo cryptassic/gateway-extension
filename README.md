@@ -28,20 +28,6 @@ Gateway may be used alongside the main [Hummingbot client](https://github.com/hu
 
 ## Installation
 
-### Generate certificates
-
-To run Gateway in `https` (default):
-```bash
-# Create certificate folder in root directory
-mkdir certs/
-
-# Create certs using Python util
-python3 ssl_cert.py YOUR_PASSPHRASE
-
-# Verify that certs folder is has certificates.
-```
-
-
 ### Run Gateway from source
 
 Dependencies:
@@ -55,13 +41,29 @@ yarn
 # Complile Typescript into JS
 $ yarn build
 
-# Run Gateway setup script, which helps you set configs and CERTS_PATH
+# Create certificate folder in root directory
+mkdir certs/
+
+# Run Gateway setup script, which helps you set configs and CERTS_PATH.
+# When promted for CERTS_PATH use created certs directory. Write simply certs
+# When promted if we want to proceed, choose Yes.
+# Ignore errors
 $ chmod a+x gateway-setup.sh
 $ ./gateway-setup.sh
+
+# Create certs using Python util
+python3 ssl_cert.py <PASSPHRASE>
+
 
 # Start the Gateway server using PASSPHRASE
 $ yarn start --passphrase=<PASSPHRASE>
 ```
+
+## Postman workspace
+
+https://www.postman.com/cryptassic/workspace/galaxygainz/overview
+
+
 
 ### Run Gateway using Docker
 

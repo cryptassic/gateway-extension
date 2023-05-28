@@ -1,0 +1,18 @@
+networks:
+  mainnet:
+    nodeURL: https://terra-rpc.polkachu.com/
+    tokenListType: URL
+    tokenListSource: >-
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/assetlist.json
+    chainId: phoenix-1
+    bech32Prefix: terra
+  testnet:
+    nodeURL: https://terra-testnet-rpc.polkachu.com
+    tokenListType: URL
+    tokenListSource: >-
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/terra2/assetlist.json
+    chainId: pisco-1
+    bech32Prefix: terra
+network: mainnet
+nativeCurrencySymbol: LUNA
+manualGasPrice: 110

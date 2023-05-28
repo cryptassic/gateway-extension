@@ -1,0 +1,8 @@
+version: 0
+configurations:
+  $namespace server:
+    configurationPath: server.yml
+    schemaPath: server-schema.json
+  $namespace ethereum:
+    configurationPath: ethereum.yml
+    schemaPath: ethereum-schema.json

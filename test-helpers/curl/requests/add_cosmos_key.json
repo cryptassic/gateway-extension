@@ -1,0 +1,5 @@
+{
+  "privateKey": "$COSMOS_PRIVATE_KEY",
+  "chain": "cosmos",
+  "network": "mainnet"
+}

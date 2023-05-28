@@ -1,0 +1,41 @@
+# how much the execution price is allowed to move unfavorably from the trade
+# execution price. It uses a rational number for precision.
+allowedSlippage: '1/100'
+
+# the maximum gas used to estimate gasCost for a uniswap trade.
+gasLimitEstimate: 1200000
+
+# how long a trade is valid in seconds. After time passes uniswap will not
+# perform the trade, but the gas will still be sent.
+ttl: 60
+
+# Max number of hops to consider for each trade
+maximumHops: 4
+
+
+contractAddresses:
+  terra2:
+    mainnet:
+      routerAddress: 'terra1p37jrwlaqpklzlu4rwjyjrmzuezdgk3pyuyk2zclc4rda6awkm3qnj6f0a'
+      factoryAddress: 'terra1f4cr4sr5eulp3f2us8unu6qv8a5rhjltqsg7ujjx6f2mrlqh923sljwhn3'
+    testnet:
+      routerAddress: 'terra1ssrdlwawevh52k2dr6r25aeflgzcnwm097gqlga4tee7au35a4ss4wkdxw'
+      factoryAddress: 'terra15d7gjn0rtu93nxkjt7kqj0sz62gcgy7p5srjeefp74hjsyjry9uqdz5zc7'
+  juno:
+    mainnet:
+     routerAddress: 'juno128lewlw6kv223uw4yzdffl8rnh3k9qs8vrf6kef28579w8ygccyq7m90n2'
+     factoryAddress: 'juno14m9rd2trjytvxvu4ldmqvru50ffxsafs8kequmfky7jh97uyqrxqs5xrnx'
+    testnet:
+     routerAddress: 'juno1krumlux5aa2ar7chnd3ju4zsw3s6u6kz6lge9sax9a3s6nhqr6dqeyngmk'
+     factoryAddress: 'juno15cdzmhx47yyqejzh0mcrqpzvexzzqzgusgjfkhrnpjc592xtuvqsxazy23'
+  chihuaua:
+    mainnet:
+     routerAddress: 'chihuahua1w3z9kpv08ya8ketrd8sc9008wxq6ygeuur40dlvh3df2u54pcdmq52sguh'
+     factoryAddress: 'chihuahua1s8ehad3r9wxyk08ls2nmz8mqh4vlfmaxd2nw0crxwh04t4l5je4s8ljv0j'
+  injective:
+    mainnet:
+     routerAddress: 'inj1657pee2jhf4jk8pq6yq64e758ngvum45nft8rf'
+     factoryAddress: 'inj1x22q8lfhz7qcvtzs0dakhgx2th64l79kfye5lk'
+    testnet:
+     routerAddress: 'inj1e40kslczvwzset7c20p92pg3hzhuesms4j96f2'
+     factoryAddress: 'inj1e40kslczvwzset7c20p92pg3hzhuesms4j96f2'

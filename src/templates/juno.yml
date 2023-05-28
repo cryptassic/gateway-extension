@@ -1,0 +1,18 @@
+networks:
+  mainnet:
+    nodeURL: https://juno-rpc.polkachu.com
+    tokenListType: URL
+    tokenListSource: >-
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/assetlist.json
+    chainId: juno-1
+    bech32Prefix: juno
+  testnet:
+    nodeURL: https://juno-testnet-rpc.polkachu.com
+    tokenListType: URL
+    tokenListSource: >-
+      https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/assetlist.json
+    chainId: uni-6
+    bech32Prefix: juno
+network: mainnet
+nativeCurrencySymbol: JUNO
+manualGasPrice: 110

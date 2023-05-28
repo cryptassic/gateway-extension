@@ -1,0 +1,6 @@
+certs
+*.md
+*.yml
+coverage
+dist
+vendor

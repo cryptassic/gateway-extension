@@ -180,7 +180,10 @@ export class EVMNonceManager extends ReferenceCountingCloseable {
   public _getTransactionCount: (address: string) => Promise<number>;
   public _localNonceTTL: number;
   public _pendingNonceTTL: number;
-
+  
+  // TS complains about this, but we don't care. Super call must be the first statement in the constructor, but it can't because
+  // refCountKey needs to be first.
+  // @ts-ignore
   constructor(
     chainName: string,
     chainId: number,
@@ -189,6 +192,7 @@ export class EVMNonceManager extends ReferenceCountingCloseable {
     pendingNonceTTL: number = 300 * 1000
   ) {
     const refCountKey: string = `${chainName}/${chainId}/${dbPath}`;
+    
     super(refCountKey);
 
     this.#chainName = chainName;

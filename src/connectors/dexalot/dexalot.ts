@@ -37,6 +37,7 @@ import {
   parseOrderInfo,
   fromUtf8,
 } from './dexalot.utils';
+import { MarketInfoStruct } from './dexalot.interfaces';
 
 export class DexalotCLOB implements CLOBish {
   private static _instances: LRUCache<string, DexalotCLOB>;
@@ -100,13 +101,13 @@ export class DexalotCLOB implements CLOBish {
 
   public async loadMarkets() {
     const rawMarkets = (
-      await Promise.all(
+      (await Promise.all(
         (
           await this.tradePairsContract.getTradePairs()
         ).map(async (marketId: string) => {
           return this.tradePairsContract.getTradePair(marketId);
         })
-      )
+      )) as MarketInfoStruct[]
     ).map(parseMarkerInfo);
     for (const market of rawMarkets) {
       this.parsedMarkets[

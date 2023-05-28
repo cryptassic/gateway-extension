@@ -72,14 +72,14 @@ Gateway may be used alongside the main [Hummingbot client](https://github.com/hu
 
 Dependencies:
 * NodeJS (16.0.0 or higher)
-* Yarn: run `npm install -g yarn` after installing NodeJS
+* pnpm: run `npm install -g pnpm` after installing NodeJS
 
 ```bash
 # Install dependencies
-yarn
+pnpm i
 
 # Complile Typescript into JS
-$ yarn build
+$ pnpm build
 
 # Create certificate folder in root directory
 mkdir certs/
@@ -96,7 +96,7 @@ python3 ssl_cert.py <PASSPHRASE>
 
 
 # Start the Gateway server using PASSPHRASE
-$ yarn start --passphrase=<PASSPHRASE>
+$ pnpm start --passphrase=<PASSPHRASE>
 ```
 
 ## Postman workspace

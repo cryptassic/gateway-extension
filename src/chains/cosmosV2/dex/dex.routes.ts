@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { Router, Request, Response } from 'express';
 import { asyncHandler } from '../../../services/error-handler';
 import {
@@ -19,6 +20,7 @@ export namespace DEXRoutes {
     '/pairs',
     asyncHandler(
       async (
+        // eslint-disable-next-line @typescript-eslint/ban-types
         req: Request<{}, {}, PairsRequest>,
         res: Response<PairsResponse | string, {}>
       ) => {

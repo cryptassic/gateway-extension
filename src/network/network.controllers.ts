@@ -22,7 +22,7 @@ import { Near } from '../chains/near/near';
 import { Nearish, Xdcish } from '../services/common-interfaces';
 import { CosmosV2 } from '../chains/cosmosV2/cosmos';
 
-import { SupportedChains } from '../chains/cosmosV2/types';
+import { SUPPORTED_CHAINS } from '../chains/cosmosV2/types';
 import { getNetwork } from '../chains/cosmosV2/utils';
 
 export async function getStatus(
@@ -55,7 +55,7 @@ export async function getStatus(
       connections.push(await Cronos.getInstance(req.network as string));
     } else if (req.chain === 'injective') {
       connections.push(Injective.getInstance(req.network as string));
-    } else if (SupportedChains.includes(req.chain)) {
+    } else if (SUPPORTED_CHAINS.includes(req.chain)) {
       connections.push(
         CosmosV2.getInstance(
           req.chain as string,
@@ -168,7 +168,7 @@ export async function getTokens(req: TokensRequest): Promise<TokensResponse> {
       connection = await Cronos.getInstance(req.network);
     } else if (req.chain === 'injective') {
       connection = Injective.getInstance(req.network);
-    } else if (SupportedChains.includes(req.chain)) {
+    } else if (SUPPORTED_CHAINS.includes(req.chain)) {
       connection = CosmosV2.getInstance(
         req.chain as string,
         getNetwork(req.network as string)

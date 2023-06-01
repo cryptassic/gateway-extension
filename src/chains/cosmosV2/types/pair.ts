@@ -8,23 +8,24 @@ export type PairType =
       };
     };
 
+//TODO (cryptassic): Replace with connectors.base.ts PairInfo type
 export interface PairInfo {
-    asset_infos: [Asset, Asset];
-    symbol:string;
-    contract_addr: string;
-    liquidity_token: LiquidityToken;
-    pair_type?: PairType;
+  asset_infos: [Asset, Asset];
+  symbol: string;
+  contract_addr: string;
+  liquidity_token: LiquidityToken;
+  pair_type?: PairType;
 }
 
 export interface LiquidityToken {
-    name: string;
-    symbol: string;
-    decimals: number;
-    total_supply: string;
-    mint: Mint;
+  name: string;
+  symbol: string;
+  decimals: number;
+  total_supply: string;
+  mint: Mint;
 }
 
 interface Mint {
-    minter: string;
-    cap?: any;
+  minter: string;
+  cap?: any;
 }

@@ -759,6 +759,21 @@ export interface CosmosishV2 {
   nativeTokenSymbol: string;
 }
 
+abstract class Swapish {}
+
+// export interface Swapish {
+//   init(): Promise<void>;
+//   ready(): boolean;
+//   pairs(): Promise<PairInfo[]>;
+//   estimateSellTrade(
+//     baseToken: TokenMetadata,
+//     quoteToken: TokenMetadata,
+//     amount: string,
+//     allowedSlippage?: string
+//   ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }>;
+
+// }
+
 export interface TerraSwapish {
   /**
    * Default time-to-live for swap transactions, in seconds.
@@ -777,7 +792,7 @@ export interface TerraSwapish {
    * Function for retrieving asset info list.
    * @return a list of available market pairs' info.
    */
-  Pairs(): Promise<PairInfo[]>;
+  pairs(): Promise<PairInfo[]>;
 
   /**
    * Given the amount of `baseToken` to put into a transaction, calculate the

@@ -10,7 +10,7 @@ import { CosmosV2 } from '../../chains/cosmosV2/cosmos';
 import { Harmony } from '../../chains/harmony/harmony';
 import { Injective } from '../../chains/injective/injective';
 
-import { SupportedChains } from '../../chains/cosmosV2/types';
+import { SUPPORTED_CHAINS } from '../../chains/cosmosV2/types';
 
 import {
   AddWalletRequest,
@@ -77,7 +77,7 @@ export async function addWallet(
     connection = Cronos.getInstance(req.network);
   } else if (req.chain === 'cosmos') {
     connection = Cosmos.getInstance(req.network);
-  } else if (SupportedChains.includes(req.chain)) {
+  } else if (SUPPORTED_CHAINS.includes(req.chain)) {
     connection = CosmosV2.getInstance(req.chain, Network.Mainnet);
   } else if (req.chain === 'near') {
     if (!('address' in req))

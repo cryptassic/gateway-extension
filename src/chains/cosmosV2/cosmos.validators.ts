@@ -7,7 +7,7 @@ import {
   validateTxHash,
 } from '../../services/validators';
 import { normalizeBech32 } from '@cosmjs/encoding';
-import { SupportedChains } from './types';
+import { SUPPORTED_CHAINS } from './types';
 import { Request } from 'express';
 
 export const invalidCosmosAddressError: string =
@@ -25,7 +25,7 @@ export const isValidCosmosAddress = (str: string): boolean => {
 
 export const isValidCosmosNetwork = (network: string): boolean => {
   return network === 'mainnet' || network === 'testnet';
-}
+};
 
 // given a request, look for a key called address that is a Cosmos address
 export const validatePublicKey: Validator = mkValidator(
@@ -42,7 +42,7 @@ export const validateCosmosPollRequest: RequestValidator = mkRequestValidator([
 ]);
 
 export const isValidChain = (chain: string): boolean => {
-  return SupportedChains.includes(chain);
+  return SUPPORTED_CHAINS.includes(chain);
 };
 
 export const isValidNetwork = (network: string): boolean => {

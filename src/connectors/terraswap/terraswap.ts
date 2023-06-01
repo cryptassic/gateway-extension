@@ -1,4 +1,3 @@
-
 import { TokenMetadata, EstimateSwapView } from 'coinalpha-ref-sdk';
 import { Account } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
@@ -91,7 +90,8 @@ export class WhiteWhale implements TerraSwapish {
   }
 
   private async _initQueryClients(): Promise<void> {
-    let cosmWasmClient: CosmWasmClient = await this._chain.getCosmWasmClient();
+    const cosmWasmClient: CosmWasmClient =
+      await this._chain.getCosmWasmClient();
 
     if (!this._routerQueryClient) {
       this._routerQueryClient = new TerraswapRouterQueryClient(
@@ -197,21 +197,22 @@ export class WhiteWhale implements TerraSwapish {
    * @todo
    * @returns {availablePairs} - Returns an array of available pairs in string format
    */
-  async Pairs(limit?: number, start_after?: AssetInfo[]): Promise<PairInfo[]> {
+  async pairs(limit?: number, start_after?: AssetInfo[]): Promise<PairInfo[]> {
     if (!this._factoryQueryClient) {
       throw new Error('Factory Query Client not initialized');
     }
-    if (!this._ibcTokenMap){
+    if (!this._ibcTokenMap) {
       throw new Error('IBC Token Map not initialized');
     }
 
+    //TODO(cryptassic): Include additional call on  each pair to get config and this way include fee rates in PairInfo[]
     const pairsResponse = await this._factoryQueryClient.pairs({
       limit: limit,
-      startAfter: start_after
+      startAfter: start_after,
     });
 
-    let pairsResult: PairInfo[] = [];
-    
+    const pairsResult: PairInfo[] = [];
+
     const pairs = pairsResponse.pairs;
 
     pairs.forEach((pair) => {
@@ -232,17 +233,21 @@ export class WhiteWhale implements TerraSwapish {
         if (isStringProperty(pair, 'liquidity_token')) {
           lpTokenAddress = pair.liquidity_token;
         } else {
-          lpTokenAddress = getTokenValue(pair.liquidity_token); 
+          lpTokenAddress = getTokenValue(pair.liquidity_token);
         }
 
-        const indexLP = lpTokenAddress + "_" + this._chain.chainName;
-        
+        const indexLP = lpTokenAddress + '_' + this._chain.chainName;
+
         const asset1 = this._tokenMetadata?.get(index1 as string) as Asset;
         const asset2 = this._tokenMetadata?.get(index2 as string) as Asset;
-        const assetLP = this._tokenMetadata?.get(indexLP as string) as LiquidityToken;
+        const assetLP = this._tokenMetadata?.get(
+          indexLP as string
+        ) as LiquidityToken;
 
-        if(!asset1 || !asset2 || !assetLP) {
-          logger.warn(`Pair: ${pair.contract_addr} - Failed to get Token Metadata for any of these [${index1},${index2},${assetLP}]`);
+        if (!asset1 || !asset2 || !assetLP) {
+          logger.warn(
+            `Pair: ${pair.contract_addr} - Failed to get Token Metadata for any of these [${index1},${index2},${assetLP}]`
+          );
           return;
         }
 
@@ -252,20 +257,18 @@ export class WhiteWhale implements TerraSwapish {
           contract_addr: pair.contract_addr,
           liquidity_token: assetLP,
           pair_type: pair.pair_type,
-
-        }
+        };
 
         pairsResult.push(pairInfo);
-
       } catch (e) {
         console.log(
           `Error ${e} getting Pairs Token Info: ${pair.asset_infos[0]} - ${pair.asset_infos[1]}`
         );
       }
     });
-    return pairsResult
+    return pairsResult;
   }
-  
+
   // async simulateSwapOperations(
   //   offerAmount: string,
   //   pair: string
@@ -293,7 +296,9 @@ export class WhiteWhale implements TerraSwapish {
     amount: string,
     allowedSlippage?: string | undefined
   ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }> {
-    throw new Error(`Method not implemented.${baseToken} ${quoteToken} ${amount} ${allowedSlippage}}`);
+    throw new Error(
+      `Method not implemented.${baseToken} ${quoteToken} ${amount} ${allowedSlippage}}`
+    );
   }
 
   estimateBuyTrade(
@@ -302,7 +307,9 @@ export class WhiteWhale implements TerraSwapish {
     amount: string,
     allowedSlippage?: string | undefined
   ): Promise<{ trade: EstimateSwapView[]; expectedAmount: string }> {
-    throw new Error(`Method not implemented.${baseToken} ${quoteToken} ${amount} ${allowedSlippage}}`);
+    throw new Error(
+      `Method not implemented.${baseToken} ${quoteToken} ${amount} ${allowedSlippage}}`
+    );
   }
 
   executeTrade(
@@ -313,6 +320,8 @@ export class WhiteWhale implements TerraSwapish {
     tokenOut: TokenMetadata,
     allowedSlippage?: string | undefined
   ): Promise<FinalExecutionOutcome> {
-    throw new Error( `Method not implemented. ${account} ${trade} ${amountIn} ${tokenIn} ${tokenOut} ${allowedSlippage}`);
+    throw new Error(
+      `Method not implemented. ${account} ${trade} ${amountIn} ${tokenIn} ${tokenOut} ${allowedSlippage}`
+    );
   }
 }

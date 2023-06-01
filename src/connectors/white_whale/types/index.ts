@@ -3,4 +3,3 @@ export * from './TerraswapFactory.client';
 export { AssetInfo, ConfigResponse } from './TerraswapRouter.types';
 export * from './TerraswapRouter.client';
 export * from './TerraswapPair.client';
-// export * from './TerraswapPair.types';

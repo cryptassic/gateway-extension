@@ -40,7 +40,10 @@ import { Xsswap } from '../connectors/xsswap/xsswap';
 import { DexalotCLOB } from '../connectors/dexalot/dexalot';
 import { CosmosV2 } from '../chains/cosmosV2/cosmos';
 
-import { SupportedChains } from '../chains/cosmosV2/types';
+import {
+  SUPPORTED_CHAINS,
+  SUPPORTED_CONNECTORS,
+} from '../chains/cosmosV2/types';
 import { getNetwork } from '../chains/cosmosV2/utils';
 
 export type ChainUnion = Ethereumish | Nearish | Injective | Xdcish | CosmosV2;
@@ -75,7 +78,7 @@ export async function getChain<T>(
   else if (chain === 'cronos') chainInstance = Cronos.getInstance(network);
   else if (chain === 'injective')
     chainInstance = Injective.getInstance(network);
-  else if (SupportedChains.includes(chain))
+  else if (SUPPORTED_CHAINS.includes(chain))
     chainInstance = CosmosV2.getInstance(chain, getNetwork(network));
   else throw new Error('unsupported chain');
 
@@ -166,8 +169,13 @@ export async function getConnector<T>(
     connectorInstance = DexalotCLOB.getInstance(network);
   } else if (chain === 'ethereum' && connector === 'zigzag') {
     connectorInstance = ZigZag.getInstance(network);
-  } else if (SupportedChains.includes(chain) && connector === 'white_whale') {
+  } else if (SUPPORTED_CHAINS.includes(chain) && connector === 'white_whale') {
     connectorInstance = WhiteWhale.getInstance(chain, network);
+  } else if (
+    connector !== undefined &&
+    SUPPORTED_CHAINS.includes(chain) &&
+    SUPPORTED_CONNECTORS.includes(connector)
+  ) {
   } else {
     throw new Error('unsupported chain or connector');
   }

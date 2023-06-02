@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
@@ -26,7 +29,7 @@ import {
 } from './types';
 
 import { WhiteWhaleConfig } from './white_whale.config';
-import { ClientsManager, QueryClient } from './white_whale.clients';
+import { ClientsManager, getQueryClientBuilder } from '../connectors.clients';
 
 export class WhiteWhales extends AbstractSwapConnector {
   public get ttl(): number {
@@ -241,11 +244,6 @@ export class WhiteWhales extends AbstractSwapConnector {
 
     const hasAllClientsDefined = this.hasAllClients();
     const areClientsReady = this._clientsManager.isReady;
-    // The variable hasRouterQueryClient will be true if this._routerQueryClient has a truthy value,
-    // and false if this._routerQueryClient is falsy or undefined.
-
-    // const hasRouterQueryClient = !!this._routerQueryClient;
-    // const hasFactoryQueryClient = !!this._factoryQueryClient;
 
     if (
       isChainReady &&
@@ -261,6 +259,7 @@ export class WhiteWhales extends AbstractSwapConnector {
   }
 
   private hasAllClients(): boolean {
+    // Simple way to check if clientManager can find client and client is defined.
     const hasRouterQueryClient = !!this._clientsManager.getClient(
       'TerraswapRouterQueryClient'
     );
@@ -283,37 +282,47 @@ export class WhiteWhales extends AbstractSwapConnector {
   }
   // These clients allows us to easily query/execute blockchain apps. This is generated using ts-codegen from white-whale-core contracts.
   private async _initClients(): Promise<void> {
+    // This client is like http client that fethes data from blockchain. We use singleton, so all clients share same wasm client.
+    // This way we can easily rate limit this client.
     const cosmWasmClient: CosmWasmClient =
       await this._chain.getCosmWasmClient();
 
-    this._clientsManager.initializeClients([
-      () =>
-        new QueryClient(
-          TerraswapFactoryQueryClient,
-          cosmWasmClient,
-          this._factory
-        ),
-      () =>
-        new QueryClient(
-          TerraswapRouterQueryClient,
-          cosmWasmClient,
-          this._router
-        ),
-    ]);
+    // Using generic getQueryClientBuilder to get required parameters for clientsManager initialization.
+    // There are many types of clients, so we needed to create some generic manager who would allow us easily manage all clients accross this system.
+    // Otherwise it would looked like this:
+    // const routerQueryClient = ...;
+    // const factoryQueryClient = ...;
+    // const routerExecuteClient = ...;
+    // const pairQueryClientPairA = ...;
+    // const pairQueryClientPairB = ...;
+    // And so on.
+    // with clientsManager:
+    //   clientsManager.getClient('TerraswapRouterQueryClient');
+    //   clientsManager.getClient('TerraswapFactoryQueryClient');
+    //   clientsManager.getClient('TerraswapRouterExecuteClient');
+    //   clientsManager.getClient('TerraswapPairQueryClient_{contract_address}');
+    //   clientsManager.getClient('TerraswapPairQueryClient_{contract_address}');
+    // And so on.
+    const routerQueryClient = this._clientsManager.getClient(
+      'TerraswapRouterQueryClient'
+    );
+    const factoryQueryClient = this._clientsManager.getClient(
+      'TerraswapFactoryQueryClient'
+    );
+    const routerQueryBuilder = getQueryClientBuilder(
+      TerraswapRouterQueryClient,
+      cosmWasmClient,
+      this._router
+    );
+    // Same goes for factory clients.
+    const factoryQueryBuilder = getQueryClientBuilder(
+      TerraswapFactoryQueryClient,
+      cosmWasmClient,
+      this._factory
+    );
 
-    // if (!this._routerQueryClient) {
-    //   this._routerQueryClient = new TerraswapRouterQueryClient(
-    //     cosmWasmClient,
-    //     this._router
-    //   );
-    // }
-
-    // if (!this._factoryQueryClient) {
-    //   this._factoryQueryClient = new TerraswapFactoryQueryClient(
-    //     cosmWasmClient,
-    //     this._factory
-    //   );
-    // }
+    // Then we simply register them at clientManager where they will be accessed globally.
+    this._clientsManager.addClients([routerQueryBuilder, factoryQueryBuilder]);
   }
   // We use tokens metadata to further augment the information returned to the user.
   // It goes together with IBC Maps.

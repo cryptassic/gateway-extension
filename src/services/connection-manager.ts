@@ -176,6 +176,8 @@ export async function getConnector<T>(
     SUPPORTED_CHAINS.includes(chain) &&
     SUPPORTED_CONNECTORS.includes(connector)
   ) {
+    //TODO(cryptassic): Replace this, it is temporarily, so that we could compile
+    connectorInstance = WhiteWhale.getInstance(chain, network);
   } else {
     throw new Error('unsupported chain or connector');
   }

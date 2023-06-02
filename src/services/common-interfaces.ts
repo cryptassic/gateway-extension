@@ -759,8 +759,6 @@ export interface CosmosishV2 {
   nativeTokenSymbol: string;
 }
 
-abstract class Swapish {}
-
 // export interface Swapish {
 //   init(): Promise<void>;
 //   ready(): boolean;

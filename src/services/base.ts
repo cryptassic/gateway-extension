@@ -166,3 +166,7 @@ export const floatStringWithDecimalToFixed = (
     return null;
   }
 };
+
+export function isStringProperty(obj: any, propertyName: string): boolean {
+  return typeof obj[propertyName] === 'string';
+}

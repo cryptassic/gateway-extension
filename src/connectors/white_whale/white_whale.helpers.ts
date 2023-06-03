@@ -1,6 +1,6 @@
 import { AssetInfo } from './types/TerraswapFactory.types';
 import { NativeAsset, ExternalAsset } from '../../chains/cosmosV2/types';
-import { IBCMap } from './data-provider';
+import { IBCMap } from '../../services/data-provider';
 import { getIndex } from '../../chains/cosmosV2/utils';
 
 export function isNativeToken(asset: AssetInfo): boolean {

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
@@ -17,19 +14,13 @@ import {
 } from '../connectors.base';
 
 import {
-  IBCMap,
-  getIBCMap,
-  TokenMetadataMap,
-  getTokenMetadata,
-} from '../terraswap/data-provider';
-
-import {
   TerraswapRouterQueryClient,
   TerraswapFactoryQueryClient,
 } from './types';
 
 import { WhiteWhaleConfig } from './white_whale.config';
 import { ClientsManager, getQueryClientBuilder } from '../connectors.clients';
+import { PairDataTransformer } from './white_whale.transformers';
 
 export class WhiteWhales extends AbstractSwapConnector {
   public get ttl(): number {
@@ -45,11 +36,6 @@ export class WhiteWhales extends AbstractSwapConnector {
 
   private readonly _router: string;
   private readonly _factory: string;
-  private _ibcTokenMap: IBCMap | undefined;
-  private _tokenMetadata: TokenMetadataMap | undefined;
-
-  // private _routerQueryClient: TerraswapRouterQueryClient | undefined;
-  private _factoryQueryClient: TerraswapFactoryQueryClient | undefined;
 
   private readonly _clientsManager: ClientsManager;
   private readonly _chain: CosmosV2;
@@ -64,6 +50,7 @@ export class WhiteWhales extends AbstractSwapConnector {
     this._factory = config.factoryAddress(chain, network);
 
     this._clientsManager = ClientsManager.getInstance();
+    //TODO: refactor getNetwork to const type.
     this._chain = CosmosV2.getInstance(chain, getNetwork(network));
   }
 
@@ -73,18 +60,6 @@ export class WhiteWhales extends AbstractSwapConnector {
     if (!this._chain.ready()) {
       await this._chain.init();
     }
-
-    // Init IBC Token Map
-    if (this._ibcTokenMap === undefined || this._ibcTokenMap.size === 0) {
-      await this._initIBCMap();
-    }
-
-    // Init Token Metadata
-    if (this._tokenMetadata === undefined || this._tokenMetadata.size === 0) {
-      await this._initTokenMetadata();
-    }
-
-    this._clientsManager.isReady;
 
     // Init Query and Factory Clients
     if (!this.hasAllClients()) {
@@ -116,14 +91,11 @@ export class WhiteWhales extends AbstractSwapConnector {
     ..._args: any[]
   ): Promise<PairInfo[]> {
     const factoryQueryClient = this._clientsManager.getClient(
-      'TerraswapFactoryQueryClient'
+      TerraswapFactoryQueryClient
     );
 
     if (!factoryQueryClient) {
       throw new Error('Factory Query Client not initialized');
-    }
-    if (!this._ibcTokenMap) {
-      throw new Error('IBC Token Map not initialized');
     }
 
     //TODO(cryptassic): Include additional call on  each pair to get config and this way include fee rates in PairInfo[]
@@ -131,62 +103,12 @@ export class WhiteWhales extends AbstractSwapConnector {
       limit: limit,
       startAfter: startAfter,
     });
-
-    const pairsResult: PairInfo[] = [];
-
     const pairs = pairsResponse.pairs;
 
-    pairs.forEach((pair) => {
-      try {
-        const index1 = getTokenMetadataIndex(
-          pair.asset_infos[0],
-          this._ibcTokenMap as IBCMap,
-          this._chain.chainName
-        );
-        const index2 = getTokenMetadataIndex(
-          pair.asset_infos[1],
-          this._ibcTokenMap as IBCMap,
-          this._chain.chainName
-        );
+    const transformer = PairDataTransformer.getInstance();
 
-        // LP Token Index
-        let lpTokenAddress;
-        if (isStringProperty(pair, 'liquidity_token')) {
-          lpTokenAddress = pair.liquidity_token;
-        } else {
-          lpTokenAddress = getTokenValue(pair.liquidity_token);
-        }
+    const pairsResult = transformer.transform(pairs, this._chain.chainName);
 
-        const indexLP = lpTokenAddress + '_' + this._chain.chainName;
-
-        const asset1 = this._tokenMetadata?.get(index1 as string) as Asset;
-        const asset2 = this._tokenMetadata?.get(index2 as string) as Asset;
-        const assetLP = this._tokenMetadata?.get(
-          indexLP as string
-        ) as LiquidityToken;
-
-        if (!asset1 || !asset2 || !assetLP) {
-          logger.warn(
-            `Pair: ${pair.contract_addr} - Failed to get Token Metadata for any of these [${index1},${index2},${assetLP}]`
-          );
-          return;
-        }
-
-        const pairInfo: PairInfo = {
-          asset_infos: [asset1, asset2],
-          symbol: `${asset1?.symbol}-${asset2?.symbol}`,
-          contract_addr: pair.contract_addr,
-          liquidity_token: assetLP,
-          pair_type: pair.pair_type,
-        };
-
-        pairsResult.push(pairInfo);
-      } catch (e) {
-        console.log(
-          `Error ${e} getting Pairs Token Info: ${pair.asset_infos[0]} - ${pair.asset_infos[1]}`
-        );
-      }
-    });
     return pairsResult;
   }
   estimateSellTrade(
@@ -235,23 +157,10 @@ export class WhiteWhales extends AbstractSwapConnector {
   // This is used to set ready flag.
   private isReadyToSetFlag(): boolean {
     const isChainReady = this._chain.ready();
-
-    const ibcTokenMapSize = this._ibcTokenMap?.size || 0;
-    const tokenMetadataMapSize = this._tokenMetadata?.size || 0;
-
-    const hasNonEmptyIbcTokenMap = ibcTokenMapSize > 0;
-    const hasNonEmptyTokenMetadataMap = tokenMetadataMapSize > 0;
-
     const hasAllClientsDefined = this.hasAllClients();
     const areClientsReady = this._clientsManager.isReady;
 
-    if (
-      isChainReady &&
-      hasNonEmptyIbcTokenMap &&
-      hasNonEmptyTokenMetadataMap &&
-      hasAllClientsDefined &&
-      areClientsReady
-    ) {
+    if (isChainReady && hasAllClientsDefined && areClientsReady) {
       return true;
     }
 
@@ -261,24 +170,13 @@ export class WhiteWhales extends AbstractSwapConnector {
   private hasAllClients(): boolean {
     // Simple way to check if clientManager can find client and client is defined.
     const hasRouterQueryClient = !!this._clientsManager.getClient(
-      'TerraswapRouterQueryClient'
+      TerraswapRouterQueryClient
     );
     const hasFactoryQueryClient = !!this._clientsManager.getClient(
-      'TerraswapFactoryQueryClient'
+      TerraswapFactoryQueryClient
     );
 
     return hasRouterQueryClient && hasFactoryQueryClient;
-  }
-  // We need IBC mapping to resolve assets found in pools. This allows us to append more information
-  // to each asset.
-  private async _initIBCMap(): Promise<void> {
-    const ibcMap = await getIBCMap();
-
-    if (!ibcMap || ibcMap.size === 0) {
-      throw new Error('Unable to get IBC Token Map');
-    }
-
-    this._ibcTokenMap = ibcMap;
   }
   // These clients allows us to easily query/execute blockchain apps. This is generated using ts-codegen from white-whale-core contracts.
   private async _initClients(): Promise<void> {
@@ -289,26 +187,6 @@ export class WhiteWhales extends AbstractSwapConnector {
 
     // Using generic getQueryClientBuilder to get required parameters for clientsManager initialization.
     // There are many types of clients, so we needed to create some generic manager who would allow us easily manage all clients accross this system.
-    // Otherwise it would looked like this:
-    // const routerQueryClient = ...;
-    // const factoryQueryClient = ...;
-    // const routerExecuteClient = ...;
-    // const pairQueryClientPairA = ...;
-    // const pairQueryClientPairB = ...;
-    // And so on.
-    // with clientsManager:
-    //   clientsManager.getClient('TerraswapRouterQueryClient');
-    //   clientsManager.getClient('TerraswapFactoryQueryClient');
-    //   clientsManager.getClient('TerraswapRouterExecuteClient');
-    //   clientsManager.getClient('TerraswapPairQueryClient_{contract_address}');
-    //   clientsManager.getClient('TerraswapPairQueryClient_{contract_address}');
-    // And so on.
-    const routerQueryClient = this._clientsManager.getClient(
-      'TerraswapRouterQueryClient'
-    );
-    const factoryQueryClient = this._clientsManager.getClient(
-      'TerraswapFactoryQueryClient'
-    );
     const routerQueryBuilder = getQueryClientBuilder(
       TerraswapRouterQueryClient,
       cosmWasmClient,
@@ -323,16 +201,5 @@ export class WhiteWhales extends AbstractSwapConnector {
 
     // Then we simply register them at clientManager where they will be accessed globally.
     this._clientsManager.addClients([routerQueryBuilder, factoryQueryBuilder]);
-  }
-  // We use tokens metadata to further augment the information returned to the user.
-  // It goes together with IBC Maps.
-  private async _initTokenMetadata(): Promise<void> {
-    const tokenMetadata = await getTokenMetadata();
-
-    if (!tokenMetadata || tokenMetadata.size === 0) {
-      throw new Error('Unable to get Token Metadata');
-    }
-
-    this._tokenMetadata = tokenMetadata;
   }
 }

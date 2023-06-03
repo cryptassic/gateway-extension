@@ -1,5 +1,5 @@
 import { PairType as TerraswapPairType } from '../../../connectors/terraswap/types/TerraswapFactory.types';
-import { PairInfo } from '../types';
+import { PairInfo } from '../../../connectors/connectors.base';
 
 export type PairType = TerraswapPairType;
 

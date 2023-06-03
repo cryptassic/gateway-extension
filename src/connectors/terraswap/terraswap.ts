@@ -1,27 +1,31 @@
-import { TokenMetadata, EstimateSwapView } from 'coinalpha-ref-sdk';
 import { Account } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
-import { TerraSwapish } from '../../services/common-interfaces';
+import { TokenMetadata, EstimateSwapView } from 'coinalpha-ref-sdk';
+import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+
+import { logger } from '../../services/logger';
 import { CosmosV2 } from '../../chains/cosmosV2/cosmos';
-import { WhiteWhaleConfig } from './terraswap.config';
-import {
-  TerraswapFactoryQueryClient,
-  TerraswapRouterQueryClient,
-} from './types';
+import { TerraSwapish } from '../../services/common-interfaces';
+import { getNetwork, getIndex } from '../../chains/cosmosV2/utils';
+import { Asset } from '../../chains/cosmosV2/types';
+
+import { PairInfo, LiquidityToken } from '../connectors.base';
+
 import {
   IBCMap,
   TokenMetadataMap,
   getIBCMap,
   getTokenMetadata,
 } from './data-provider';
-import { getNetwork, getIndex } from '../../chains/cosmosV2/utils';
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
-import { Asset, LiquidityToken, PairInfo } from '../../chains/cosmosV2/types';
+import {
+  TerraswapFactoryQueryClient,
+  TerraswapRouterQueryClient,
+} from './types';
 
 import { getTokenMetadataIndex, getTokenValue } from './helpers';
-import { logger } from '../../services/logger';
 import { AssetInfo } from './types/TerraswapFactory.types';
+import { WhiteWhaleConfig } from './terraswap.config';
 
 export interface IBCData {
   chain: string;

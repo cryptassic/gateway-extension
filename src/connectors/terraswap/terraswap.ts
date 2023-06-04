@@ -209,7 +209,6 @@ export class WhiteWhale implements TerraSwapish {
       throw new Error('IBC Token Map not initialized');
     }
 
-    //TODO(cryptassic): Include additional call on  each pair to get config and this way include fee rates in PairInfo[]
     const pairsResponse = await this._factoryQueryClient.pairs({
       limit: limit,
       startAfter: start_after,

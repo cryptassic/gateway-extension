@@ -87,7 +87,6 @@ export type ExecuteMsg =
       };
     };
 export type Decimal = string;
-// TODO (cryptassic): Remove and import from connectors.base.ts
 export type AssetInfo =
   | {
       token: {

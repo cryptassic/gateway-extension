@@ -117,8 +117,6 @@ import { PairInfo } from '../connectors/connectors.base';
 import { BalanceRequest } from '../network/network.requests';
 import { RouteMarket, ZigZagOrder } from '../connectors/zigzag/zigzag';
 
-// TODO Check the possibility to have clob/solana/serum equivalents here
-//  Check this link https://hummingbot.org/developers/gateway/building-gateway-connectors/#5-add-sdk-classes-to-uniswapish-interface
 export type Tokenish =
   | Token
   | TokenPangolin

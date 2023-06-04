@@ -55,7 +55,6 @@ export type NativeToken = {
 export type Token = {
   contract_addr: string;
 };
-// TODO(cryptassic): Remove this, including Token & NativeToken and import from connectors.base.ts file
 export type AssetInfo = Token | NativeToken;
 export interface Cw20ReceiveMsg {
   amount: Uint128;

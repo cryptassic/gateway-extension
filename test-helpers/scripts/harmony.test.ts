@@ -90,8 +90,6 @@ export const harmonyTests = async (
   let allowances = allowancesResponse1.approvals;
   console.log(allowances);
 
-  // TODO: For some reason, the approve amount is not working
-
   for (const token of [tokens[0], tokens[1]]) {
     // call /approve on each token
     console.log(`Resetting allowance for ${token} to ${ALLOWANCE}...`);

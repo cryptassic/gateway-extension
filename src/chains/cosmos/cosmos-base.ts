@@ -184,8 +184,6 @@ export class CosmosBase {
     return accounts[0];
   }
 
-  // returns Wallet for an address
-  // TODO: Abstract-away into base.ts
   async getWallet(address: string, prefix: string): Promise<CosmosWallet> {
     const path = `${walletPath}/${this.chainName}`;
 

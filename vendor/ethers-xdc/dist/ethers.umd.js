@@ -1175,9 +1175,6 @@
 	    return out._strip();
 	  }
 
-	  // TODO(indutny): it may be reasonable to omit it for users who don't need
-	  // to work with 256-bit numbers, otherwise it gives 20% improvement for 256-bit
-	  // multiplication (like elliptic secp256k1).
 	  var comb10MulTo = function comb10MulTo (self, num, out) {
 	    var a = self.words;
 	    var b = num.words;
@@ -2138,7 +2135,6 @@
 	  };
 
 	  BN.prototype.ishln = function ishln (bits) {
-	    // TODO(indutny): implement me
 	    assert(this.negative === 0);
 	    return this.iushln(bits);
 	  };
@@ -2204,7 +2200,6 @@
 	  };
 
 	  BN.prototype.ishrn = function ishrn (bits, hint, extended) {
-	    // TODO(indutny): implement me
 	    assert(this.negative === 0);
 	    return this.iushrn(bits, hint, extended);
 	  };
@@ -12411,9 +12406,6 @@
 	    return out.strip();
 	  }
 
-	  // TODO(indutny): it may be reasonable to omit it for users who don't need
-	  // to work with 256-bit numbers, otherwise it gives 20% improvement for 256-bit
-	  // multiplication (like elliptic secp256k1).
 	  var comb10MulTo = function comb10MulTo (self, num, out) {
 	    var a = self.words;
 	    var b = num.words;
@@ -13369,7 +13361,6 @@
 	  };
 
 	  BN.prototype.ishln = function ishln (bits) {
-	    // TODO(indutny): implement me
 	    assert(this.negative === 0);
 	    return this.iushln(bits);
 	  };
@@ -13435,7 +13426,6 @@
 	  };
 
 	  BN.prototype.ishrn = function ishrn (bits, hint, extended) {
-	    // TODO(indutny): implement me
 	    assert(this.negative === 0);
 	    return this.iushrn(bits, hint, extended);
 	  };

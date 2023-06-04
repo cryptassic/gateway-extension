@@ -193,8 +193,6 @@ export class XdcBase {
   getWalletFromPrivateKey(privateKey: string): Wallet {
     return new Wallet(privateKey, this._provider);
   }
-  // returns Wallet for an address
-  // TODO: Abstract-away into base.ts
   async getWallet(address: string): Promise<Wallet> {
     const path = `${walletPath}/${this.chainName}`;
 

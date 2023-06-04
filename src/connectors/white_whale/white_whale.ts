@@ -5,11 +5,12 @@ import { CosmosV2 } from '../../chains/cosmosV2/cosmos';
 import { getNetwork } from '../../chains/cosmosV2/utils';
 
 import {
-  AbstractSwapConnector,
+  Uint128,
+  PairInfo,
   AssetInfo,
   EstimateSwapView,
   FinalExecuteResult,
-  PairInfo,
+  AbstractSwapConnector,
   TransactionSigningData,
 } from '../connectors.base';
 
@@ -81,10 +82,11 @@ export class WhiteWhales extends AbstractSwapConnector {
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
   /* eslint-disable no-unused-vars */
-  pair(assetInfos: AssetInfo[]): Promise<PairInfo> {
+  pair(baseSymbol: string, quoteSymbol: string): Promise<PairInfo | undefined> {
     throw new Error('Method not implemented.');
   }
 
+  //TODO(cryptassic): Add Tests for this method
   async pairs(
     limit?: number | undefined,
     startAfter?: AssetInfo[] | undefined,
@@ -98,7 +100,6 @@ export class WhiteWhales extends AbstractSwapConnector {
       throw new Error('Factory Query Client not initialized');
     }
 
-    //TODO(cryptassic): Include additional call on  each pair to get config and this way include fee rates in PairInfo[]
     const pairsResponse = await factoryQueryClient.pairs({
       limit: limit,
       startAfter: startAfter,
@@ -112,17 +113,17 @@ export class WhiteWhales extends AbstractSwapConnector {
     return pairsResult;
   }
   estimateSellTrade(
-    askAssetInfo: AssetInfo,
-    offerAssetInfo: AssetInfo,
-    amount: string,
+    baseSymbol: string,
+    quoteSymbol: string,
+    amount: Uint128,
     allowedSlippage?: string | undefined
   ): Promise<EstimateSwapView> {
     throw new Error('Method not implemented.');
   }
   estimateBuyTrade(
-    askAssetInfo: AssetInfo,
-    offerAssetInfo: AssetInfo,
-    amount: string,
+    baseSymbol: string,
+    quoteSymbol: string,
+    amount: Uint128,
     allowedSlippage?: string | undefined
   ): Promise<EstimateSwapView> {
     throw new Error('Method not implemented.');

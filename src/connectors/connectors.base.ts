@@ -25,10 +25,6 @@ export type AssetInfo =
 //Region: Pair
 // ----------------------------------------------------------------
 
-//TODO(cryptassic): Include SwapFee value
-//TODO(cryptassic): Change logic to:
-// asset_infos -> [AssetInfo,AssetInfo]
-// asset_metadata -> [Asset,Asset]
 export interface PairInfo {
   asset_infos: [Asset, Asset];
   symbol: string;
@@ -94,7 +90,10 @@ export abstract class AbstractSwapConnector {
   abstract init(): Promise<void>;
   abstract ready(): boolean;
 
-  abstract pair(assetInfos: AssetInfo[]): Promise<PairInfo>;
+  abstract pair(
+    baseSymbol: string,
+    quoteSymbol: string
+  ): Promise<PairInfo | undefined>;
 
   abstract pairs(
     limit?: number,
@@ -103,15 +102,15 @@ export abstract class AbstractSwapConnector {
   ): Promise<PairInfo[]>;
 
   abstract estimateSellTrade(
-    askAssetInfo: AssetInfo,
-    offerAssetInfo: AssetInfo,
+    baseSymbol: string,
+    quoteSymbol: string,
     amount: Uint128,
     allowedSlippage?: string | undefined
   ): Promise<EstimateSwapView>;
 
   abstract estimateBuyTrade(
-    askAssetInfo: AssetInfo,
-    offerAssetInfo: AssetInfo,
+    baseSymbol: string,
+    quoteSymbol: string,
     amount: Uint128,
     allowedSlippage?: string | undefined
   ): Promise<EstimateSwapView>;

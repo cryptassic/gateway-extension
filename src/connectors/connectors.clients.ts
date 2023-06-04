@@ -1,4 +1,7 @@
-import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
+import {
+  CosmWasmClient,
+  SigningCosmWasmClient,
+} from '@cosmjs/cosmwasm-stargate';
 
 export interface Client {
   ready: boolean;
@@ -78,8 +81,8 @@ export class ClientsManager {
   }
 }
 
+// Query client only queries data from blockchain. So, it's like read only client.
 export function getQueryClientBuilder<T extends new (...args: any[]) => any>(
-  // ClientType: new (...args: any[]) => T,
   clientType: T,
   wasm: CosmWasmClient,
   contractAddress: string,
@@ -91,9 +94,19 @@ export function getQueryClientBuilder<T extends new (...args: any[]) => any>(
   };
 }
 
-//TODO(cryptassic): Add getExecuteClientBuilder method
-// export function getExecuteClientBuilder<T extends new (...args: any[]) => any>(
-//  clientType:T,
-//  singingCosmWasmClient,
-//  senderAddress:string,
-//  contractAddress:string) {}
+// Execute client does not have read ability, but have ability to execute. Like interact with the smart contract.
+export function getExecuteClientBuilder<T extends new (...args: any[]) => any>(
+  clientType: T,
+  singingCosmWasmClient: SigningCosmWasmClient,
+  senderAddress: string,
+  contractAddress: string,
+  postfixRequired: boolean = false
+) {
+  return {
+    builder: () =>
+      new ContractClient(
+        new clientType(singingCosmWasmClient, senderAddress, contractAddress)
+      ),
+    postfix: postfixRequired ? contractAddress : undefined,
+  };
+}

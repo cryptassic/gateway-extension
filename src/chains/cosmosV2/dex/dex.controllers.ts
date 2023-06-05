@@ -1,21 +1,21 @@
-import { PairsRequest, PairsResponse } from './dex.requests';
-import { TerraSwapish } from '../../../services/common-interfaces';
-
 import { latency } from '../../../services/base';
 import { getConnector } from '../../../services/connection-manager';
-import { pairs as terraPairs } from '../../../connectors/terraswap/controllers';
+import { pairs as getPairs } from '../../../connectors/connectors.controllers';
+import { AbstractSwapConnector } from '../../../connectors/connectors.base';
 import {
   HttpException,
   UNKNOWN_ERROR_ERROR_CODE,
 } from '../../../services/error-handler';
 
+import { PairsRequest, PairsResponse } from './dex.requests';
+
 export async function pairs(req: PairsRequest): Promise<PairsResponse> {
   const initTime = Date.now();
 
-  let connector: TerraSwapish;
+  let connector: AbstractSwapConnector;
 
   try {
-    connector = await getConnector<TerraSwapish>(
+    connector = await getConnector<AbstractSwapConnector>(
       req.chain,
       req.network,
       req.connector
@@ -27,7 +27,7 @@ export async function pairs(req: PairsRequest): Promise<PairsResponse> {
       UNKNOWN_ERROR_ERROR_CODE
     );
   }
-  const pairs = await terraPairs(connector);
+  const pairs = await getPairs(connector, req);
   return {
     latency: latency(initTime, Date.now()),
     pairs: pairs,

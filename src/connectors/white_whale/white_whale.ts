@@ -2,7 +2,7 @@ import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 import { CosmosV2 } from '../../chains/cosmosV2/cosmos';
-import { getNetwork } from '../../chains/cosmosV2/utils';
+import { getNetwork, getIndex } from '../../chains/cosmosV2/utils';
 
 import {
   Uint128,
@@ -31,6 +31,7 @@ export class WhiteWhales extends AbstractSwapConnector {
     return this._gasLimitEstimate;
   }
 
+  private static _instances: { [name: string]: WhiteWhales };
   private _ttl: number;
   private _gasLimitEstimate: number;
   private _ready: boolean = false;
@@ -53,6 +54,19 @@ export class WhiteWhales extends AbstractSwapConnector {
     this._clientsManager = ClientsManager.getInstance();
     //TODO: refactor getNetwork to const type.
     this._chain = CosmosV2.getInstance(chain, getNetwork(network));
+  }
+
+  public static getInstance(chain: string, network: string): WhiteWhales {
+    const index = getIndex(chain, network);
+
+    if (WhiteWhales._instances === undefined) {
+      WhiteWhales._instances = {};
+    }
+    if (!(index in WhiteWhales._instances)) {
+      WhiteWhales._instances[index] = new WhiteWhales(chain, network);
+    }
+
+    return WhiteWhales._instances[index];
   }
 
   // All Connectors must be initialized before usage.
@@ -80,8 +94,9 @@ export class WhiteWhales extends AbstractSwapConnector {
     return this._ready;
   }
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  /* eslint-disable @typescript-eslint/no-unused-vars,@typescript-eslint/ban-ts-comment */
   /* eslint-disable no-unused-vars */
+  // @ts-ignore
   pair(baseSymbol: string, quoteSymbol: string): Promise<PairInfo | undefined> {
     throw new Error('Method not implemented.');
   }
@@ -113,46 +128,46 @@ export class WhiteWhales extends AbstractSwapConnector {
     return pairsResult;
   }
   estimateSellTrade(
-    baseSymbol: string,
-    quoteSymbol: string,
-    amount: Uint128,
-    allowedSlippage?: string | undefined
+    _baseSymbol: string,
+    _quoteSymbol: string,
+    _amount: Uint128,
+    _allowedSlippage?: string | undefined
   ): Promise<EstimateSwapView> {
     throw new Error('Method not implemented.');
   }
   estimateBuyTrade(
-    baseSymbol: string,
-    quoteSymbol: string,
-    amount: Uint128,
-    allowedSlippage?: string | undefined
+    _baseSymbol: string,
+    _quoteSymbol: string,
+    _amount: Uint128,
+    _allowedSlippage?: string | undefined
   ): Promise<EstimateSwapView> {
     throw new Error('Method not implemented.');
   }
   executeTradeLocallySigned(
-    account: string,
-    trade: EstimateSwapView[],
-    amountIn: string,
-    tokenIn: AssetInfo,
-    tokenOut: AssetInfo,
-    allowedSlippage?: string | undefined
+    _account: string,
+    _trade: EstimateSwapView[],
+    _amountIn: string,
+    _tokenIn: AssetInfo,
+    _tokenOut: AssetInfo,
+    _allowedSlippage?: string | undefined
   ): Promise<FinalExecuteResult> {
     throw new Error('Method not implemented.');
   }
   getTransactionSigningData(
-    account: string,
-    trade: EstimateSwapView[],
-    amountIn: string,
-    tokenIn: AssetInfo,
-    tokenOut: AssetInfo,
-    allowedSlippage?: string | undefined
+    _account: string,
+    _trade: EstimateSwapView[],
+    _amountIn: string,
+    _tokenIn: AssetInfo,
+    _tokenOut: AssetInfo,
+    _allowedSlippage?: string | undefined
   ): Promise<TransactionSigningData> {
     throw new Error('Method not implemented.');
   }
-  executeTradeExternallySigned(data: TxRaw): Promise<FinalExecuteResult> {
+  executeTradeExternallySigned(_data: TxRaw): Promise<FinalExecuteResult> {
     throw new Error('Method not implemented.');
   }
   /* eslint-enable no-unused-vars */
-  /* eslint-disable @typescript-eslint/no-unused-vars */
+  /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 
   // Checks if all the required data is ready to be used.
   // This is used to set ready flag.

@@ -18,7 +18,8 @@ import { InjectiveCLOB } from '../connectors/injective/injective';
 import { InjectiveClobPerp } from '../connectors/injective_perpetual/injective.perp';
 import { Injective } from '../chains/injective/injective';
 import { ZigZag } from '../connectors/zigzag/zigzag';
-import { WhiteWhale } from '../connectors/terraswap/terraswap';
+import { WhiteWhales } from '../connectors/white_whale/white_whale';
+import { AbstractSwapConnector } from '../connectors/connectors.base';
 import {
   CLOBish,
   Ethereumish,
@@ -40,10 +41,7 @@ import { Xsswap } from '../connectors/xsswap/xsswap';
 import { DexalotCLOB } from '../connectors/dexalot/dexalot';
 import { CosmosV2 } from '../chains/cosmosV2/cosmos';
 
-import {
-  SUPPORTED_CHAINS,
-  SUPPORTED_CONNECTORS,
-} from '../chains/cosmosV2/types';
+import { SUPPORTED_CHAINS } from '../chains/cosmosV2/types';
 import { getNetwork } from '../chains/cosmosV2/utils';
 
 export type ChainUnion = Ethereumish | Nearish | Injective | Xdcish | CosmosV2;
@@ -97,7 +95,8 @@ export type ConnectorUnion =
   | CLOBish
   | ZigZag
   | InjectiveClobPerp
-  | TerraSwapish;
+  | TerraSwapish
+  | AbstractSwapConnector;
 
 export type Connector<T> = T extends Uniswapish
   ? Uniswapish
@@ -115,6 +114,8 @@ export type Connector<T> = T extends Uniswapish
   ? InjectiveClobPerp
   : T extends TerraSwapish
   ? TerraSwapish
+  : T extends AbstractSwapConnector
+  ? AbstractSwapConnector
   : never;
 
 export async function getConnector<T>(
@@ -170,14 +171,7 @@ export async function getConnector<T>(
   } else if (chain === 'ethereum' && connector === 'zigzag') {
     connectorInstance = ZigZag.getInstance(network);
   } else if (SUPPORTED_CHAINS.includes(chain) && connector === 'white_whale') {
-    connectorInstance = WhiteWhale.getInstance(chain, network);
-  } else if (
-    connector !== undefined &&
-    SUPPORTED_CHAINS.includes(chain) &&
-    SUPPORTED_CONNECTORS.includes(connector)
-  ) {
-    //TODO(cryptassic): Replace this, it is temporarily, so that we could compile
-    connectorInstance = WhiteWhale.getInstance(chain, network);
+    connectorInstance = WhiteWhales.getInstance(chain, network);
   } else {
     throw new Error('unsupported chain or connector');
   }

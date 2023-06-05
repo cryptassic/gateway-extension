@@ -6,9 +6,9 @@ import {
 } from '../../services/data-provider';
 import { logger } from '../../services/logger';
 import { isStringProperty } from '../../services/base';
-import { Asset, LiquidityToken } from '../../chains/cosmosV2/types';
+import { Asset } from '../../chains/cosmosV2/types';
 
-import { PairInfo as OutputPairInfo } from '../connectors.base';
+import { PairInfo as OutputPairInfo, LiquidityToken } from '../connectors.base';
 import { ClientsManager } from '../connectors.clients';
 
 import { PairInfo as InputPairInfo } from './types';

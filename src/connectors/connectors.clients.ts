@@ -89,7 +89,8 @@ export function getQueryClientBuilder<T extends new (...args: any[]) => any>(
   postfixRequired: boolean = false
 ): ClientBuilder {
   return {
-    builder: () => new ContractClient(new clientType(wasm, contractAddress)),
+    builder: () =>
+      new ContractClient(() => new clientType(wasm, contractAddress)),
     postfix: postfixRequired ? contractAddress : undefined,
   };
 }
@@ -105,7 +106,8 @@ export function getExecuteClientBuilder<T extends new (...args: any[]) => any>(
   return {
     builder: () =>
       new ContractClient(
-        new clientType(singingCosmWasmClient, senderAddress, contractAddress)
+        () =>
+          new clientType(singingCosmWasmClient, senderAddress, contractAddress)
       ),
     postfix: postfixRequired ? contractAddress : undefined,
   };

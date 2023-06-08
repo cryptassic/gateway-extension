@@ -2,7 +2,6 @@ import { logger } from './logger';
 const argvParser = require('minimist');
 const PASSPHRASE_ARGUMENT = 'passphrase';
 const PASSPHRASE_ENV = 'GATEWAY_PASSPHRASE';
-
 export namespace ConfigManagerCertPassphrase {
   // this adds a level of indirection so we can test the code
   export const bindings = {
@@ -21,6 +20,25 @@ export namespace ConfigManagerCertPassphrase {
     // so we need a return to satisfy the compiler checks
     logger.error(
       `The passphrase has to be provided by argument (--${PASSPHRASE_ARGUMENT}=XXX) or in an env variable (${PASSPHRASE_ENV}=XXX)`
+    );
+    bindings._exit();
+    return;
+  };
+
+  export const readSecrets = (
+    ARGUMENT: string,
+    ENV: string
+  ): string | undefined => {
+    const argv = argvParser(process.argv, { string: [ARGUMENT] });
+    if (argv[ARGUMENT]) {
+      return argv[ARGUMENT];
+    } else if (process.env[ENV]) {
+      return process.env[ENV];
+    }
+    // the compiler does not know that bindings._exit() will end the function
+    // so we need a return to satisfy the compiler checks
+    logger.error(
+      `The secret has to be provided by argument (--${ARGUMENT}=XXX) or in an env variable (${ENV}=XXX)`
     );
     bindings._exit();
     return;

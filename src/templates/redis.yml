@@ -1,0 +1,6 @@
+enabled: false
+
+# Redis server hostname
+host: redis-18391.c135.eu-central-1-1.ec2.cloud.redislabs.com
+# Port to expose the gateway server on
+port: 18391

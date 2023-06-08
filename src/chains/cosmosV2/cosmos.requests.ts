@@ -31,8 +31,8 @@ export interface CosmosPollResponse {
   timestamp: number;
   txHash: string;
   currentBlock: number;
-  txBlock: number;
-  gasUsed: number;
-  gasWanted: number;
+  txBlock: number | null;
+  gasUsed: number | null;
+  gasWanted: number | null;
   txData: DecodedTxRaw | null;
 }

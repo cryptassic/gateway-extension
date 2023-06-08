@@ -5,7 +5,7 @@ import { IndexedTx, StargateClient } from '@cosmjs/stargate';
 import { TokenListType, TokenValue } from '../../../services/base';
 import { EvmTxStorage } from '../../../evm/evm.tx-storage';
 
-import NodeCache from 'node-cache';
+import { Cache } from '../../../services/cache';
 
 export enum Network {
   Mainnet = 'mainnet',
@@ -69,7 +69,7 @@ export interface ICosmosBase {
    *
    * NOTE: The CosmWasmClient returned by this function is an unsigned client that only queries data, and cannot be used to submit transactions to the blockchain.
    */
-  provider(): Promise<StargateClient>;
+  getProvider(): Promise<StargateClient>;
 
   /**
    * Returns an array of all stored asset objects.
@@ -167,14 +167,14 @@ export interface ICosmosBase {
    */
   cacheTransaction(tx: IndexedTx): void;
 
-  retrieveTransaction(txHash: string): IndexedTx | undefined;
+  retrieveTransaction(txHash: string): Promise<IndexedTx | undefined>;
 
   /**
    * Retrieves the transaction receipt of the indexed transaction with the specified transaction hash.
    * @param {string} txHash - The transaction hash of the indexed transaction whose receipt to retrieve.
    * @returns {Promise<IndexedTx>} A promise that resolves to the transaction receipt of the indexed transaction.
    */
-  getTransaction(txHash: string): Promise<IndexedTx>;
+  getTransaction(txHash: string): Promise<IndexedTx | null>;
 
   /**
    * Retrieves the status of the indexed transaction with the specified transaction hash.
@@ -241,9 +241,9 @@ export interface ICosmosBase {
 
   /**
    * The cache used for storing transaction receipt data.
-   * @type {NodeCache}
+   * @type {Cache}
    */
-  cache: NodeCache;
+  cache: Cache;
 
   /**
    * The storage used for storing transaction data.

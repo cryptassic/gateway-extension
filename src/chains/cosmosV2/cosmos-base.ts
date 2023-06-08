@@ -1,23 +1,13 @@
-import {
-  Asset,
-  CosmosWallet,
-  EncryptedPrivateKey,
-  ICosmosBase,
-  ProviderNotInitializedError,
-} from './types';
-
-import fse from 'fs-extra';
-import { promises as fs } from 'fs';
-
 import axios from 'axios';
-import NodeCache from 'node-cache';
+import { BigNumber } from 'ethers';
+import { promises as fs } from 'fs';
 import Bottleneck from 'bottleneck';
-
-import { Network } from './types';
+import fse from 'fs-extra';
 
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import { IndexedTx, StargateClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
+const { fromBase64 } = require('@cosmjs/encoding');
 
 import {
   TokenInfo,
@@ -26,16 +16,27 @@ import {
   walletPath,
 } from '../../services/base';
 
+import {
+  Cache,
+  CacheDataTypes,
+  getUniversalKeyPrefix,
+} from '../../services/cache';
+import { logger } from '../../services/logger';
+import { EvmTxStorage } from '../../evm/evm.tx-storage';
 import { ConfigManagerCertPassphrase } from '../../services/config-manager-cert-passphrase';
 import { ReferenceCountingCloseable } from '../../services/refcounting-closeable';
-import { EvmTxStorage } from '../../evm/evm.tx-storage';
 
+import {
+  Asset,
+  CosmosWallet,
+  EncryptedPrivateKey,
+  ICosmosBase,
+  ProviderNotInitializedError,
+  Network,
+} from './types';
 import { Crypto } from './crypto';
-import { BigNumber } from 'ethers';
 import { resolveDBPath } from './utils';
 import { DEFAULT_LIMITER, RateLimitedTendermint34Client } from './provider';
-
-const { fromBase64 } = require('@cosmjs/encoding');
 
 export class CosmosBase extends Crypto implements ICosmosBase {
   private _providerStargate: StargateClient | undefined;
@@ -56,7 +57,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   private _chainName: string;
   private _tokenListSource: string;
   private _tokenListType: TokenListType;
-  private readonly _cache: NodeCache;
+  private readonly _cache: Cache;
   private readonly _refCountingHandle: string;
   private readonly _txStorage: EvmTxStorage;
 
@@ -77,7 +78,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
 
     this._tokenListSource = tokenListSource;
     this._tokenListType = tokenListType;
-    this._cache = new NodeCache({ stdTTL: 3600 }); // set default cache ttl to 1hr
+    this._cache = Cache.getInstance(); // Default ttl is 10min
 
     this._refCountingHandle = ReferenceCountingCloseable.createHandle();
     this._txStorage = EvmTxStorage.getInstance(
@@ -113,7 +114,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return this.tokenList;
   }
 
-  public get cache(): NodeCache {
+  public get cache(): Cache {
     return this._cache;
   }
 
@@ -183,7 +184,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     return this._initPromise;
   }
 
-  provider(): Promise<StargateClient> {
+  getProvider(): Promise<StargateClient> {
     if (!this._providerStargate) {
       return Promise.reject(
         new ProviderNotInitializedError('Stargate client not initialized')
@@ -236,7 +237,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   async getBalances(wallet: CosmosWallet): Promise<Record<string, TokenValue>> {
     const balances: Record<string, TokenValue> = {};
 
-    const provider = await this.provider();
+    const provider = await this.getProvider();
 
     const accounts = await wallet.getAccounts();
 
@@ -248,7 +249,7 @@ export class CosmosBase extends Crypto implements ICosmosBase {
       allTokens.map(async (t: { denom: string; amount: string }) => {
         const asset = this.getAssetByBase(t.denom);
 
-        // TO-DO IBC token integration. Current support is only for native tokens.
+        // TODO(cryptassic): IBC token integration. Current support is only for native tokens.
         // if (!asset && t.denom.startsWith('ibc/')) {
         //   const ibcHash: string = t.denom.replace('ibc/', '');
 
@@ -334,12 +335,59 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   }
 
   cacheTransaction(tx: IndexedTx): void {
-    this._cache.set(tx.hash, tx);
+    const key = this.getTxCacheKey(tx.hash, 'transaction');
+
+    this._cache.set(key, JSON.stringify(tx), 3600); // Default TTL 1hour
   }
 
-  retrieveTransaction(txHash: string): IndexedTx | undefined {
-    const tx = this._cache.get(txHash) as any;
+  async retrieveTransaction(txHash: string): Promise<IndexedTx | undefined> {
+    let tx;
+    let error: Error | null = null;
 
+    const key = this.getTxCacheKey(txHash, 'transaction');
+
+    try {
+      await this._cache.get(key, (err, result) => {
+        if (result) {
+          tx = JSON.parse(result);
+          if(this._cache.isNodeCache){
+            tx.tx = Uint8Array.from(Object.values(tx.tx));
+          }
+          // NodeCache uses the built-in JSON.stringify and JSON.parse methods to store and retrieve values.
+          // When a Uint8Array is stringified using JSON.stringify, it is converted to an object with numeric keys,
+          // where each key represents an index in the array and each value represents the corresponding element of the array.
+          // This object can be represented as a Record<string, number> in TypeScript.
+          //
+          // What does that mean to us?
+          // When we store a Uint8Array in the cache, it is converted to an object with numeric keys.
+          //
+          // Example:
+          // Uint8Array: [1, 2, 3, 4, 5] -> cache.set -> cache.get -> Object: {0: 1, 1: 2, 2: 3, 3: 4, 4: 5}
+          // So, we can't do direct comparison... because it will fail with TypeError: this is not a typed array.
+          //
+          // Solution: To convert the object back to Uint8Array. Ugly but works.
+          // if (tx) {
+          //   tx.tx = Uint8Array.from(Object.values(tx.tx));
+          // }
+        } else if (err) {
+          error = err;
+        }
+      });
+    } catch (err) {
+      if (err instanceof Error) {
+        error = err as Error;
+      } else {
+        error = new Error(
+          `Received unexpected error during retrieveTransaction: ${err}`
+        );
+      }
+    }
+
+    if (error) {
+      logger.error(error);
+    }
+
+    return tx;
     // NodeCache uses the built-in JSON.stringify and JSON.parse methods to store and retrieve values.
     // When a Uint8Array is stringified using JSON.stringify, it is converted to an object with numeric keys,
     // where each key represents an index in the array and each value represents the corresponding element of the array.
@@ -353,48 +401,81 @@ export class CosmosBase extends Crypto implements ICosmosBase {
     // So, we can't do direct comparison... because it will fail with TypeError: this is not a typed array.
     //
     // Solution: To convert the object back to Uint8Array. Ugly but works.
-    if (tx) {
-      tx.tx = Uint8Array.from(Object.values(tx.tx));
-    }
+    // if (tx) {
+    //   tx.tx = Uint8Array.from(Object.values(tx.tx));
+    // }
 
-    return tx;
+    // return tx;
+  }
+
+  getTxCacheKey(value: string, type: CacheDataTypes) {
+    const prefix = getUniversalKeyPrefix(
+      'cosmos',
+      this.chainName,
+      this.network,
+      type
+    );
+
+    const key = prefix + value;
+
+    return key;
   }
 
   async getTransactionStatus(txHash: string): Promise<boolean> {
     const tx = await this.getTransaction(txHash);
 
     if (!tx) {
-      return Promise.reject(new Error(`Transaction not found`));
+      throw new Error(`Transaction not found. ${txHash}`);
     }
 
-    return Promise.resolve(
-      tx.code == 0 // 0 means success, anything else is an failure
-    );
+    return tx.code == 0;
   }
 
-  async getTransaction(txHash: string): Promise<IndexedTx> {
-    if (this.cache.keys().includes(txHash)) {
-      // If it's in the cache, return the value in cache, whether it's null or not
-      return Promise.resolve(this.retrieveTransaction(txHash) as IndexedTx);
+  async getTransaction(txHash: string): Promise<IndexedTx | null> {
+    let tx: IndexedTx | null = null;
+
+    const key = this.getTxCacheKey(txHash, 'transaction');
+
+    if (await this.cache.has(key)) {
+      return (await this.retrieveTransaction(txHash)) as IndexedTx;
     } else {
-      // If it's not in the cache,
-      const provider = await this.provider();
+      const provider = await this.getProvider();
 
-      const fetchedTxReceipt = await provider.getTx(txHash);
+      tx = await provider.getTx(txHash);
 
-      this.cache.set(txHash, fetchedTxReceipt); // Cache the fetched receipt, whether it's null or not
+      if (tx) {
+        this.cacheTransaction(tx);
+      } else {
+        const errMessage = `Failed to retrieve transaction from blockchain: ${txHash}`;
 
-      // TO-DO This part requires WebSocketSupport to introduce events to update the cache.
-      // if (!fetchedTxReceipt) {
-      // this._provider.once(txHash, this.cacheTransactionReceipt.bind(this));
-      // }
-
-      if (!fetchedTxReceipt) {
-        return Promise.reject(new Error('Transaction not found'));
+        logger.error(errMessage);
+        throw new Error('Transaction not found')
       }
-
-      return Promise.resolve(fetchedTxReceipt as IndexedTx);
     }
+
+    return tx;
+    // if (this.cache.keys().includes(txHash)) {
+    //   // If it's in the cache, return the value in cache, whether it's null or not
+    //   return Promise.resolve(this.retrieveTransaction(txHash) as IndexedTx);
+    // } else {
+    //   // If it's not in the cache,
+    //   const provider = await this.getProvider();
+
+    //   const fetchedTxReceipt = await provider.getTx(txHash);
+
+    //   this.cache.set(txHash, fetchedTxReceipt); // Cache the fetched receipt, whether it's null or not
+
+    //   // TO-DO This part requires WebSocketSupport to introduce events to update the cache.
+    //   // if (!fetchedTxReceipt) {
+    //   // this._provider.once(txHash, this.cacheTransactionReceipt.bind(this));
+    //   // }
+
+    //   if (!fetchedTxReceipt) {
+    //     return Promise.reject(new Error('Transaction not found'));
+    //   }
+
+    //   return Promise.resolve(fetchedTxReceipt as IndexedTx);
+    // }
   }
 
   getTransactionHistory(address: string): Promise<IndexedTx[]> {
@@ -411,12 +492,12 @@ export class CosmosBase extends Crypto implements ICosmosBase {
   }
 
   async getCurrentBlockNumber(): Promise<number> {
-    const provider = await this.provider();
+    const provider = await this.getProvider();
     return provider.getHeight();
   }
 
   async getChainId(): Promise<string> {
-    const provider = await this.provider();
+    const provider = await this.getProvider();
     return provider.getChainId();
   }
 

@@ -9,9 +9,7 @@ import { toHex } from '@cosmjs/encoding';
 import { IndexedTx } from '@cosmjs/stargate';
 import { storeWallet } from '../../../src/services/wallet/wallet.controllers';
 import { ConfigManagerCertPassphrase } from '../../../src/services/config-manager-cert-passphrase';
-import {
-  ProviderNotInitializedError,
-} from '../../../src/chains/cosmosV2/types';
+import { ProviderNotInitializedError } from '../../../src/chains/cosmosV2/types';
 import { CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const dummyWallet = {
@@ -122,13 +120,13 @@ describe('CosmosBase', () => {
 
   describe('provider', () => {
     it('should return an error if _providerStargate is not initialized', async () => {
-      await expect(cosmosBase.provider()).rejects.toThrowError(
+      await expect(cosmosBase.getProvider()).rejects.toThrowError(
         ProviderNotInitializedError
       );
     });
     it('should return _providerStargate', async () => {
       await cosmosBase.init();
-      const provider = await cosmosBase.provider();
+      const provider = await cosmosBase.getProvider();
       expect(provider).toBeDefined();
     });
   });
@@ -163,21 +161,21 @@ describe('CosmosBase', () => {
 
   describe('cache', () => {
     beforeEach(() => {
-      cosmosBase.cache.flushAll();
+      cosmosBase.cache.clear();
     });
 
-    it('should store transaction at cache', () => {
+    it('should store transaction at cache', async () => {
       cosmosBase.cacheTransaction(testnetTxMetadata);
 
-      const retrievedTx = cosmosBase.retrieveTransaction(
+      const retrievedTx = await cosmosBase.retrieveTransaction(
         testnetTxMetadata.hash
-      ) as IndexedTx;
+      );
 
       expect(retrievedTx).toBeDefined();
       expect(retrievedTx).not.toBeNull();
     });
     it('should retrieve transaction from cache before requesting from provider', async () => {
-      const spy = jest.spyOn(cosmosBase, 'provider');
+      const spy = jest.spyOn(cosmosBase, 'getProvider');
 
       cosmosBase.cacheTransaction(testnetTxMetadata);
 
@@ -312,9 +310,9 @@ describe('CosmosBase', () => {
     beforeEach(async () => {
       await cosmosBase.init();
 
-      spy = jest.spyOn(cosmosBase, 'provider');
+      spy = jest.spyOn(cosmosBase, 'getProvider');
 
-      cosmosBase.cache.flushAll();
+      await cosmosBase.cache.clear();
     });
     it('should return a transaction from the given hash', async () => {
       const tx = (await cosmosBase.getTransaction(
@@ -340,9 +338,9 @@ describe('CosmosBase', () => {
       expect(spy).toHaveBeenCalled();
       expect(spy).toHaveBeenCalledTimes(1);
 
-      const cachedTx = cosmosBase.retrieveTransaction(
+      const cachedTx = await cosmosBase.retrieveTransaction(
         testnetTxMetadata.hash
-      ) as IndexedTx;
+      );
 
       expect(cachedTx).toBeDefined();
       expect(cachedTx).not.toBeNull();

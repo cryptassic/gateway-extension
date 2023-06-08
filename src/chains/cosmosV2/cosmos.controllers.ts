@@ -81,9 +81,9 @@ export async function poll(
     timestamp: initTime,
     txHash: req.txHash,
     currentBlock,
-    txBlock: transaction.height,
-    gasUsed: transaction.gasUsed,
-    gasWanted: transaction.gasWanted,
-    txData: decodeTxRaw(transaction.tx),
+    txBlock: transaction?.height ?? null,
+    gasUsed: transaction?.gasUsed ?? null,
+    gasWanted: transaction?.gasWanted ?? null,
+    txData: transaction?.tx ? decodeTxRaw(transaction.tx) : undefined,
   };
 }

@@ -3,6 +3,10 @@ configurations:
   $namespace server:
     configurationPath: server.yml
     schemaPath: server-schema.json
+  
+  $namespace redis:
+    configurationPath: redis.yml
+    schemaPath: redis-schema.json
 
   $namespace ethereum:
     configurationPath: ethereum.yml

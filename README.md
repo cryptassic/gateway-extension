@@ -13,49 +13,13 @@ We aimed to address a developer experience issue by creating a client-side infra
   
  - Our product operates independently, eliminating the reliance on third-party data or services. Instead, we directly index and retrieve information from blockchains, ensuring a reliable and secure source of data.
 
-## Investor pitch
-
+## The Problem
 
 We have identified a pressing problem in the industry and are confident that our solution meets an unmet need, positioning us at the forefront of this market. The existing complexity and steep learning curve act as significant barriers for developers, impeding the growth of the ecosystem as a whole. In response, we have developed a groundbreaking project that reduces this complexity and accelerates development for users.
 
 Our journey began with the firsthand experience of solving the White Whale protocol challenge, which involved building a market-making bot. This firsthand experience highlighted the importance of simplifying the learning curve for end users, attracting more individuals to the ecosystem. To address this, we offer users a prebuilt, ready-to-use client-side server that can be easily deployed on their workstations. Additionally, for rapid prototyping, we will provide public servers for users to interact with.
 
 Our product goes beyond limiting itself to a single exchange or market. Instead, our vision encompasses all chains and markets. We have developed custom backends that facilitate interaction with various chains and their applications, providing us with the ability to expand across multiple chains. While decentralized exchanges remain our primary focus, we are committed to encompassing the broad spectrum of DeFi functionality within a single, user-friendly framework. By striving to integrate most, if not all, DeFi features, we aim to simplify and democratize access to decentralized finance for a wider audience.
-
-## Development Deepdive
-
-During the development process, we encountered several challenges as we embarked on our journey with limited knowledge about the Cosmos ecosystem. To overcome this, we started by reverse engineering existing botting solutions, carefully studying their strengths and weaknesses. This deep analysis enabled us to build a more scalable and robust solution.
-
-Our learning process involved a combination of UML diagrams, extensive documentation readings, and consultations with ChatGPT on various CosmWasm topics. It took us several weeks to gain a solid understanding of how to interact with the ecosystem, and we hadn't even delved into the Rust language at that point.
-
-To enhance our knowledge, we studied and learned from the codebases of various projects, including the Gateway extension, Hummingbot, CosmJS, and the White Whale bot. This allowed us to grasp different perspectives and incorporate the best practices into our development process.
-
-Throughout the development, we focused on improving our TypeScript skills and leveraged ChatGPT's assistance in code development. This enabled us to produce more readable, secure, and optimized code.
-
-In order to ensure the reliability and functionality of our custom backend class that handles multichains, we built extensive test suites that cover a wide range of use cases. These tests serve as a solid foundation for maintaining the stability and performance of our product.
-
-This is what we built
- - Rate limiter of Tendermint client. Public rpc are not reliable.
- - IBC token mapping. Translating IBC hashes to symbols are more detailed token information.
- - Multichain class that is capable to handle CosmWasm chains. 
- - In-memory transaction caching. Improving response time for repeated requests.
- - Wrapper around white whale core contracts. We used ts-codegen to generate interfaces and incorporate them in our libraries.
- - Validations, controllers, routes. 
- - Unit tests.
-
-Our presentation goes into more detail about our experience with this project.
-
-
-## Presentation
-Video: https://vimeo.com/827020448
-
-Slideshow:https://www.canva.com/design/DAFiCdFXKLc/aDM112fV_M6bO4alrP6COA/view?utm_content=DAFiCdFXKLc&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink
-
-
-## DEMO
-Video: https://vimeo.com/827016331
-
-
 
 
 # Hummingbot Gateway
